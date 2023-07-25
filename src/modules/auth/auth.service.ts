@@ -1,11 +1,14 @@
 import {
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as jwt from 'jsonwebtoken';
+
 import { User } from '../users/schema/user.schema';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -40,7 +43,9 @@ export class AuthService {
     if (+user.otp.expiresIn < now)
       throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
 
-    return { statusCode: HttpStatus.CREATED, data: { token: '' } };
+    const accessToken = await this.signAccessToken(user._id as any);
+
+    return { statusCode: HttpStatus.CREATED, data: { accessToken } };
   }
 
   private async saveUser(mobile: string, code: string) {
@@ -63,7 +68,7 @@ export class AuthService {
   ) {
     const updateResult = await this.userModel.updateOne(
       { mobile },
-      { $set: otp },
+      { $set: { otp } },
     );
     return !!updateResult.modifiedCount;
   }
@@ -78,5 +83,33 @@ export class AuthService {
       maxm = 999999;
     const code = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
     return String(code);
+  }
+
+  private async signAccessToken(userId: string) {
+    return new Promise(async (resolve, reject) => {
+      const user = await this.userModel.findById(userId);
+
+      const payload = {
+        mobile: user.mobile,
+      };
+      const options = {
+        expiresIn: '30d',
+      };
+
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        options,
+        (err: any, token: any) => {
+          if (err)
+            reject(
+              new InternalServerErrorException(
+                ResponseMessages.INTERNAL_SERVER_ERROR,
+              ),
+            );
+          resolve(token);
+        },
+      );
+    });
   }
 }
