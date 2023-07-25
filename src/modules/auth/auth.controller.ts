@@ -1,13 +1,22 @@
+// modules
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
+// services
 import { AuthService } from './auth.service';
+
+// validations
 import { JoiValidationPipe } from 'src/core/pipes/joi-validation.pipe';
 import { getOtpValidation } from './validations/get-otp.validation';
-import { GetOtpDto } from './dtos/get-otp.dto';
 import { checkOtpSchema } from './validations/check-otp.validation';
+
+// dtos
+import { GetOtpDto } from './dtos/get-otp.dto';
 import { CheckOtpDto } from './dtos/check-otp.dto';
+
+// docs
 import { ApiGetOTP } from './docs/get-otp.doc';
 import { ApiCheckOTP } from './docs/check-otp.doc';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')

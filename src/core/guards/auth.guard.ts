@@ -8,13 +8,14 @@ import * as jwt from 'jsonwebtoken';
 
 import { ResponseMessages } from '../constants/response-messages.constant';
 import { UsersService } from '../../modules/users/users.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly usersService: UsersService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req: Request = context.switchToHttp().getRequest();
 
     const [bearer, token] = req.headers.authorization?.split(' ');
     const validBearer = ['Bearer', 'bearer'];
@@ -23,7 +24,6 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
     }
     try {
-      console.log({ bearer, token, JWT_SECRET: process.env.JWT_SECRET });
       const payload: any = jwt.verify(token, process.env.JWT_SECRET);
 
       const user = await this.usersService.findByEmail(payload.email);
