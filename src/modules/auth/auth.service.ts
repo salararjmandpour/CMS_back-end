@@ -8,6 +8,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
+import { Redis } from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 import { User } from '../users/schema/user.schema';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
@@ -18,34 +20,52 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 export class AuthService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectRedis() private readonly cacheService: Redis,
   ) {}
 
   async getOtp(mobile: string): Promise<ResponseFormat<any>> {
-    const code = this.generateRandomNumber();
+    try {
+      const code = this.generateRandomNumber();
 
-    const result = await this.saveUser(mobile, code);
-    if (!result) throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
+      const result = await this.saveUser(mobile, code);
+      if (!result) {
+        throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
+      }
 
-    return { statusCode: HttpStatus.CREATED, data: { code } };
+      return { statusCode: HttpStatus.CREATED, data: { code } };
+    } catch (err) {
+      throw new UnauthorizedException(err.message);
+    }
   }
 
   async checkOtp({ mobile, code }: CheckOtpDto): Promise<ResponseFormat<any>> {
-    const user = await this.userModel.findOne({ mobile });
-    if (!user) throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    try {
+      // check exist user
+      const user = await this.userModel.findOne({ mobile });
+      if (!user) throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
 
-    const now = Date.now();
+      const now = Date.now();
 
-    if (user.otp.code !== code)
-      throw new UnauthorizedException(
-        ResponseMessages.CODE_SENT_IS_NOT_CORRECT,
-      );
+      // check correctness code sent
+      if (user.otp.code !== code)
+        throw new UnauthorizedException(
+          ResponseMessages.CODE_SENT_IS_NOT_CORRECT,
+        );
 
-    if (+user.otp.expiresIn < now)
-      throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
+      // check expired code sent
+      if (+user.otp.expiresIn < now)
+        throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
 
-    const accessToken = await this.signAccessToken(user._id as any);
+      // generate access token
+      const accessToken = await this.signAccessToken(user._id as any);
 
-    return { statusCode: HttpStatus.CREATED, data: { accessToken } };
+      // save access token to mongodb
+      await this.userModel.findByIdAndUpdate(user._id, { accessToken });
+
+      return { statusCode: HttpStatus.CREATED, data: { accessToken } };
+    } catch (err) {
+      throw new UnauthorizedException(err.message);
+    }
   }
 
   private async saveUser(mobile: string, code: string) {
@@ -93,20 +113,21 @@ export class AuthService {
         mobile: user.mobile,
       };
       const options = {
-        expiresIn: '30d',
+        expiresIn: process.env.JWT_EXPIRES,
       };
 
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
         options,
-        (err: any, token: any) => {
+        async (err: any, token: any) => {
           if (err)
             reject(
               new InternalServerErrorException(
                 ResponseMessages.INTERNAL_SERVER_ERROR,
               ),
             );
+          await this.cacheService.set(userId, token);
           resolve(token);
         },
       );

@@ -42,7 +42,6 @@ export class User {
   mobile: string;
 
   @Prop({
-    required: true,
     unique: true,
     validate: {
       validator: (value: string) => {
@@ -72,7 +71,11 @@ export class User {
 
   @Prop({
     type: String,
-    required: true,
+  })
+  accessToken: string;
+
+  @Prop({
+    type: String,
     default: Roles.USER,
     enum: [Roles.ADMIN, Roles.USER],
   })
@@ -86,7 +89,6 @@ export class User {
 
   @Prop({
     type: String,
-    required: true,
     enum: [Nationality.IRANIAN, Nationality.FOREIGNER],
   })
   nationality: string;
@@ -98,7 +100,6 @@ export class User {
   gender: string;
 
   @Prop({
-    required: true,
     unique: true,
     validate: {
       validator: (value: string) => {

@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Request } from 'express';
 import { Model } from 'mongoose';
+import { Request } from 'express';
+import { InjectModel } from '@nestjs/mongoose';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { User } from './schema/user.schema';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 
 @ApiBearerAuth()
@@ -26,7 +26,7 @@ export class UsersService {
       }
       const user = await this.userModel.findOne(
         { email: req.user.email },
-        { otp: 0, password: 0 },
+        { otp: 0, password: 0, accessToken: 0 },
       );
       return { statusCode: HttpStatus.OK, data: { user } };
     } catch (error) {
