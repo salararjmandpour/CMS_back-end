@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { SmsModule } from './modules/sms/sms.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     MongooseModule.forRoot(process.env.MONGO_URI),
     UsersModule,
     AuthModule,
+    SmsModule,
   ],
   controllers: [],
   providers: [],

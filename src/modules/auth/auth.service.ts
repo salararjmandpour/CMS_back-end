@@ -15,12 +15,14 @@ import { User } from '../users/schema/user.schema';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { CheckOtpDto } from './dtos/check-otp.dto';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectRedis() private readonly cacheService: Redis,
+    private smsService: SmsService,
   ) {}
 
   async getOtp(mobile: string): Promise<ResponseFormat<any>> {
@@ -31,6 +33,9 @@ export class AuthService {
       if (!result) {
         throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
       }
+
+      // send otp sms to user mobile
+      await this.smsService.sendOtpSms(mobile, code);
 
       return { statusCode: HttpStatus.CREATED, data: { code } };
     } catch (err) {
