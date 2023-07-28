@@ -1,27 +1,26 @@
 import {
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import * as jwt from 'jsonwebtoken';
 import { Redis } from 'ioredis';
+import * as jwt from 'jsonwebtoken';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
-import { User } from '../users/schema/user.schema';
+import { SmsService } from '../sms/sms.service';
+import { UserRepository } from '../users/users.repository';
+
+import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { CheckOtpDto } from './dtos/check-otp.dto';
-import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectRedis() private readonly cacheService: Redis,
+    private readonly userRepository: UserRepository,
     private smsService: SmsService,
   ) {}
 
@@ -45,8 +44,8 @@ export class AuthService {
 
   async checkOtp({ mobile, code }: CheckOtpDto): Promise<ResponseFormat<any>> {
     try {
-      // check exist user
-      const user = await this.userModel.findOne({ mobile });
+      // check exist user by mobile
+      const user = await this.userRepository.findByMobile(mobile);
       if (!user) throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
 
       const now = Date.now();
@@ -58,14 +57,14 @@ export class AuthService {
         );
 
       // check expired code sent
-      if (+user.otp.expiresIn < now)
+      if (user.otp.expiresIn < now)
         throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
 
       // generate access token
       const accessToken = await this.signAccessToken(user._id as any);
 
       // save access token to mongodb
-      await this.userModel.findByIdAndUpdate(user._id, { accessToken });
+      await this.userRepository.updateById(user._id, { accessToken });
 
       return { statusCode: HttpStatus.CREATED, data: { accessToken } };
     } catch (err) {
@@ -73,6 +72,7 @@ export class AuthService {
     }
   }
 
+  // check exist user and update user or create user
   private async saveUser(mobile: string, code: string) {
     const otp = {
       code,
@@ -81,57 +81,50 @@ export class AuthService {
     const existUserResult = await this.checkExistUser(mobile);
     if (existUserResult) return await this.updateUser(mobile, otp);
 
-    return !!(await this.userModel.create({
-      mobile,
-      otp,
-    }));
+    return !!(await this.userRepository.create(mobile, otp));
   }
 
+  // update user otp by mobile
   private async updateUser(
     mobile: string,
     otp: { code: string; expiresIn: number },
   ) {
-    const updateResult = await this.userModel.updateOne(
-      { mobile },
-      { $set: { otp } },
-    );
+    const updateResult = await this.userRepository.updateByMobile(mobile, {otp});
     return !!updateResult.modifiedCount;
   }
 
+  // check exist user by mobile
   private async checkExistUser(mobile: string) {
-    const user = await this.userModel.findOne({ mobile });
+    const user = await this.userRepository.findByMobile(mobile);
     return !!user;
   }
 
+  // generate random number 6-digit
   private generateRandomNumber(): string {
-    const minm = 100000,
-      maxm = 999999;
+    const minm = 100000, maxm = 999999;
     const code = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
     return String(code);
   }
 
+  // generate access token
   private async signAccessToken(userId: string) {
     return new Promise(async (resolve, reject) => {
-      const user = await this.userModel.findById(userId);
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new NotFoundException(ResponseMessages.USER_NOT_FOUND)
+      }
 
-      const payload = {
-        mobile: user.mobile,
-      };
-      const options = {
-        expiresIn: process.env.JWT_EXPIRES,
-      };
+      const payload = { mobile: user.mobile};
+      const options = { expiresIn: process.env.JWT_EXPIRES };
 
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
         options,
         async (err: any, token: any) => {
-          if (err)
-            reject(
-              new InternalServerErrorException(
-                ResponseMessages.INTERNAL_SERVER_ERROR,
-              ),
-            );
+          if (err) {
+            reject(new InternalServerErrorException(ResponseMessages.INTERNAL_SERVER_ERROR));
+          }
           await this.cacheService.set(userId, token);
           resolve(token);
         },

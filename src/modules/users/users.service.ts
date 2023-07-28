@@ -1,33 +1,29 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { Request } from 'express';
-import { InjectModel } from '@nestjs/mongoose';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { User } from './schema/user.schema';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { UserRepository } from './users.repository';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @ApiBearerAuth()
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  findByEmail(email: string) {
-    return this.userModel.findOne({ email });
-  }
-
+  // get logged in user
   async getMe(req: Request): Promise<ResponseFormat<any>> {
     try {
       if (!req.user) {
         throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
       }
-      const user = await this.userModel.findOne(
-        { email: req.user.email },
-        { otp: 0, password: 0, accessToken: 0 },
-      );
+
+      const user = await this.userRepository.findByEmail(req.user.email, {
+        otp: 0,
+        password: 0,
+        accessToken: 0,
+      });
+
       return { statusCode: HttpStatus.OK, data: { user } };
     } catch (error) {
       throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);

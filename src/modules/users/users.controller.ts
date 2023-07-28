@@ -1,9 +1,10 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ApiGetMe } from './docs/get-me.doc';
-import { UsersService } from './users.service';
 import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+
+import { UsersService } from './users.service';
 import { AuthGuard } from 'src/core/guards/auth.guard';
+import { ApiGetMe } from './docs/get-me.doc';
 
 @ApiTags('Users')
 @ApiBearerAuth()
