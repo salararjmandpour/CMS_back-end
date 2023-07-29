@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CheckOtpDto {
   @ApiProperty({
-    description: 'The mobile for check otp',
+    description: 'The mobile or email for check otp',
     type: String,
     required: true,
     example: '09054538720',
   })
-  mobile: string;
+  field: string;
 
   @ApiProperty({
     description: 'The code for check otp',

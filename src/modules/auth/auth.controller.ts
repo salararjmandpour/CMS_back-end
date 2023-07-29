@@ -27,7 +27,7 @@ export class AuthController {
   @Post('get-otp')
   @UsePipes(new JoiValidationPipe(getOtpValidation))
   getOtp(@Body() data: GetOtpDto) {
-    return this.authService.getOtp(data.mobile);
+    return this.authService.getOtp(data.field);
   }
 
   @ApiCheckOTP()

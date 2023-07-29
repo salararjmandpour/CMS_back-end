@@ -12,7 +12,8 @@ export const ApiGetOTP = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'get otp',
-      description: 'Returns a 6-digit code for authentication',
+      description:
+        'Enter mobile or email for get otp. Returns a 6-digit code for authentication',
     }),
     ApiCreatedResponse({
       schema: {

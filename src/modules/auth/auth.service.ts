@@ -15,6 +15,8 @@ import { UserRepository } from '../users/users.repository';
 import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { boolean } from 'joi';
+import { emailPattern } from 'src/core/constants/pattern.constant';
 
 @Injectable()
 export class AuthService {
@@ -24,31 +26,37 @@ export class AuthService {
     private smsService: SmsService,
   ) {}
 
-  async getOtp(mobile: string): Promise<ResponseFormat<any>> {
+  async getOtp(mobileOrEmail: string): Promise<ResponseFormat<any>> {
     try {
+      const isEmail = emailPattern.test(mobileOrEmail);
       const code = this.generateRandomNumber();
 
-      const result = await this.saveUser(mobile, code);
+      const result = await this.saveUser(mobileOrEmail, code, isEmail);
       if (!result) {
         throw new UnauthorizedException(ResponseMessages.UNAUTHORIZED);
       }
 
-      // send otp sms to user mobile
-      await this.smsService.sendOtpSms(mobile, code);
+      // send otp code to user mobile
+      !isEmail && (await this.smsService.sendOtpSms(mobileOrEmail, code));
+
+      // send otp code to user email
+      isEmail && console.log({ code });
 
       return {
         statusCode: HttpStatus.CREATED,
-        message: ResponseMessages.CODE_SENT_FOR_YOU,
+        message: isEmail
+          ? ResponseMessages.CODE_SENT_FOR_YOUR_EMAIL
+          : ResponseMessages.CODE_SENT_FOR_YOUR_MOBILE,
       };
     } catch (err) {
       throw new UnauthorizedException(err.message);
     }
   }
 
-  async checkOtp({ mobile, code }: CheckOtpDto): Promise<ResponseFormat<any>> {
+  async checkOtp({ field, code }: CheckOtpDto): Promise<ResponseFormat<any>> {
     try {
-      // check exist user by mobile
-      const user = await this.userRepository.findByMobile(mobile);
+      // check exist user by mobile or email
+      const user = await this.userRepository.findByEmailOrMobile(field);
       if (!user) throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
 
       const now = Date.now();
@@ -76,31 +84,43 @@ export class AuthService {
   }
 
   // check exist user and update user or create user
-  private async saveUser(mobile: string, code: string) {
+  private async saveUser(
+    mobileOrEmail: string,
+    code: string,
+    isEmail: boolean,
+  ) {
     const otp = {
       code,
       expiresIn: new Date().getTime() + 120000,
     };
-    const existUserResult = await this.checkExistUser(mobile);
-    if (existUserResult) return await this.updateUser(mobile, otp);
+    const existUserResult = await this.checkExistUser(mobileOrEmail);
+    if (existUserResult)
+      return await this.updateUser(mobileOrEmail, otp, isEmail);
 
-    return !!(await this.userRepository.create(mobile, otp));
+    return !!(await this.userRepository.createByEmailOrMobile(
+      mobileOrEmail,
+      otp,
+      isEmail,
+    ));
   }
 
-  // update user otp by mobile
+  // update user otp by mobile or email
   private async updateUser(
-    mobile: string,
+    mobileOrEmail: string,
     otp: { code: string; expiresIn: number },
+    isEmail: boolean,
   ) {
-    const updateResult = await this.userRepository.updateByMobile(mobile, {
-      otp,
-    });
+    const updateResult = await this.userRepository.updateByMobileOrEmail(
+      mobileOrEmail,
+      { otp },
+      isEmail,
+    );
     return !!updateResult.modifiedCount;
   }
 
-  // check exist user by mobile
+  // check exist user by mobile or password
   private async checkExistUser(mobile: string) {
-    const user = await this.userRepository.findByMobile(mobile);
+    const user = await this.userRepository.findByEmailOrMobile(mobile);
     return !!user;
   }
 
@@ -120,7 +140,7 @@ export class AuthService {
         throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
       }
 
-      const payload = { mobile: user.mobile };
+      const payload = { userId: user._id };
       const options = { expiresIn: process.env.JWT_EXPIRES };
 
       jwt.sign(

@@ -13,23 +13,47 @@ export class UserRepository {
     return this.userModel.findById(id);
   }
 
-  findByEmail(email: string, fileds?: UserNumberType) {
-    return this.userModel.findOne({ email }, fileds);
+  findByEmail(email: string, fields?: UserNumberType) {
+    return this.userModel.findOne({ email }, fields);
   }
 
   findByMobile(mobile: string) {
     return this.userModel.findOne({ mobile });
   }
 
-  create(mobile: string, otp: { code: string; expiresIn: number }) {
-    return this.userModel.create({ mobile, otp });
+  createByEmailOrMobile(
+    mobileOrEmail: string,
+    otp: { code: string; expiresIn: number },
+    isEmail: boolean,
+  ) {
+    return this.userModel.create({
+      [isEmail ? 'email' : 'mobile']: mobileOrEmail,
+      otp,
+    });
   }
 
-  updateById(id: string | Types.ObjectId, fileds: any) {
-    return this.userModel.updateOne({ _id: id }, { $set: fileds });
+  createByEmail(email: string, otp: { code: string; expiresIn: number }) {
+    return this.userModel.create({ email, otp });
   }
 
-  updateByMobile(mobile: string, fileds: any) {
-    return this.userModel.updateOne({ mobile }, { $set: fileds });
+  updateById(id: string | Types.ObjectId, fields: any) {
+    return this.userModel.updateOne({ _id: id }, { $set: fields });
+  }
+
+  updateByMobile(mobile: string, fields: any) {
+    return this.userModel.updateOne({ mobile }, { $set: fields });
+  }
+
+  findByEmailOrMobile(mobileOrEmail: string) {
+    return this.userModel.findOne({
+      $or: [{ email: mobileOrEmail }, { mobile: mobileOrEmail }],
+    });
+  }
+
+  updateByMobileOrEmail(mobileOrEmail: string, fields: any, isEmail: boolean) {
+    return this.userModel.updateOne(
+      { [isEmail ? 'email' : 'mobile']: mobileOrEmail },
+      { $set: fields },
+    );
   }
 }
