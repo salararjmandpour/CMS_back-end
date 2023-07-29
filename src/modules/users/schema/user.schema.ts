@@ -42,7 +42,6 @@ export class User {
   mobile: string;
 
   @Prop({
-    unique: true,
     validate: {
       validator: (value: string) => {
         return emailPattern.test(value);
@@ -100,7 +99,6 @@ export class User {
   gender: string;
 
   @Prop({
-    unique: true,
     validate: {
       validator: (value: string) => {
         return persianNationalId.test(value);

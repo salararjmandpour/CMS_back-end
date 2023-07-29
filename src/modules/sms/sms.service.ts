@@ -1,31 +1,35 @@
-import axios from 'axios';
+import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { configService } from 'src/core/config/app.config';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class SmsService {
-  async sendOtpSms(mobile: string, code: string) {
-    const apiKey = configService.get('IPPANEL_API_KEY')
-    const baseUrl = configService.get('IPPANEL_BASE_URL');
-    const message = `کد ورود شما: ${code}`;
-    
-    try {
-      // const response = await axios.post(
-      //   baseUrl,
-      //   {
-      //     originator: '+985000404223',
-      //     recipients: [mobile],
-      //     message,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       Authorization: `AccessKey ${apiKey}`,
-      //     },
-      //   },
-      // );
+  constructor(private readonly httpService: HttpService) {}
 
+  async sendOtpSms(mobile: string, code: string) {
+    const apiKey = configService.get('IPPANEL_API_KEY');
+    const baseUrl = configService.get('IPPANEL_BASE_URL');
+    const pattern_code = configService.get('IPPANEL_PATTERN');
+
+    const data = {
+      pattern_code,
+      originator: '+985000404223',
+      recipient: mobile,
+      values: {
+        'verification-code': code,
+      },
+    };
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `AccessKey ${apiKey}`,
+      },
+    };
+
+    try {
+      await this.httpService.post(baseUrl, data, config).toPromise();
     } catch (err) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_OTP_SMS,

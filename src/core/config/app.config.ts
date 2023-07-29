@@ -10,6 +10,7 @@ export interface Configs {
   JWT_EXPIRES: string;
   IPPANEL_API_KEY: string;
   IPPANEL_BASE_URL: string;
+  IPPANEL_PATTERN: string;
 }
 
 export default (): Configs => ({
@@ -24,6 +25,7 @@ export default (): Configs => ({
 
   IPPANEL_API_KEY: process.env.IPPANEL_API_KEY,
   IPPANEL_BASE_URL: process.env.IPPANEL_BASE_URL,
+  IPPANEL_PATTERN: process.env.IPPANEL_PATTERN,
 });
 
 export const configService: ConfigService<Configs> =

@@ -36,7 +36,10 @@ export class AuthService {
       // send otp sms to user mobile
       await this.smsService.sendOtpSms(mobile, code);
 
-      return { statusCode: HttpStatus.CREATED, data: { code } };
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: ResponseMessages.CODE_SENT_FOR_YOU,
+      };
     } catch (err) {
       throw new UnauthorizedException(err.message);
     }
@@ -89,7 +92,9 @@ export class AuthService {
     mobile: string,
     otp: { code: string; expiresIn: number },
   ) {
-    const updateResult = await this.userRepository.updateByMobile(mobile, {otp});
+    const updateResult = await this.userRepository.updateByMobile(mobile, {
+      otp,
+    });
     return !!updateResult.modifiedCount;
   }
 
@@ -101,7 +106,8 @@ export class AuthService {
 
   // generate random number 6-digit
   private generateRandomNumber(): string {
-    const minm = 100000, maxm = 999999;
+    const minm = 100000,
+      maxm = 999999;
     const code = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
     return String(code);
   }
@@ -111,10 +117,10 @@ export class AuthService {
     return new Promise(async (resolve, reject) => {
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new NotFoundException(ResponseMessages.USER_NOT_FOUND)
+        throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
       }
 
-      const payload = { mobile: user.mobile};
+      const payload = { mobile: user.mobile };
       const options = { expiresIn: process.env.JWT_EXPIRES };
 
       jwt.sign(
@@ -123,7 +129,11 @@ export class AuthService {
         options,
         async (err: any, token: any) => {
           if (err) {
-            reject(new InternalServerErrorException(ResponseMessages.INTERNAL_SERVER_ERROR));
+            reject(
+              new InternalServerErrorException(
+                ResponseMessages.INTERNAL_SERVER_ERROR,
+              ),
+            );
           }
           await this.cacheService.set(userId, token);
           resolve(token);
