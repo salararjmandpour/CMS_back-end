@@ -1,6 +1,6 @@
 // modules
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 
 // services
 import { AuthService } from './auth.service';
@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 // validations
 import { JoiValidationPipe } from 'src/core/pipes/joi-validation.pipe';
 import { getOtpValidation } from './validations/get-otp.validation';
-import { checkOtpSchema } from './validations/check-otp.validation';
+import { checkOtpValidation } from './validations/check-otp.validation';
 
 // dtos
 import { GetOtpDto } from './dtos/get-otp.dto';
@@ -17,6 +17,9 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 // docs
 import { ApiGetOTP } from './docs/get-otp.doc';
 import { ApiCheckOTP } from './docs/check-otp.doc';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { ApiRefreshToken } from './docs/refresh-token.doc';
+import { refreshTokenValidation } from './validations/refresh-token.validation';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,8 +35,15 @@ export class AuthController {
 
   @ApiCheckOTP()
   @Post('check-otp')
-  @UsePipes(new JoiValidationPipe(checkOtpSchema))
+  @UsePipes(new JoiValidationPipe(checkOtpValidation))
   checkOtp(@Body() data: CheckOtpDto) {
     return this.authService.checkOtp(data);
+  }
+
+  @ApiRefreshToken()
+  @Post('refresh-token')
+  @UsePipes(new JoiValidationPipe(refreshTokenValidation))
+  refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshToken);
   }
 }

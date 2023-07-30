@@ -6,11 +6,13 @@ export interface Configs {
   NODE_ENV: string;
   MONGO_URI: string;
   REDIS_URL: string;
-  JWT_SECRET: string;
-  JWT_EXPIRES: string;
   IPPANEL_API_KEY: string;
   IPPANEL_BASE_URL: string;
   IPPANEL_PATTERN: string;
+  ACCESS_TOKEN_SECRET_KEY: string;
+  REFRESH_TOKEN_SECRET_KEY: string;
+  ACCESS_TOKEN_EXPIRES: string;
+  REFRESH_TOKEN_EXPIRES: string;
 }
 
 export default (): Configs => ({
@@ -20,8 +22,10 @@ export default (): Configs => ({
   MONGO_URI: process.env.MONGO_URI,
   REDIS_URL: process.env.REDIS_URL,
 
-  JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES: process.env.JWT_EXPIRES,
+  ACCESS_TOKEN_SECRET_KEY: process.env.ACCESS_TOKEN_SECRET_KEY,
+  REFRESH_TOKEN_SECRET_KEY: process.env.REFRESH_TOKEN_SECRET_KEY,
+  ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES,
+  REFRESH_TOKEN_EXPIRES: process.env.REFRESH_TOKEN_EXPIRES,
 
   IPPANEL_API_KEY: process.env.IPPANEL_API_KEY,
   IPPANEL_BASE_URL: process.env.IPPANEL_BASE_URL,

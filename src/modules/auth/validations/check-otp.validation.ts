@@ -6,7 +6,7 @@ const emailOrMobileSchema = joi.alternatives().try(
   joi.string().length(11).pattern(mobilePattern), // mobile (should be 11-digit)
 );
 
-export const checkOtpSchema = joi.object({
+export const checkOtpValidation = joi.object({
   field: emailOrMobileSchema
     .required()
     .error(new Error('field shold be mobile or email')),

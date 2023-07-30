@@ -9,8 +9,8 @@ export class UserRepository {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  findById(id: string) {
-    return this.userModel.findById(id);
+  findById(id: string, fields?: UserNumberType) {
+    return this.userModel.findOne({ _id: id }, fields);
   }
 
   findByEmail(email: string, fields?: UserNumberType) {

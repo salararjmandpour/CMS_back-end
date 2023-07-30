@@ -22,6 +22,7 @@ export class UsersService {
         otp: 0,
         password: 0,
         accessToken: 0,
+        refreshToken: 0,
       });
 
       return { statusCode: HttpStatus.OK, data: { user } };

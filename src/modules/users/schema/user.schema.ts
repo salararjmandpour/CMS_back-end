@@ -73,6 +73,11 @@ export class User {
 
   @Prop({
     type: String,
+  })
+  refreshToken: string;
+
+  @Prop({
+    type: String,
     default: Roles.USER,
     enum: [Roles.ADMIN, Roles.USER],
   })

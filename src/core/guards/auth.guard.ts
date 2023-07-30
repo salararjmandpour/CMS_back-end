@@ -9,6 +9,7 @@ import * as jwt from 'jsonwebtoken';
 
 import { UserRepository } from 'src/modules/users/users.repository';
 import { ResponseMessages } from '../constants/response-messages.constant';
+import { configService } from '../config/app.config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -30,7 +31,10 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload: any = jwt.verify(token, process.env.JWT_SECRET);
+      const payload: any = jwt.verify(
+        token,
+        configService.get('ACCESS_TOKEN_SECRET_KEY'),
+      );
 
       const user = await this.usersRepository.findById(payload.userId);
       if (!user) {

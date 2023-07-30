@@ -11,12 +11,12 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 import { SmsService } from '../sms/sms.service';
 import { UserRepository } from '../users/users.repository';
+import { configService } from 'src/core/config/app.config';
 
 import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { boolean } from 'joi';
 import { emailPattern } from 'src/core/constants/pattern.constant';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class AuthService {
@@ -72,12 +72,63 @@ export class AuthService {
         throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
 
       // generate access token
-      const accessToken = await this.signAccessToken(user._id as any);
+      const accessToken = await this.signToken(
+        user._id as any,
+        configService.get('ACCESS_TOKEN_SECRET_KEY'),
+        configService.get('ACCESS_TOKEN_EXPIRES'),
+      );
 
-      // save access token to mongodb
-      await this.userRepository.updateById(user._id, { accessToken });
+      // generate refresh token
+      const refreshToken = await this.signToken(
+        user._id as any,
+        configService.get('REFRESH_TOKEN_SECRET_KEY'),
+        configService.get('REFRESH_TOKEN_EXPIRES'),
+      );
 
-      return { statusCode: HttpStatus.CREATED, data: { accessToken } };
+      // save accessToken and refreshToken to mongodb
+      await this.userRepository.updateById(user._id, {
+        accessToken,
+        refreshToken,
+      });
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: { accessToken, refreshToken },
+      };
+    } catch (err) {
+      throw new UnauthorizedException(err.message);
+    }
+  }
+
+  async refreshToken(refreshToken: string): Promise<ResponseFormat<any>> {
+    try {
+      const userId = await this.verifyRefreshToken(refreshToken);
+      const user = await this.userRepository.findById(userId);
+
+      // generate access token
+      const accessToken = await this.signToken(
+        user._id as any,
+        configService.get('ACCESS_TOKEN_SECRET_KEY'),
+        configService.get('ACCESS_TOKEN_EXPIRES'),
+      );
+
+      // generate refresh token
+      const newRefreshToken = await this.signToken(
+        user._id as any,
+        configService.get('REFRESH_TOKEN_SECRET_KEY'),
+        configService.get('REFRESH_TOKEN_EXPIRES'),
+      );
+
+      // save accessToken and refreshToken to mongodb
+      await this.userRepository.updateById(user._id, {
+        accessToken,
+        refreshToken: newRefreshToken,
+      });
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: { accessToken, refreshToken },
+      };
     } catch (err) {
       throw new UnauthorizedException(err.message);
     }
@@ -133,7 +184,11 @@ export class AuthService {
   }
 
   // generate access token
-  private async signAccessToken(userId: string) {
+  private async signToken(
+    userId: string,
+    secretKey: string,
+    expiresIn: string,
+  ) {
     return new Promise(async (resolve, reject) => {
       const user = await this.userRepository.findById(userId);
       if (!user) {
@@ -141,22 +196,48 @@ export class AuthService {
       }
 
       const payload = { userId: user._id };
-      const options = { expiresIn: process.env.JWT_EXPIRES };
+      const options = { expiresIn };
 
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        options,
-        async (err: any, token: any) => {
+      jwt.sign(payload, secretKey, options, async (err: any, token: any) => {
+        if (err) {
+          reject(
+            new InternalServerErrorException(
+              ResponseMessages.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        }
+        await this.cacheService.set(userId, token);
+        resolve(token);
+      });
+    });
+  }
+
+  // verify refresh token
+  private verifyRefreshToken(token: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      jwt.verify(
+        token,
+        configService.get('REFRESH_TOKEN_SECRET_KEY'),
+        async (err, payload: any) => {
           if (err) {
-            reject(
-              new InternalServerErrorException(
-                ResponseMessages.INTERNAL_SERVER_ERROR,
-              ),
+            return reject(
+              new UnauthorizedException(ResponseMessages.UNAUTHORIZED),
             );
           }
-          await this.cacheService.set(userId, token);
-          resolve(token);
+
+          const user = await this.userRepository.findById(payload.userId, {
+            otp: 0,
+            password: 0,
+            accessToken: 0,
+            refreshToken: 0,
+          });
+          if (!user) {
+            return reject(
+              new UnauthorizedException(ResponseMessages.UNAUTHORIZED),
+            );
+          }
+
+          resolve(payload.userId);
         },
       );
     });

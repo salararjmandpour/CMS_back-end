@@ -8,6 +8,7 @@ export interface UserNumberType {
   password?: Numbers;
   otp?: Numbers;
   accessToken?: Numbers;
+  refreshToken?: Numbers;
   role?: Numbers;
   avatar?: Numbers;
   nationality?: Numbers;
