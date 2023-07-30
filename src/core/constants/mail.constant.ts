@@ -1,0 +1,3 @@
+export enum MailConstant {
+  FROM = 'dev@mail.ir', //or process.env.....
+}

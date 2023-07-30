@@ -6,6 +6,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { SmsModule } from './modules/sms/sms.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     AuthModule,
     SmsModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
