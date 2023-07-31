@@ -10,7 +10,7 @@ export class MailService {
   async sendOtpMail(email: string, code: string) {
     try {
       await this.emailService.sendMail({
-        from: MailConstant.FROM,
+        from: 'mailTest@mail.com',
         to: email,
         subject: `ارسال کد ورود`,
         context: {
@@ -19,6 +19,7 @@ export class MailService {
         template: 'verify-email.ejs',
       });
     } catch (err) {
+      console.log(err);
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_OTP_EMAIL,
       );

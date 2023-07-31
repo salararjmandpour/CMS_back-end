@@ -17,6 +17,7 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     @InjectRedis() private readonly cacheService: Redis,
     private readonly userRepository: UserRepository,
     private smsService: SmsService,
+    private mailService: MailService,
   ) {}
 
   async getOtp(mobileOrEmail: string): Promise<ResponseFormat<any>> {
@@ -37,10 +39,15 @@ export class AuthService {
       }
 
       // send otp code to user mobile
-      !isEmail && (await this.smsService.sendOtpSms(mobileOrEmail, code));
+      if (!isEmail) {
+        await this.smsService.sendOtpSms(mobileOrEmail, code);
+      }
 
       // send otp code to user email
-      isEmail && console.log({ code });
+      if (isEmail) {
+        console.log({ code });
+        await this.mailService.sendOtpMail(mobileOrEmail, code);
+      }
 
       return {
         statusCode: HttpStatus.CREATED,

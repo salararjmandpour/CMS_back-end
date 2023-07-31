@@ -29,7 +29,7 @@ export class SmsService {
     };
 
     try {
-      await this.httpService.post(baseUrl, data, config).toPromise();
+      return await this.httpService.post(baseUrl, data, config).toPromise();
     } catch (err) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_OTP_SMS,

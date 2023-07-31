@@ -19,7 +19,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('v1');
 
-  if (isDevelopment) SwaggerConfig(app);
+  SwaggerConfig(app);
 
   await app.listen(port, () => {
     const runningMode = `Server running in ${bold(mode)} mode`;
