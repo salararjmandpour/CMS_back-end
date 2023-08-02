@@ -1,6 +1,14 @@
 // modules
 import { ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Redirect,
+  UsePipes,
+} from '@nestjs/common';
 
 // services
 import { AuthService } from './auth.service';
@@ -45,5 +53,19 @@ export class AuthController {
   @UsePipes(new JoiValidationPipe(refreshTokenValidation))
   refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
     return this.authService.refreshToken(refreshToken);
+  }
+
+  @Get()
+  @Redirect()
+  async googleAuth() {
+    const authUrl = await this.authService.getGoogleAuthUrl();
+    return { url: authUrl };
+  }
+
+  @Get('callback')
+  @Redirect('http://localhost:3000/success')
+  async googleAuthCallback(@Query('code') code: string) {
+    const accessToken = await this.authService.getGoogleAccessToken(code);
+    return { token: accessToken };
   }
 }

@@ -1,0 +1,10 @@
+{
+    "app":"api-arshida",
+    "port":3000,
+    "disks":[
+        {
+            "name":"my-disk",
+            "mountTo":"templates"
+        }
+    ]
+}

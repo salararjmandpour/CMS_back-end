@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { User, UserSchema } from '../users/schema/user.schema';
 import { MailModule } from '../mail/mail.module';
+import { OAuth2Client } from 'google-auth-library';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { MailModule } from '../mail/mail.module';
     forwardRef(() => MailModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, OAuth2Client],
   exports: [AuthService],
 })
 export class AuthModule {}

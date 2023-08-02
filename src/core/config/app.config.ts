@@ -6,17 +6,24 @@ export interface Configs {
   NODE_ENV: string;
   MONGO_URI: string;
   REDIS_URL: string;
+
   IPPANEL_API_KEY: string;
   IPPANEL_BASE_URL: string;
   IPPANEL_PATTERN: string;
+
   ACCESS_TOKEN_SECRET_KEY: string;
   REFRESH_TOKEN_SECRET_KEY: string;
   ACCESS_TOKEN_EXPIRES: string;
   REFRESH_TOKEN_EXPIRES: string;
+
   EMAIL_HOST: string;
   EMAIL_PORT: string;
   EMAIL_USER: string;
   EMAIL_PASS: string;
+
+  GOOGLE_OAUTH_CLIENT_ID: string;
+  GOOGLE_OAUTH_CLIENT_SECRET: string;
+  GOOGLE_OAUTH_REDIRECT_URL: string;
 }
 
 export default (): Configs => ({
@@ -39,6 +46,10 @@ export default (): Configs => ({
   EMAIL_PORT: process.env.EMAIL_PORT,
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
+
+  GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
+  GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+  GOOGLE_OAUTH_REDIRECT_URL: process.env.GOOGLE_OAUTH_REDIRECT_URL,
 });
 
 export const configService: ConfigService<Configs> =

@@ -8,7 +8,7 @@ import { configService } from './core/config/app.config';
 import { SwaggerConfig } from './core/config/swagger.config';
 
 async function bootstrap() {
-  const port = process.env.PORT || 3000;
+  const port = configService.get('PORT') || 3000;
   const mode = configService.get('NODE_ENV') || 'development';
   const isDevelopment = configService.get('NODE_ENV') === 'development';
 
@@ -21,7 +21,7 @@ async function bootstrap() {
 
   SwaggerConfig(app);
 
-  await app.listen(port, () => {
+  await app.listen(port, '0.0.0.0', () => {
     const runningMode = `Server running in ${bold(mode)} mode`;
     const runningOnPort = `on port ${bold(port)}`;
     const runningSince = `[since ${new Date().toISOString()}]`;

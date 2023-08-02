@@ -18,15 +18,23 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { MailService } from '../mail/mail.service';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRedis() private readonly cacheService: Redis,
     private readonly userRepository: UserRepository,
-    private smsService: SmsService,
-    private mailService: MailService,
-  ) {}
+    private readonly googleClient: OAuth2Client,
+    private readonly mailService: MailService,
+    private readonly smsService: SmsService,
+  ) {
+    this.googleClient = new OAuth2Client({
+      clientId: configService.get('GOOGLE_OAUTH_CLIENT_SECRET'),
+      clientSecret: configService.get('GOOGLE_OAUTH_CLIENT_SECRET'),
+      redirectUri: configService.get('GOOGLE_OAUTH_REDIRECT_URL'),
+    });
+  }
 
   async getOtp(mobileOrEmail: string): Promise<ResponseFormat<any>> {
     try {
@@ -248,5 +256,21 @@ export class AuthService {
         },
       );
     });
+  }
+
+  // get google auth url (Google Auth)
+  async getGoogleAuthUrl(): Promise<string> {
+    const url = this.googleClient.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['email', 'profile'],
+    });
+    return url;
+  }
+
+  // get google access token  (Google Auth)
+  async getGoogleAccessToken(code: string): Promise<string> {
+    const { tokens } = await this.googleClient.getToken(code);
+    const accessToken = tokens.access_token;
+    return accessToken;
   }
 }
