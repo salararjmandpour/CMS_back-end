@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { User } from './schema/user.schema';
+import { User, UserDocument } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
 
 export class UserRepository {
@@ -47,6 +47,12 @@ export class UserRepository {
   findByEmailOrMobile(mobileOrEmail: string) {
     return this.userModel.findOne({
       $or: [{ email: mobileOrEmail }, { mobile: mobileOrEmail }],
+    });
+  }
+
+  findByEmailOrUsername(emailOrUsername: string): Promise<UserDocument> {
+    return this.userModel.findOne({
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });
   }
 

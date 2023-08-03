@@ -7,6 +7,8 @@ import { SmsModule } from './modules/sms/sms.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { MailModule } from './modules/mail/mail.module';
+import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
+import { JwtModule } from './modules/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { MailModule } from './modules/mail/mail.module';
     AuthModule,
     SmsModule,
     MailModule,
+    AdminAuthModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [],

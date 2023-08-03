@@ -55,14 +55,14 @@ export class AuthController {
     return this.authService.refreshToken(refreshToken);
   }
 
-  @Get()
+  @Get('google/get-url')
   @Redirect()
   async googleAuth() {
     const authUrl = await this.authService.getGoogleAuthUrl();
     return { url: authUrl };
   }
 
-  @Get('callback')
+  @Get('google/callback')
   @Redirect('http://localhost:3000/success')
   async googleAuthCallback(@Query('code') code: string) {
     const accessToken = await this.authService.getGoogleAccessToken(code);

@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  InternalServerErrorException,
 } from '@nestjs/common';
-import { Redis } from 'ioredis';
-import * as jwt from 'jsonwebtoken';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { OAuth2Client } from 'google-auth-library';
 
 import { SmsService } from '../sms/sms.service';
+import { JwtService } from '../jwt/jwt.service';
+import { MailService } from '../mail/mail.service';
+
 import { UserRepository } from '../users/users.repository';
 import { configService } from 'src/core/config/app.config';
 
@@ -17,17 +17,15 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { MailService } from '../mail/mail.service';
-import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRedis() private readonly cacheService: Redis,
     private readonly userRepository: UserRepository,
     private readonly googleClient: OAuth2Client,
     private readonly mailService: MailService,
     private readonly smsService: SmsService,
+    private readonly jwtService: JwtService,
   ) {
     this.googleClient = new OAuth2Client({
       clientId: configService.get('GOOGLE_OAUTH_CLIENT_SECRET'),
@@ -53,7 +51,6 @@ export class AuthService {
 
       // send otp code to user email
       if (isEmail) {
-        console.log({ code });
         await this.mailService.sendOtpMail(mobileOrEmail, code);
       }
 
@@ -87,14 +84,14 @@ export class AuthService {
         throw new UnauthorizedException(ResponseMessages.YOUR_CODE_EXPIRED);
 
       // generate access token
-      const accessToken = await this.signToken(
+      const accessToken = await this.jwtService.signToken(
         user._id as any,
         configService.get('ACCESS_TOKEN_SECRET_KEY'),
         configService.get('ACCESS_TOKEN_EXPIRES'),
       );
 
       // generate refresh token
-      const refreshToken = await this.signToken(
+      const refreshToken = await this.jwtService.signToken(
         user._id as any,
         configService.get('REFRESH_TOKEN_SECRET_KEY'),
         configService.get('REFRESH_TOKEN_EXPIRES'),
@@ -117,18 +114,18 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<ResponseFormat<any>> {
     try {
-      const userId = await this.verifyRefreshToken(refreshToken);
+      const userId = await this.jwtService.verifyRefreshToken(refreshToken);
       const user = await this.userRepository.findById(userId);
 
       // generate access token
-      const accessToken = await this.signToken(
+      const accessToken = await this.jwtService.signToken(
         user._id as any,
         configService.get('ACCESS_TOKEN_SECRET_KEY'),
         configService.get('ACCESS_TOKEN_EXPIRES'),
       );
 
       // generate refresh token
-      const newRefreshToken = await this.signToken(
+      const newRefreshToken = await this.jwtService.signToken(
         user._id as any,
         configService.get('REFRESH_TOKEN_SECRET_KEY'),
         configService.get('REFRESH_TOKEN_EXPIRES'),
@@ -196,66 +193,6 @@ export class AuthService {
       maxm = 999999;
     const code = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
     return String(code);
-  }
-
-  // generate access token
-  private async signToken(
-    userId: string,
-    secretKey: string,
-    expiresIn: string,
-  ) {
-    return new Promise(async (resolve, reject) => {
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
-        throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
-      }
-
-      const payload = { userId: user._id };
-      const options = { expiresIn };
-
-      jwt.sign(payload, secretKey, options, async (err: any, token: any) => {
-        if (err) {
-          reject(
-            new InternalServerErrorException(
-              ResponseMessages.INTERNAL_SERVER_ERROR,
-            ),
-          );
-        }
-        await this.cacheService.set(userId, token);
-        resolve(token);
-      });
-    });
-  }
-
-  // verify refresh token
-  private verifyRefreshToken(token: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      jwt.verify(
-        token,
-        configService.get('REFRESH_TOKEN_SECRET_KEY'),
-        async (err, payload: any) => {
-          if (err) {
-            return reject(
-              new UnauthorizedException(ResponseMessages.UNAUTHORIZED),
-            );
-          }
-
-          const user = await this.userRepository.findById(payload.userId, {
-            otp: 0,
-            password: 0,
-            accessToken: 0,
-            refreshToken: 0,
-          });
-          if (!user) {
-            return reject(
-              new UnauthorizedException(ResponseMessages.UNAUTHORIZED),
-            );
-          }
-
-          resolve(payload.userId);
-        },
-      );
-    });
   }
 
   // get google auth url (Google Auth)

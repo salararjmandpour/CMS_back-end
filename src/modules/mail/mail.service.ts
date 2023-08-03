@@ -1,6 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { MailConstant } from 'src/core/constants/mail.constant';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
@@ -12,14 +11,13 @@ export class MailService {
       await this.emailService.sendMail({
         from: 'mailTest@mail.com',
         to: email,
-        subject: `ارسال کد ورود`,
+        subject: `تایید آدرس ایمیل - شرکت آرشیدا تب ترنج`,
         context: {
           code,
         },
         template: 'verify-email.ejs',
       });
     } catch (err) {
-      console.log(err);
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_OTP_EMAIL,
       );

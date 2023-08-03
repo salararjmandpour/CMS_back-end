@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   emailPattern,
@@ -5,7 +6,7 @@ import {
 } from 'src/core/constants/pattern.constant';
 
 enum Roles {
-  ADMIN = 'ADMIN',
+  SUPERADMIN = 'SUPERADMIN',
   USER = 'USER',
 }
 
@@ -51,6 +52,7 @@ export class User {
 
   @Prop({
     type: String,
+    min: 8,
   })
   password: string;
 
@@ -79,7 +81,7 @@ export class User {
   @Prop({
     type: String,
     default: Roles.USER,
-    enum: [Roles.ADMIN, Roles.USER],
+    enum: [Roles.SUPERADMIN, Roles.USER],
   })
   role: Roles;
 
@@ -136,7 +138,18 @@ export class User {
     type: String,
   })
   birthdate: string;
+
+  async comparePassword(enteredPassword: string): Promise<boolean> {
+    return bcrypt.compare(enteredPassword, this.password);
+  }
 }
 
 export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
