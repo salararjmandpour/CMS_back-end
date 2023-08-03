@@ -4,11 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 import { SmsModule } from './modules/sms/sms.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
 import { MailModule } from './modules/mail/mail.module';
-import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
 import { JwtModule } from './modules/jwt/jwt.module';
+import { ApiModulesModule } from './modules/api-modules/api-modules.module';
 
 @Module({
   imports: [
@@ -22,12 +20,10 @@ import { JwtModule } from './modules/jwt/jwt.module';
       },
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),
-    UsersModule,
-    AuthModule,
+    JwtModule,
     SmsModule,
     MailModule,
-    AdminAuthModule,
-    JwtModule,
+    ApiModulesModule,
   ],
   controllers: [],
   providers: [],

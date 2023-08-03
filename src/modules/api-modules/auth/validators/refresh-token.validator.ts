@@ -1,5 +1,5 @@
 import * as joi from 'joi';
 
-export const refreshTokenValidation = joi.object({
+export const refreshTokenValidator = joi.object({
   refreshToken: joi.string().required(),
 });

@@ -1,5 +1,4 @@
 // modules
-import { ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -9,14 +8,15 @@ import {
   Redirect,
   UsePipes,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 // services
 import { AuthService } from './auth.service';
 
-// validations
-import { JoiValidationPipe } from 'src/core/pipes/joi-validation.pipe';
-import { getOtpValidation } from './validations/get-otp.validation';
-import { checkOtpValidation } from './validations/check-otp.validation';
+// validators
+import { JoiValidatorPipe } from 'src/core/pipes/joi-validator.pipe';
+import { getOtpValidator } from './validators/get-otp.validator';
+import { checkOtpValidator } from './validators/check-otp.validator';
 
 // dtos
 import { GetOtpDto } from './dtos/get-otp.dto';
@@ -27,7 +27,7 @@ import { ApiGetOTP } from './docs/get-otp.doc';
 import { ApiCheckOTP } from './docs/check-otp.doc';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { ApiRefreshToken } from './docs/refresh-token.doc';
-import { refreshTokenValidation } from './validations/refresh-token.validation';
+import { refreshTokenValidator } from './validators/refresh-token.validator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -36,21 +36,21 @@ export class AuthController {
 
   @ApiGetOTP()
   @Post('get-otp')
-  @UsePipes(new JoiValidationPipe(getOtpValidation))
+  @UsePipes(new JoiValidatorPipe(getOtpValidator))
   getOtp(@Body() data: GetOtpDto) {
     return this.authService.getOtp(data.field);
   }
 
   @ApiCheckOTP()
   @Post('check-otp')
-  @UsePipes(new JoiValidationPipe(checkOtpValidation))
+  @UsePipes(new JoiValidatorPipe(checkOtpValidator))
   checkOtp(@Body() data: CheckOtpDto) {
     return this.authService.checkOtp(data);
   }
 
   @ApiRefreshToken()
   @Post('refresh-token')
-  @UsePipes(new JoiValidationPipe(refreshTokenValidation))
+  @UsePipes(new JoiValidatorPipe(refreshTokenValidator))
   refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
     return this.authService.refreshToken(refreshToken);
   }

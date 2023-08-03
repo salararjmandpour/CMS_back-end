@@ -9,7 +9,7 @@ import * as jwt from 'jsonwebtoken';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 import { configService } from 'src/core/config/app.config';
-import { UserRepository } from '../users/users.repository';
+import { UserRepository } from '../api-modules/users/users.repository';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()

@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 
-import { SmsService } from '../sms/sms.service';
-import { JwtService } from '../jwt/jwt.service';
-import { MailService } from '../mail/mail.service';
+import { SmsService } from '../../sms/sms.service';
+import { JwtService } from '../../jwt/jwt.service';
+import { MailService } from '../../mail/mail.service';
 
 import { UserRepository } from '../users/users.repository';
 import { configService } from 'src/core/config/app.config';

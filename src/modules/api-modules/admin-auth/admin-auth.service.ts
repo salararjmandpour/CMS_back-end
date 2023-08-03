@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { JwtService } from '../jwt/jwt.service';
+import { JwtService } from '../../jwt/jwt.service';
 import { configService } from 'src/core/config/app.config';
 import { UserRepository } from '../users/users.repository';
 import { UserDocument } from '../users/schema/user.schema';
