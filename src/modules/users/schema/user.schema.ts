@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcryptjs';
+import { Document as MongooseDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   emailPattern,
@@ -144,7 +145,7 @@ export class User {
   }
 }
 
-export type UserDocument = User & Document;
+export type UserDocument = User & MongooseDocument;
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', async function (next) {
