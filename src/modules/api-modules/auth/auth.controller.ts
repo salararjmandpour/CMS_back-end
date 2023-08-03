@@ -1,56 +1,36 @@
 // modules
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Redirect,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Get, Query, Redirect } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 // services
 import { AuthService } from './auth.service';
-
-// validators
-import { JoiValidatorPipe } from 'src/core/pipes/joi-validator.pipe';
-import { getOtpValidator } from './validators/get-otp.validator';
-import { checkOtpValidator } from './validators/check-otp.validator';
 
 // dtos
 import { GetOtpDto } from './dtos/get-otp.dto';
 import { CheckOtpDto } from './dtos/check-otp.dto';
 
 // docs
-import { ApiGetOTP } from './docs/get-otp.doc';
-import { ApiCheckOTP } from './docs/check-otp.doc';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
-import { ApiRefreshToken } from './docs/refresh-token.doc';
-import { refreshTokenValidator } from './validators/refresh-token.validator';
+import { GetOtpDecorator } from './decorators/get-otp-decorator';
+import { CheckOtpDecorator } from './decorators/check-otp.decorator';
+import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiGetOTP()
-  @Post('get-otp')
-  @UsePipes(new JoiValidatorPipe(getOtpValidator))
+  @GetOtpDecorator()
   getOtp(@Body() data: GetOtpDto) {
     return this.authService.getOtp(data.field);
   }
 
-  @ApiCheckOTP()
-  @Post('check-otp')
-  @UsePipes(new JoiValidatorPipe(checkOtpValidator))
+  @CheckOtpDecorator()
   checkOtp(@Body() data: CheckOtpDto) {
     return this.authService.checkOtp(data);
   }
 
-  @ApiRefreshToken()
-  @Post('refresh-token')
-  @UsePipes(new JoiValidatorPipe(refreshTokenValidator))
+  @RefreshTokenDecorator()
   refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
     return this.authService.refreshToken(refreshToken);
   }
