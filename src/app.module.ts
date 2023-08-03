@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
 
+import { JwtModule } from './modules/jwt/jwt.module';
 import { SmsModule } from './modules/sms/sms.module';
 import { MailModule } from './modules/mail/mail.module';
-import { JwtModule } from './modules/jwt/jwt.module';
+import { RedisModule } from './modules/redis/redis.module';
 import { ApiModulesModule } from './modules/api-modules/api-modules.module';
 
 @Module({
@@ -14,16 +14,13 @@ import { ApiModulesModule } from './modules/api-modules/api-modules.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    RedisModule.forRoot({
-      config: {
-        url: process.env.REDIS_URL,
-      },
-    }),
     MongooseModule.forRoot(process.env.MONGO_URI),
+    RedisModule,
     JwtModule,
     SmsModule,
     MailModule,
     ApiModulesModule,
+    RedisModule,
   ],
   controllers: [],
   providers: [],

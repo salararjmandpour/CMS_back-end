@@ -4,10 +4,10 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Redis } from 'ioredis';
 import * as jwt from 'jsonwebtoken';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
+import { RedisService } from '../redis/redis.service';
 import { configService } from 'src/core/config/app.config';
 import { UserRepository } from '../api-modules/users/users.repository';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -15,7 +15,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 @Injectable()
 export class JwtService {
   constructor(
-    @InjectRedis() private readonly cacheService: Redis,
+    @InjectRedis() private readonly cacheService: RedisService,
     private readonly userRepository: UserRepository,
   ) {}
 
