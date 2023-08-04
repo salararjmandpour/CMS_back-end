@@ -6,16 +6,30 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { configService } from './core/config/app.config';
 import { SwaggerConfig } from './core/config/swagger.config';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const port = configService.get('PORT') || 3000;
   const mode = configService.get('NODE_ENV') || 'development';
   const isDevelopment = configService.get('NODE_ENV') === 'development';
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets('uploads', {
+    prefix: '/uploads/',
   });
 
+  const corsOptions: CorsOptions = {
+    origin: [
+      'https://busy-galileo-rdldetyvg.iran.liara.run',
+      'https://react-appzahra.iran.liara.run',
+      'https://mshoreactapp.iran.liara.run',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+
+  app.enableCors(corsOptions);
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('v1');
 
