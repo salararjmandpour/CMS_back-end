@@ -51,4 +51,12 @@ export class FileService {
       return false;
     }
   }
+
+  async uploadImage(imagePath: string, targetPath: string): Promise<void> {
+    try {
+      await fs.copyFile(imagePath, targetPath);
+    } catch (error) {
+      throw new BadRequestException('Error uploading image.');
+    }
+  }
 }

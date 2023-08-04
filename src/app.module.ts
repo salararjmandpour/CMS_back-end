@@ -8,6 +8,7 @@ import { MailModule } from './modules/mail/mail.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { ApiModulesModule } from './modules/api-modules/api-modules.module';
 import { FileModule } from './modules/file/file.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FileModule } from './modules/file/file.module';
     ApiModulesModule,
     RedisModule,
     FileModule,
+    UploadsModule,
   ],
   controllers: [],
   providers: [],
