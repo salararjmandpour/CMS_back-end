@@ -1,15 +1,18 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import * as path from 'path';
 import {
   promises as fs,
   ReadStream,
   createReadStream,
   Stats,
   constants as fileConstant,
+  existsSync,
+  unlinkSync,
 } from 'fs';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 
 @Injectable()
 export class FileService {
@@ -32,6 +35,13 @@ export class FileService {
       await fs.unlink(filePath);
     } catch (error) {
       throw new NotFoundException('File not found.');
+    }
+  }
+
+  deleteFileByPath(fileAddress: string) {
+    if (fileAddress) {
+      const pathFile = path.join(fileAddress);
+      if (existsSync(pathFile)) unlinkSync(pathFile);
     }
   }
 

@@ -22,7 +22,9 @@ export const ApiCheckOTP = () => {
           statusCode: HttpStatus.CREATED,
           data: {
             accessToken:
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTA1NDUzODcyMCIsImlhdCI6MTY5MDI5MDc3OSwiZXhwIjoxNjkyODgyNzc5fQ.Hf7fUFbzwY3XGY_fx8SirUQM_Hav0Nsv_M1wG7QidN0',
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGM2NTU2ZTE0YmEyMDFlMDUwNGEyYzMiLCJpYXQiOjE2OTExNDQyMjYsImV4cCI6MTY5MzczNjIyNn0.qLQnHnJAFTEHJV9UoTx2VZ8ipN6uxO0c8pGPi7Ba_pE',
+            refreshToken:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGM2NTU2ZTE0YmEyMDFlMDUwNGEyYzMiLCJpYXQiOjE2OTExNDQyMjYsImV4cCI6MTcyMjcwMTgyNn0.trTzZYj4P_4p1JqILs5Dos-gkKZxjZKaizQBUlhqcTg',
           },
         },
       },
