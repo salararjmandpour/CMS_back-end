@@ -1,6 +1,8 @@
 import {
+  ForbiddenException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -17,6 +19,18 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { UserDocument } from '../users/schema/user.schema';
+
+interface GoogleUserResult {
+  sub: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  email: string;
+  email_verified: boolean;
+  locale: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -28,7 +42,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {
     this.googleClient = new OAuth2Client({
-      clientId: configService.get('GOOGLE_OAUTH_CLIENT_SECRET'),
+      clientId: configService.get('GOOGLE_OAUTH_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_OAUTH_CLIENT_SECRET'),
       redirectUri: configService.get('GOOGLE_OAUTH_REDIRECT_URL'),
     });
@@ -195,19 +209,74 @@ export class AuthService {
     return String(code);
   }
 
-  // get google auth url (Google Auth)
-  async getGoogleAuthUrl(): Promise<string> {
-    const url = this.googleClient.generateAuthUrl({
-      access_type: 'offline',
-      scope: ['email', 'profile'],
+  // google login
+  async googleOAuth(code: string) {
+    const { tokens } = await this.googleClient.getToken({ code });
+    this.googleClient.setCredentials(tokens);
+
+    const access_token = tokens.access_token;
+    const googleUserInfo = await this.fetchGoogleUserInfo(access_token);
+
+    if (!googleUserInfo.email_verified) {
+      throw new ForbiddenException('Google account is not verified');
+    }
+
+    const email = googleUserInfo.email;
+
+    let user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      user = await this.userRepository.create({
+        email,
+        authProvider: 'GOOGLE',
+        firstName: googleUserInfo.given_name,
+        lastName: googleUserInfo.family_name,
+      });
+    }
+
+    // generate access token
+    const accessToken = await this.jwtService.signToken(
+      user._id as string,
+      configService.get('ACCESS_TOKEN_SECRET_KEY'),
+      configService.get('ACCESS_TOKEN_EXPIRES'),
+    );
+
+    // generate refresh token
+    const refreshToken = await this.jwtService.signToken(
+      user._id as any,
+      configService.get('REFRESH_TOKEN_SECRET_KEY'),
+      configService.get('REFRESH_TOKEN_EXPIRES'),
+    );
+
+    // save accessToken and refreshToken to mongodb
+    await this.userRepository.updateById(user._id, {
+      accessToken,
+      refreshToken,
     });
-    return url;
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: { accessToken, refreshToken },
+    };
   }
 
-  // get google access token  (Google Auth)
-  async getGoogleAccessToken(code: string): Promise<string> {
-    const { tokens } = await this.googleClient.getToken(code);
-    const accessToken = tokens.access_token;
-    return accessToken;
+  private async fetchGoogleUserInfo(
+    access_token: string,
+  ): Promise<GoogleUserResult> {
+    try {
+      const url = 'https://www.googleapis.com/oauth2/v3/userinfo';
+      const { data } = await this.googleClient.request({
+        url,
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      return data as GoogleUserResult;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch user info from Google API',
+      );
+    }
   }
 }

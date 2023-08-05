@@ -1,5 +1,5 @@
 // modules
-import { Body, Controller, Get, Query, Redirect } from '@nestjs/common';
+import { Body, Controller, Query, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 // services
@@ -14,6 +14,8 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { GetOtpDecorator } from './decorators/get-otp-decorator';
 import { CheckOtpDecorator } from './decorators/check-otp.decorator';
 import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
+import { GoogleLoginDecorator } from './decorators/google-login.decorator';
+import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,17 +37,9 @@ export class AuthController {
     return this.authService.refreshToken(refreshToken);
   }
 
-  @Get('google/get-url')
-  @Redirect()
-  async googleAuth() {
-    const authUrl = await this.authService.getGoogleAuthUrl();
-    return { url: authUrl };
-  }
-
-  @Get('google/callback')
-  @Redirect('http://localhost:3000/success')
-  async googleAuthCallback(@Query('code') code: string) {
-    const accessToken = await this.authService.getGoogleAccessToken(code);
-    return { token: accessToken };
+  // login with google
+  @GoogleLoginDecorator()
+  google(@Query('code') code: string) {
+    return this.authService.googleOAuth(code);
   }
 }

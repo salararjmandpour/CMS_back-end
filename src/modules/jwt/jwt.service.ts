@@ -83,4 +83,8 @@ export class JwtService {
   verifyAccessToken(token: string) {
     return jwt.verify(token, configService.get('ACCESS_TOKEN_SECRET_KEY'));
   }
+
+  decodeToken(token: string) {
+    return jwt.decode(token);
+  }
 }

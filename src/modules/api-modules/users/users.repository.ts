@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose';
+import { Model, SaveOptions, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { User, UserDocument } from './schema/user.schema';
@@ -13,7 +13,7 @@ export class UserRepository {
     return this.userModel.findOne({ _id: id }, fields);
   }
 
-  findByEmail(email: string, fields?: UserNumberType) {
+  findByEmail(email: string, fields?: UserNumberType): Promise<UserDocument> {
     return this.userModel.findOne({ email }, fields);
   }
 
@@ -32,7 +32,11 @@ export class UserRepository {
     });
   }
 
-  createByEmail(email: string, otp: { code: string; expiresIn: number }) {
+  create(properties: any) {
+    return this.userModel.create(properties);
+  }
+
+  createByEmail(email: string, otp?: { code: string; expiresIn: number }) {
     return this.userModel.create({ email, otp });
   }
 
@@ -50,7 +54,7 @@ export class UserRepository {
     });
   }
 
-  findByEmailOrUsername(emailOrUsername: string): Promise<UserDocument> {
+  findByEmailOrUsername(emailOrUsername: string) {
     return this.userModel.findOne({
       $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });

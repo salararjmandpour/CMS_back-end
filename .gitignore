@@ -38,9 +38,8 @@ lerna-debug.log*
 .env
 
 dump.rdb
-
-/*templates
-
+temp-47522.rdb
 package-lock.json
 
+/*templates
 /uploads

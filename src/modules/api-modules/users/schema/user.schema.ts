@@ -6,19 +6,24 @@ import {
   persianNationalId,
 } from 'src/core/constants/pattern.constant';
 
-enum Roles {
+enum RolesEnum {
   SUPERADMIN = 'SUPERADMIN',
   USER = 'USER',
 }
 
-enum Nationality {
+enum NationalityEnum {
   IRANIAN = 'iranian',
   FOREIGNER = 'foreigner',
 }
 
-enum Gender {
+enum GenderEnum {
   MALE = 'male',
   FEMALE = 'female',
+}
+
+export enum AuthProviderEnum {
+  GOOGLE = 'GOOGLE',
+  OTP = 'OTP',
 }
 
 @Schema({
@@ -53,6 +58,13 @@ export class User {
 
   @Prop({
     type: String,
+    enum: [AuthProviderEnum.GOOGLE, AuthProviderEnum.OTP],
+    default: AuthProviderEnum.OTP,
+  })
+  authProvider: string;
+
+  @Prop({
+    type: String,
     min: 8,
   })
   password: string;
@@ -81,10 +93,10 @@ export class User {
 
   @Prop({
     type: String,
-    default: Roles.USER,
-    enum: [Roles.SUPERADMIN, Roles.USER],
+    default: RolesEnum.USER,
+    enum: [RolesEnum.SUPERADMIN, RolesEnum.USER],
   })
-  role: Roles;
+  role: RolesEnum;
 
   @Prop({
     type: String,
@@ -94,13 +106,13 @@ export class User {
 
   @Prop({
     type: String,
-    enum: [Nationality.IRANIAN, Nationality.FOREIGNER],
+    enum: [NationalityEnum.IRANIAN, NationalityEnum.FOREIGNER],
   })
   nationality: string;
 
   @Prop({
     type: String,
-    enum: [Gender.MALE, Gender.FEMALE],
+    enum: [GenderEnum.MALE, GenderEnum.FEMALE],
   })
   gender: string;
 
