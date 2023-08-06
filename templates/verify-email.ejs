@@ -32,12 +32,13 @@
         border-radius: 20px;
         padding: 16px 22px 0;
         color: white;
-        font-size: 24px;
+        font-size: 18px;
       }
       .code {
-        font-size: 20px;
+        font-size: 24px;
         font-weight: bold;
         color: white;
+        margin-bottom: 12px;
       }
       p {
         color: white;
@@ -53,7 +54,10 @@
     <div class="main">
       <div class="wrapper">
         <h2 class="heading">رمز یک بار مصرف شما</h2>
-        <p class="code"><%=code%></p>
+        <div>
+          <p class="code"><%=code%></p>
+          <p class="expire">دو دقیقه دیگر منقضی میشود</p>
+        </div>
         <p>(شرکت ارشیدا طب ترنج)</p>
         <a href="https://www.arshidateb.com"><p>www.arshidateb.com</p></a>
       </div>

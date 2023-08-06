@@ -6,8 +6,10 @@ import {
   persianNationalId,
 } from 'src/core/constants/pattern.constant';
 
-enum RolesEnum {
+export enum RolesEnum {
   SUPERADMIN = 'SUPERADMIN',
+  ADMIN = 'ADMIN',
+  SUPPLIER = 'SUPPLIER',
   USER = 'USER',
 }
 
