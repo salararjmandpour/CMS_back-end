@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -19,7 +20,6 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { UserDocument } from '../users/schema/user.schema';
 
 interface GoogleUserResult {
   sub: string;
@@ -211,6 +211,10 @@ export class AuthService {
 
   // google login
   async googleOAuth(code: string) {
+    if (!code) {
+      throw new BadRequestException(ResponseMessages.CODE_IS_REQUIRED);
+    }
+
     const { tokens } = await this.googleClient.getToken({ code });
     this.googleClient.setCredentials(tokens);
 

@@ -4,11 +4,21 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { MailService } from './mail.service';
 import { join, resolve } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  EmailSettings,
+  EmailSettingsSchema,
+} from './schemas/email-settings.schema';
+import { MailController } from './mail.controller';
+import { MailRepository } from './mail.repository';
 
 const providersAndExports = [MailService];
 @Global()
 @Module({
   imports: [
+    MongooseModule.forFeature([
+      { name: EmailSettings.name, schema: EmailSettingsSchema },
+    ]),
     MailerModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         transport: {
@@ -27,8 +37,8 @@ const providersAndExports = [MailService];
       inject: [ConfigService],
     }),
   ],
-  controllers: [],
-  providers: [...providersAndExports],
+  controllers: [MailController],
+  providers: [...providersAndExports, MailRepository],
   exports: [...providersAndExports],
 })
 export class MailModule {}

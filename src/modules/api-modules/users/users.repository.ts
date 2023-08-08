@@ -1,4 +1,4 @@
-import { Model, SaveOptions, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { User, UserDocument } from './schema/user.schema';

@@ -1,5 +1,5 @@
 // modules
-import { Body, Controller, Query, Res } from '@nestjs/common';
+import { Body, Controller, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 // services
@@ -15,7 +15,6 @@ import { GetOtpDecorator } from './decorators/get-otp-decorator';
 import { CheckOtpDecorator } from './decorators/check-otp.decorator';
 import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
 import { GoogleLoginDecorator } from './decorators/google-login.decorator';
-import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -39,7 +38,8 @@ export class AuthController {
 
   // login with google
   @GoogleLoginDecorator()
-  google(@Query('code') code: string) {
+  googleLogin(@Query('code') code: string) {
+    console.log({ code });
     return this.authService.googleOAuth(code);
   }
 }

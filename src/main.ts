@@ -41,6 +41,7 @@ async function bootstrap() {
     const runningSince = `[since ${new Date().toISOString()}]`;
     console.log(`🏁 —> ${runningMode} ${runningOnPort} ${runningSince}`);
     isDevelopment && console.log('🏁 —> RestApi:',`${bold(`http://localhost:${port}/api-docs`)}`);
+    console.log(new Date())
   });
 
 }
