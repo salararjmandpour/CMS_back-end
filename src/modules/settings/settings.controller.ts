@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
+import * as momentTimezone from 'moment-timezone';
 
 @ApiTags('Settings')
 @Controller('settings')
@@ -9,6 +10,10 @@ export class SettingsController {
 
   @Get('pubic-settings')
   getPublicSettigns() {
-    return this.settingsService.getSettings()
+    const currentTime = momentTimezone().format('YYYY-MM-DD HH:mm:ss');
+
+    return {
+      currentTime: currentTime,
+    };
   }
 }

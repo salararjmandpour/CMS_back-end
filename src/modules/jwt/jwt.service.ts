@@ -9,7 +9,7 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 import { RedisService } from '../redis/redis.service';
 import { configService } from 'src/core/config/app.config';
-import { UserRepository } from '../api-modules/users/users.repository';
+import { UserRepository } from '../users/users.repository';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()

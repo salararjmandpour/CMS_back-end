@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtService } from './jwt.service';
-import { UserModule } from '../api-modules/users/users.module';
+import { UserModule } from '../users/users.module';
 
 @Global()
 @Module({

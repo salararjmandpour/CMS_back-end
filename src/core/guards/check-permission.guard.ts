@@ -4,7 +4,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { RolesEnum } from 'src/modules/api-modules/users/schema/user.schema';
+import { RolesEnum } from 'src/modules/users/schema/user.schema';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 export const CheckPermission = (requiredPermissions: Array<RolesEnum>) => {

@@ -6,8 +6,11 @@ import { JwtModule } from './modules/jwt/jwt.module';
 import { SmsModule } from './modules/sms/sms.module';
 import { MailModule } from './modules/mail/mail.module';
 import { RedisModule } from './modules/redis/redis.module';
-import { ApiModulesModule } from './modules/api-modules/api-modules.module';
 import { FileModule } from './modules/file/file.module';
+import { UserModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -20,9 +23,12 @@ import { FileModule } from './modules/file/file.module';
     JwtModule,
     SmsModule,
     MailModule,
-    ApiModulesModule,
     RedisModule,
     FileModule,
+    UserModule,
+    AuthModule,
+    AdminAuthModule,
+    SettingsModule,
   ],
   controllers: [],
   providers: [],

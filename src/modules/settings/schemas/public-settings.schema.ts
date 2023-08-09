@@ -23,6 +23,12 @@ export class PublicSettings {
     required: true,
   })
   role: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  timeZone: string;
 }
 
 export type PublicSettingsDocument = PublicSettings & MongooseDocument;

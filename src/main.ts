@@ -2,6 +2,7 @@ import { bold } from 'chalk';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as momentTimezone from 'moment-timezone';
 
 import { AppModule } from './app.module';
 import { configService } from './core/config/app.config';
@@ -34,6 +35,8 @@ async function bootstrap() {
   app.setGlobalPrefix('v1');
 
   SwaggerConfig(app);
+
+  momentTimezone.tz.setDefault('Asia/Tehran');
 
   await app.listen(port, '0.0.0.0', () => {
     const runningMode = `Server running in ${bold(mode)} mode`;

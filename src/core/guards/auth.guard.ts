@@ -7,7 +7,7 @@ import {
 import { Request } from 'express';
 
 import { JwtService } from 'src/modules/jwt/jwt.service';
-import { UserRepository } from 'src/modules/api-modules/users/users.repository';
+import { UserRepository } from 'src/modules/users/users.repository';
 import { ResponseMessages } from '../constants/response-messages.constant';
 
 @Injectable()
