@@ -5,11 +5,11 @@ import { Model, QueryOptions, UpdateQuery } from 'mongoose';
 import {
   SmsSettings,
   SmsSettingsDocument,
-} from './schemas/sms-settings.schema';
-import { SetConfigDto } from './dto/set-config.dto';
+} from '../schemas/sms-settings.schema';
+import { SetSmsConfigDto } from '../dtos/set-sms-config.dto';
 
 @Injectable()
-export class SmsRepository {
+export class SmsSettingsRepository {
   constructor(
     @InjectModel(SmsSettings.name)
     private readonly smsSettingsModel: Model<SmsSettings>,
@@ -27,7 +27,7 @@ export class SmsRepository {
     return this.smsSettingsModel.find();
   }
 
-  create(data: SetConfigDto) {
+  create(data: SetSmsConfigDto) {
     return this.smsSettingsModel.create(data);
   }
 }

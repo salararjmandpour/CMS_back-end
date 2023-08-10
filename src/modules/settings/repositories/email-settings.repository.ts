@@ -5,11 +5,11 @@ import { Model, QueryOptions, UpdateQuery } from 'mongoose';
 import {
   EmailSettings,
   EmailSettingsDocument,
-} from './schemas/email-settings.schema';
-import { SetConfigDto } from './dto/set-config.dto';
+} from '../schemas/email-settings.schema';
+import { SetEmailConfigDto } from '../dtos/set-email-config.dto';
 
 @Injectable()
-export class MailRepository {
+export class EmailSettingsRepository {
   constructor(
     @InjectModel(EmailSettings.name)
     private readonly mailSettingsModel: Model<EmailSettings>,
@@ -34,7 +34,7 @@ export class MailRepository {
     return this.mailSettingsModel.find();
   }
 
-  create(data: SetConfigDto) {
+  create(data: SetEmailConfigDto) {
     return this.mailSettingsModel.create(data);
   }
 }

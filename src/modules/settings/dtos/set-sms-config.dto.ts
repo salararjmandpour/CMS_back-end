@@ -1,41 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 
-export class SetConfigDto {
+export class SetSmsConfigDto {
   @ApiProperty({
     type: String,
     required: true,
-    default: 'irweb.ir',
+    default: 'farazsms.ir',
   })
-  host: string;
+  panel: string;
 
   @ApiProperty({
     type: String,
     required: true,
-    default: '354',
   })
-  port: string;
+  username: string;
 
   @ApiProperty({
     type: String,
     required: true,
-    default: 'test@irweb.ir',
+    default: '51csvs4s5d',
   })
-  user: string;
+  password: string;
 
   @ApiProperty({
     type: String,
     required: true,
-    default: 'D9)F?d4%6Q&5',
+    default: '+985000404223',
   })
-  pass: string;
-
-  @ApiProperty({
-    type: String,
-    required: true,
-    default: 'test@test.com',
-  })
-  senderEmail: string;
+  senderNumber: string;
 
   @ApiProperty({
     type: String,

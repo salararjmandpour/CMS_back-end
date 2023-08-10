@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 
-export const setConfigValidator = Joi.object({
+export const setSmsConfigValidator = Joi.object({
   panel: Joi.string().required(),
   username: Joi.string().required(),
   password: Joi.string().required(),

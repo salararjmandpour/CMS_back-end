@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { JwtModule } from './modules/jwt/jwt.module';
 import { SmsModule } from './modules/sms/sms.module';
-import { MailModule } from './modules/mail/mail.module';
+import { EmailModule } from './modules/email/email.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { FileModule } from './modules/file/file.module';
 import { UserModule } from './modules/users/users.module';
@@ -22,7 +22,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     RedisModule,
     JwtModule,
     SmsModule,
-    MailModule,
+    EmailModule,
     RedisModule,
     FileModule,
     UserModule,

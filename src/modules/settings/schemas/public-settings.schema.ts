@@ -32,4 +32,4 @@ export class PublicSettings {
 }
 
 export type PublicSettingsDocument = PublicSettings & MongooseDocument;
-export const PublicSettingsModel = SchemaFactory.createForClass(PublicSettings);
+export const PublicSettingsSchema = SchemaFactory.createForClass(PublicSettings);

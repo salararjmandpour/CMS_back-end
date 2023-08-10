@@ -11,7 +11,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 import { SmsService } from '../sms/sms.service';
 import { JwtService } from '../jwt/jwt.service';
-import { MailService } from '../mail/mail.service';
+import { EmailService } from '../email/email.service';
 
 import { UserRepository } from '../users/users.repository';
 import { configService } from 'src/core/config/app.config';
@@ -37,7 +37,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly googleClient: OAuth2Client,
-    private readonly mailService: MailService,
+    private readonly emailService: EmailService,
     private readonly smsService: SmsService,
     private readonly jwtService: JwtService,
   ) {
@@ -65,7 +65,7 @@ export class AuthService {
 
       // send otp code to user email
       if (isEmail) {
-        await this.mailService.sendOtpMail(mobileOrEmail, code);
+        await this.emailService.sendOtpEmail(mobileOrEmail, code);
       }
 
       return {
