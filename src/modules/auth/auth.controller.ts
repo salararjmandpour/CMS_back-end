@@ -39,7 +39,6 @@ export class AuthController {
   // login with google
   @GoogleLoginDecorator()
   googleLogin(@Query('code') code: string) {
-    console.log({ code });
     return this.authService.googleOAuth(code);
   }
 }

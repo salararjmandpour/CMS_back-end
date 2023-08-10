@@ -5,28 +5,23 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 import { EmailService } from './email.service';
-import { SettingsService } from '../settings/settings.service';
-import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
+import { EmailSettingsRepository } from '../settings/repositories/email-settings.repository';
 
 @Global()
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: async (
-        config: ConfigService,
-        settingsRepository: PublicSettingsRepository,
-        settingsService: SettingsService,
-      ) => {
-        const data = await settingsRepository.findAll();
-        console.log({ data });
-        console.log('test', 2023);
+      useFactory: async (emailSettingsRepository: EmailSettingsRepository) => {
+        const data = await emailSettingsRepository.findAll();
+        const emailConfig = (data.length !== 0 && data[0]) || null;
+
         return {
           transport: {
-            host: config.get<string>('EMAIL_HOST'),
-            port: config.get<number>('EMAIL_PORT'),
+            host: emailConfig?.host || null,
+            port: +emailConfig?.port || null,
             auth: {
-              user: config.get<string>('EMAIL_USER'),
-              pass: config.get<string>('EMAIL_PASS'),
+              user: emailConfig?.user || null,
+              pass: emailConfig?.pass || null,
             },
           },
           template: {
@@ -35,10 +30,9 @@ import { PublicSettingsRepository } from '../settings/repositories/public-settin
           },
         };
       },
-      inject: [ConfigService, PublicSettingsRepository, SettingsService],
+      inject: [EmailSettingsRepository],
     }),
   ],
-  controllers: [],
   providers: [EmailService],
   exports: [EmailService],
 })
