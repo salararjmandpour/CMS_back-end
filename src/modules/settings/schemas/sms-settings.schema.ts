@@ -2,12 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document as MongooseDocument } from 'mongoose';
 
 export enum SmsPanelEnum {
-  SMS_IR = 'sms.ir',
+  'SMS.IR' = 'sms.ir',
+  IPPANEL = 'ippanel',
   FARAPAYAMAK = 'farapayamak',
   MELIPAYAMAK = 'melipayamak',
   PAYAM_RESAN = 'payam-resan',
   NIKSMS = 'niksms',
-  FARAZSMS = 'farazsms',
   NOVIN_PAYAM = 'novin-payam',
   MEDIANA = 'mediana',
 }

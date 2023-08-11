@@ -3,6 +3,7 @@ import {
   HttpStatus,
   NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { SmsSettingsRepository } from './repositories/sms-settings.repository';
@@ -11,9 +12,11 @@ import { PublicSettingsRepository } from './repositories/public-settings.reposit
 
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
+import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
 
 @Injectable()
 export class SettingsService {
@@ -23,10 +26,81 @@ export class SettingsService {
     private smsSettingsRepository: SmsSettingsRepository,
   ) {}
 
-  // get public settings
-  async getPublicSettings(): Promise<ResponseFormat<any>> {
+  // get public config
+  async getPublicConfig(): Promise<ResponseFormat<any>> {
+    let publicSettings = await this.publicSettingsRepository.findAll();
+    if (!publicSettings || publicSettings.length === 0) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_PUBLIC_CONFIG);
+    }
+
     return {
       statusCode: HttpStatus.OK,
+      data: {
+        publicConfig: publicSettings[0],
+      },
+    };
+  }
+
+  // set public config
+  async setPublicConfig(
+    data: SetPublicConfigDto,
+  ): Promise<ResponseFormat<any>> {
+    // check validate timezone
+    if (data.timezone) {
+      const timezone = getTimezone(data.timezone);
+      if (!timezone) {
+        throw new BadRequestException(ResponseMessages.INVALID_TIMEZONE);
+      }
+    }
+
+    // check if it is not config, create config
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    if (!publicSettings || publicSettings.length === 0) {
+      const createdResult = await this.publicSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_PUBLIC_CONFIG,
+        );
+      }
+
+      // set timezone
+      if (data.timezone) setDefaultTimezone(data.timezone);
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
+      };
+    }
+
+    // update config
+    const updateResult: any = await this.publicSettingsRepository.findAndUpdate(
+      data?._id,
+      {
+        siteTitle: data.siteTitle,
+        email: data.email,
+        role: data.role,
+        timezone: data.timezone,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_PUBLIC_CONFIG,
+      );
+    }
+
+    // set timezone
+    if (data.timezone) setDefaultTimezone(data.timezone);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        emailConfig: updateResult,
+      },
     };
   }
 

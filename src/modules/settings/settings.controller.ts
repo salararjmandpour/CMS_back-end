@@ -1,5 +1,4 @@
 import { ApiTags } from '@nestjs/swagger';
-import * as momentTimezone from 'moment-timezone';
 import { Body, Controller, Get } from '@nestjs/common';
 
 import { SettingsService } from './settings.service';
@@ -11,6 +10,8 @@ import { GetSmsConfigDecorator } from './decorators/get-sms-config.decorator';
 import { SetSmsConfigDecorator } from './decorators/set-sms-config.decorator';
 import { GetEmailConfigDecorator } from './decorators/get-email-config.decorator';
 import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator';
+import { SetPublicConfigDto } from './dtos/set-public-config.dto';
+import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
 
 @ApiTags('Settings')
 @Controller('settings')
@@ -41,13 +42,15 @@ export class SettingsController {
     return this.settingsService.getSmsConfig();
   }
 
-  // get public config (date and time)
-  @Get('/pubic/get-config')
-  getPublicSettigns() {
-    const currentTime = momentTimezone().format('YYYY-MM-DD HH:mm:ss');
+  // get public config (timezone)
+  @Get('/public/get-config')
+  getPublicConfig() {
+    return this.settingsService.getPublicConfig();
+  }
 
-    return {
-      currentTime: currentTime,
-    };
+  // set public config (timezone)
+  @SetPublicConfigDecorator()
+  setPublicConfig(@Body() body: SetPublicConfigDto) {
+    return this.settingsService.setPublicConfig(body);
   }
 }

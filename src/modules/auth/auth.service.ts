@@ -60,7 +60,7 @@ export class AuthService {
 
       // send otp code to user mobile
       if (!isEmail) {
-        await this.smsService.sendOtpSms(mobileOrEmail, code);
+        await this.smsService.sendOtpSms_ippanel(mobileOrEmail, code);
       }
 
       // send otp code to user email

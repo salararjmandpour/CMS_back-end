@@ -1,13 +1,15 @@
 import { bold } from 'chalk';
+import * as moment from 'moment-timezone';
+import * as jalaali from 'moment-jalaali'
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as momentTimezone from 'moment-timezone';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 import { AppModule } from './app.module';
 import { configService } from './core/config/app.config';
 import { SwaggerConfig } from './core/config/swagger.config';
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const port = configService.get('PORT') || 3000;
@@ -36,16 +38,14 @@ async function bootstrap() {
 
   SwaggerConfig(app);
 
-  momentTimezone.tz.setDefault('Asia/Tehran');
-
+  moment.tz.setDefault('Asia/Tehran');
+  
   await app.listen(port, '0.0.0.0', () => {
     const runningMode = `Server running in ${bold(mode)} mode`;
     const runningOnPort = `on port ${bold(port)}`;
-    const runningSince = `[since ${new Date().toISOString()}]`;
+    const runningSince = `[since ${moment().format()}]`;
     console.log(`🏁 —> ${runningMode} ${runningOnPort} ${runningSince}`);
     isDevelopment && console.log('🏁 —> RestApi:',`${bold(`http://localhost:${port}/api-docs`)}`);
-    console.log(new Date())
   });
-
 }
 bootstrap();

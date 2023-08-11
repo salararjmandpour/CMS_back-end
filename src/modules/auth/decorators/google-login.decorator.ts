@@ -4,7 +4,7 @@ import { ApiOperation } from '@nestjs/swagger';
 export const GoogleLoginDecorator = () => {
   return applyDecorators(
     ApiOperation({ summary: 'Login with google' }),
-    Redirect('http://localhost:5173'),
+    Redirect('https://busy-galileo-rdldetyvg.iran.liara.run'),
     Get('google'),
   );
 };

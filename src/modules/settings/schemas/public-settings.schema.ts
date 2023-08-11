@@ -28,7 +28,7 @@ export class PublicSettings {
     type: String,
     required: true,
   })
-  timeZone: string;
+  timezone: string;
 }
 
 export type PublicSettingsDocument = PublicSettings & MongooseDocument;
