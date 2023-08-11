@@ -1,7 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
-import { configService } from 'src/core/config/app.config';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { EmailSettingsRepository } from '../settings/repositories/email-settings.repository';
 

@@ -71,8 +71,40 @@ export class SmsService {
     }
   }
 
-  // send otp sms (sms.ir)
-  async sendOtpSms_(mobile: string, code: string, templateId: string) {
-    
+  // send otp sms (kavenegar)
+  async sendOtpSms_kavenegar(
+    mobile: string,
+    code: string,
+    apiKey: string,
+    templateId: string,
+  ) {
+    try {
+      const url =
+        'https://api.kavenegar.com/v1/{API-KEY}/sms/countinbox.json?startdate=1409533200&enddate=1410570000&linenumber=10008284&isread=1';
+      return await this.httpService.post(url).toPromise();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SEND_OTP_SMS,
+      );
+    }
   }
+
+  // send otp sms (payam-resan)
+  async sendOtpSms_payamResan(
+    mobile: string,
+    code: string,
+    apiKey: string,
+    templateKey: string,
+  ) {
+    try {
+      const url = `http://api.sms-webservice.com/api/V3/SendTokenSingle?ApiKey=${apiKey}&TemplateKey=${templateKey}&Destination=$${mobile}&p1=${code}`;
+      return await this.httpService.get(url).toPromise();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SEND_OTP_SMS,
+      );
+    }
+  }
+
+  
 }

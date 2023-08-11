@@ -10,6 +10,7 @@ export enum SmsPanelEnum {
   NIKSMS = 'niksms',
   NOVIN_PAYAM = 'novin-payam',
   MEDIANA = 'mediana',
+  KAVENEGAR = 'kavenegar',
 }
 
 @Schema({
