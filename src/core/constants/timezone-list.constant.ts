@@ -1,4 +1,4 @@
-const timezoneList = [
+export const timezoneList = [
   'Europe/Andorra',
   'Asia/Dubai',
   'Asia/Kabul',

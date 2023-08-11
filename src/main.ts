@@ -1,6 +1,5 @@
 import { bold } from 'chalk';
 import * as moment from 'moment-timezone';
-import * as jalaali from 'moment-jalaali'
 
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
@@ -18,6 +17,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  moment.tz.setDefault('Asia/Tehran');
+  
   app.useStaticAssets('uploads', {
     prefix: '/uploads/',
   });
@@ -38,8 +39,6 @@ async function bootstrap() {
 
   SwaggerConfig(app);
 
-  moment.tz.setDefault('Asia/Tehran');
-  
   await app.listen(port, '0.0.0.0', () => {
     const runningMode = `Server running in ${bold(mode)} mode`;
     const runningOnPort = `on port ${bold(port)}`;
