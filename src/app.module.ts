@@ -11,6 +11,7 @@ import { UserModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
 import { SettingsModule } from './modules/settings/settings.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     AuthModule,
     AdminAuthModule,
     SettingsModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],
