@@ -54,4 +54,29 @@ export class ProductsService {
       },
     };
   }
+
+  async getProductList(
+    page: number | undefined,
+    limit: number | undefined,
+    search?: string | undefined,
+  ): Promise<ResponseFormat<any>> {
+    const products = await this.productRepository.getProductList(
+      page,
+      limit,
+      search,
+    );
+
+    if (!products) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_PRODUCT_LIST,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        products,
+      },
+    };
+  }
 }

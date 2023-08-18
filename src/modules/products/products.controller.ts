@@ -1,12 +1,21 @@
 import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Param, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  ParseIntPipe,
+  Query,
+  Req,
+} from '@nestjs/common';
 
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { GetProductDecoratpr } from './decorators/get-product.decorator';
 import { CreateProductDecorator } from './decorators/create-product.decorator';
+import { GetProductsDecorator } from './decorators/get-products.decorator';
+import { number } from 'joi';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -25,5 +34,15 @@ export class ProductsController {
   @GetProductDecoratpr()
   getProduct(@Param('id', ParseObjectIdPipe) id: string) {
     return this.productService.findById(id);
+  }
+
+  // get product list
+  @GetProductsDecorator()
+  getProducts(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.productService.getProductList(+page, +limit, search);
   }
 }

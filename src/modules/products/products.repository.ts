@@ -22,7 +22,15 @@ export class ProductsRepository {
     return this.productModel.findOne(filder, projection).exec();
   }
 
-  findById(id: string) {
-    return this.productModel.findById(id);
+  findById(id: string, projection?: ProjectionFields<ProductDocument>) {
+    return this.productModel.findById(id, projection);
+  }
+
+  getProductList(page: number = 1, limit: number = 10, search?: string) {
+    return this.productModel
+      .find(search ? { $text: { $search: search } } : {})
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
   }
 }
