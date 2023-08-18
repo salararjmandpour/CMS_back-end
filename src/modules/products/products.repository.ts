@@ -1,6 +1,6 @@
-import { FilterQuery, Model, ProjectionFields } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, ProjectionFields } from 'mongoose';
 
 import { Product, ProductDocument } from './schema/product.schema';
 import { CreateProductDto } from './dtos/create-product.dto';
@@ -20,5 +20,9 @@ export class ProductsRepository {
     projection?: ProjectionFields<ProductDocument>,
   ) {
     return this.productModel.findOne(filder, projection).exec();
+  }
+
+  findById(id: string) {
+    return this.productModel.findById(id);
   }
 }

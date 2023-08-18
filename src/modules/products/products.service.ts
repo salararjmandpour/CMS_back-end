@@ -1,6 +1,7 @@
 import {
-  Injectable,
   HttpStatus,
+  Injectable,
+  NotFoundException,
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -22,7 +23,7 @@ export class ProductsService {
     if (duplicateProductId) {
       throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
     }
-console.log({body})
+
     // save product in database
     const createdResult = await this.productRepository.create(body);
     if (!createdResult) {
@@ -35,6 +36,21 @@ console.log({body})
       statusCode: HttpStatus.CREATED,
       data: {
         product: createdResult,
+      },
+    };
+  }
+
+  async findById(id: string): Promise<ResponseFormat<any>> {
+    // check exist product
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new NotFoundException(ResponseMessages.PRODUCT_NOT_FOUND);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        product,
       },
     };
   }

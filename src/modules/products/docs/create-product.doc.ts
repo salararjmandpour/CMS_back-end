@@ -1,11 +1,11 @@
-import { HttpStatus, applyDecorators } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
   ApiOperation,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
   ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 export const ApiCreateProduct = () => {
@@ -56,7 +56,6 @@ export const ApiCreateProduct = () => {
         },
       },
     }),
-
     ApiUnauthorizedResponse({
       schema: {
         example: {
@@ -66,7 +65,6 @@ export const ApiCreateProduct = () => {
         },
       },
     }),
-
     ApiBadRequestResponse({
       schema: {
         example: {
