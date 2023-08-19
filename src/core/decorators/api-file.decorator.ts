@@ -15,3 +15,22 @@ export const ApiFile =
       },
     })(target, propertyKey, descriptor);
   };
+
+export const ApiFiles =
+  (filesName: string = 'files'): MethodDecorator =>
+  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          [filesName]: {
+            type: 'array',
+            items: {
+              type: 'string',
+              format: 'binary',
+            },
+          },
+        },
+      },
+    })(target, propertyKey, descriptor);
+  };

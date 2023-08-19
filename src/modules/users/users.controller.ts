@@ -1,6 +1,6 @@
-import { Controller, Req, UploadedFile } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Req, UploadedFile } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { GetMeDecorator } from './decorators/get-me.decorator';

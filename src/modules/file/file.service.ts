@@ -45,6 +45,22 @@ export class FileService {
     }
   }
 
+  async deleteFilesByPath(filesAddress: string[]) {
+    const pathFiles = filesAddress.map((address) =>
+      path.join(path.resolve(), address),
+    );
+
+    const deletePromises = pathFiles.map(
+      (pathFile) =>
+        new Promise((resolve) => {
+          if (existsSync(pathFile)) fs.unlink(pathFile);
+          resolve({ success: true });
+        }),
+    );
+
+    return await Promise.all(deletePromises);
+  }
+
   async createDirectory(dirPath: string): Promise<void> {
     try {
       await fs.mkdir(dirPath, { recursive: true });
