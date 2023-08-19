@@ -4,8 +4,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+
 import { CreateCategoryDecorator } from './decorators/create-category.decorator';
 import { UpdateCategoryDecorator } from './decorators/update-category.decorator';
+import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -26,5 +28,11 @@ export class CategoriesController {
     @Body() body: CreateCategoryDto,
   ) {
     return this.categoriesService.update(id, body);
+  }
+
+  // delete category by id
+  @DeleteCategoryDecorator()
+  deleteById(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.categoriesService.deleteById(id);
   }
 }

@@ -34,4 +34,8 @@ export class CategoriesRepository {
   findByName(name: string, projection?: ProjectionType<CategoryDocument>) {
     return this.categoryModel.findOne({ name }, projection);
   }
+
+  deleteById(_id: string) {
+    return this.categoryModel.deleteOne({ _id });
+  }
 }

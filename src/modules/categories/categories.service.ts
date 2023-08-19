@@ -80,4 +80,25 @@ export class CategoriesService {
       },
     };
   }
+
+  async deleteById(id: string): Promise<ResponseFormat<any>> {
+    // check exist category
+    const existCategory = await this.categoriesRepository.findById(id);
+    if (!existCategory) {
+      throw new BadRequestException(ResponseMessages.CATEGORY_NOT_FOUND);
+    }
+
+    // delete category by id
+    const deletedResult = await this.categoriesRepository.deleteById(id);
+    if (deletedResult.deletedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_CATEGORY,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.CATEGORY_DELETED,
+    };
+  }
 }
