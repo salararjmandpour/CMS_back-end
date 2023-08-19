@@ -45,7 +45,8 @@
     "nanoid": "^3.0.0",
     "nodemailer": "^6.9.4",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "swagger-themes": "^1.2.30"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
