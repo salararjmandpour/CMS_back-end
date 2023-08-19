@@ -35,6 +35,10 @@ export class CategoriesRepository {
     return this.categoryModel.findOne({ name }, projection);
   }
 
+  findAll() {
+    return this.categoryModel.find();
+  }
+
   deleteById(_id: string) {
     return this.categoryModel.deleteOne({ _id });
   }

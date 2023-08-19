@@ -101,4 +101,21 @@ export class CategoriesService {
       message: ResponseMessages.CATEGORY_DELETED,
     };
   }
+
+  async getCategoryList(): Promise<ResponseFormat<any>> {
+    const categories = await this.categoriesRepository.findAll();
+
+    if (!categories) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_CATEGORY_LIST,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        categories,
+      },
+    };
+  }
 }

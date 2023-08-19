@@ -8,6 +8,7 @@ import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { CreateCategoryDecorator } from './decorators/create-category.decorator';
 import { UpdateCategoryDecorator } from './decorators/update-category.decorator';
 import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
+import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -34,5 +35,11 @@ export class CategoriesController {
   @DeleteCategoryDecorator()
   deleteById(@Param('id', ParseObjectIdPipe) id: string) {
     return this.categoriesService.deleteById(id);
+  }
+
+  // get category list
+  @GetCategoryListDecorator()
+  getCategoryList() {
+    return this.categoriesService.getCategoryList();
   }
 }
