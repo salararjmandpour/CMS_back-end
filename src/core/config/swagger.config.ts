@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const SwaggerConfig = (app: INestApplication): void => {
   const config = new DocumentBuilder()
-    .setTitle('CMS')
+    .setTitle('Arshida CMS')
     .setVersion('1.0.0')
     .addBearerAuth({
       type: 'http',

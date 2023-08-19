@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 
 import { configService } from 'src/core/config/app.config';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { StatusEnum } from '../order/schema/order.schema';
 
 @Injectable()
 export class SmsService {
@@ -106,5 +107,8 @@ export class SmsService {
     }
   }
 
-  
+
+  sendStatusOrder(status: StatusEnum) {
+    
+  }
 }

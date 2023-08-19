@@ -13,6 +13,7 @@ import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { OrderModule } from './modules/order/order.module';
 import { ProductsModule } from './modules/products/products.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ProductsModule } from './modules/products/products.module';
     SettingsModule,
     OrderModule,
     ProductsModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
