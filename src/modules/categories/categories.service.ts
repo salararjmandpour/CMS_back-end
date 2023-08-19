@@ -27,6 +27,7 @@ export class CategoriesService {
       throw new BadRequestException(ResponseMessages.NAME_ALREADY_EXIST);
     }
 
+    // save category in database
     const category = await this.categoriesRepository.create(body);
     if (!category) {
       throw new InternalServerErrorException(
@@ -36,6 +37,44 @@ export class CategoriesService {
 
     return {
       statusCode: HttpStatus.CREATED,
+      data: {
+        category,
+      },
+    };
+  }
+
+  async update(
+    id: string,
+    update: CreateCategoryDto,
+  ): Promise<ResponseFormat<any>> {
+    // prevent duplicate title and name
+    const [existCategory, duplicateTitle, duplicateName] = await Promise.all([
+      this.categoriesRepository.findById(id),
+      this.categoriesRepository.findByTitle(update.title),
+      this.categoriesRepository.findByName(update.name),
+    ]);
+    if (!existCategory) {
+      throw new BadRequestException(ResponseMessages.CATEGORY_NOT_FOUND);
+    }
+    if (duplicateTitle) {
+      throw new BadRequestException(ResponseMessages.TITLE_ALREADY_EXIST);
+    }
+    if (duplicateName) {
+      throw new BadRequestException(ResponseMessages.NAME_ALREADY_EXIST);
+    }
+
+    // update category by id
+    const category = await this.categoriesRepository.updateById(id, update, {
+      new: true,
+    });
+    if (!category) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_CATEGORY,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
       data: {
         category,
       },

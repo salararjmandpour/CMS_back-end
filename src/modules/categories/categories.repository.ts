@@ -1,6 +1,7 @@
-import { Model, ProjectionType } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model, ProjectionType, QueryOptions } from 'mongoose';
+
 import { Category, CategoryDocument } from './schemas/category.schema';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 
@@ -12,6 +13,18 @@ export class CategoriesRepository {
 
   create(data: CreateCategoryDto) {
     return this.categoryModel.create(data);
+  }
+
+  updateById(
+    _id: string,
+    update: CreateCategoryDto,
+    options?: QueryOptions<Category>,
+  ) {
+    return this.categoryModel.findOneAndUpdate({ _id }, update, options);
+  }
+
+  findById(id: string, projection?: ProjectionType<CategoryDocument>) {
+    return this.categoryModel.findById(id, projection);
   }
 
   findByTitle(title: string, projection?: ProjectionType<CategoryDocument>) {
