@@ -1,25 +1,25 @@
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiBadRequestResponse,
-  ApiUnauthorizedResponse,
-  ApiInternalServerErrorResponse,
-} from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiCreateProduct = () => {
+export const UpdateProductDoc = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'create product',
-      description: 'create product',
+      summary: 'Update product',
+      description: 'Update a product by ID',
     }),
-    ApiCreatedResponse({
+    ApiOkResponse({
       schema: {
         example: {
-          statusCode: 201,
+          statusCode: HttpStatus.OK,
           data: {
             product: {
+              _id: '64df800ebe2064f42a82d6bd',
               productId: '288453296',
               title: 'مچ بند هوشمند مدل M4',
               description: 'string',
@@ -49,7 +49,6 @@ export const ApiCreateProduct = () => {
                   _id: '64df800ebe2064f42a82d6bf',
                 },
               ],
-              _id: '64df800ebe2064f42a82d6bd',
               createdAt: '2023-08-18T14:28:30.525Z',
               updatedAt: '2023-08-18T14:28:30.525Z',
             },
@@ -66,20 +65,12 @@ export const ApiCreateProduct = () => {
         },
       },
     }),
-    ApiBadRequestResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: ResponseMessages.BAD_REQUEST,
-          error: 'Bad Request',
-        },
-      },
-    }),
     ApiInternalServerErrorResponse({
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          error: 'Internal Server Error',
         },
       },
     }),

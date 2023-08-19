@@ -28,6 +28,7 @@ export const ApiGetProduct = () => {
                   title: 'مچ بند هوشمند مدل M4',
                   description: 'string',
                   shortDescription: 'string',
+                  slug: 'chasbe-zed-hasasiat-marta',
                   price: 250000,
                   discount: 0,
                   count: 0,

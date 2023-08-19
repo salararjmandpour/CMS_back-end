@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, ProjectionFields } from 'mongoose';
+import {
+  FilterQuery,
+  Model,
+  ProjectionFields,
+  QueryOptions,
+  UpdateQuery,
+} from 'mongoose';
 
 import { Product, ProductDocument } from './schema/product.schema';
 import { CreateProductDto } from './dtos/create-product.dto';
@@ -32,5 +38,13 @@ export class ProductsRepository {
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
+  }
+
+  findByIdAndUpdate(
+    _id: string,
+    update: UpdateQuery<ProductDocument>,
+    options?: QueryOptions,
+  ) {
+    return this.productModel.findOneAndUpdate({ _id }, update, options);
   }
 }

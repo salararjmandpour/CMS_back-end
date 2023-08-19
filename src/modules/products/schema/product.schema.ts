@@ -115,6 +115,13 @@ export class Product {
   shortDescription: string;
 
   @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
+  slug: string;
+
+  @Prop({
     type: Number,
     required: true,
   })
@@ -168,7 +175,7 @@ export class Product {
   category: string;
 
   @Prop({
-    type: [SpecificationsSchema],
+    type: [{ type: SpecificationsSchema }],
     default: [],
   })
   specifications: ISpecifications[];

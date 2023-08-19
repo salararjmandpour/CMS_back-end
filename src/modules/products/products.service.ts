@@ -10,18 +10,29 @@ import { ProductsRepository } from './products.repository';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private productRepository: ProductsRepository) {}
 
   async create(body: CreateProductDto): Promise<ResponseFormat<any>> {
-    // prevent duplicate productId
-    const duplicateProductId = await this.productRepository.findOne({
-      productId: body.productId,
-    });
+    // prevent duplicate productId and slug
+    const [duplicateProductId, duplicateSlug] = await Promise.all([
+      this.productRepository.findOne({
+        productId: body.productId,
+      }),
+      this.productRepository.findOne({
+        slug: body.slug,
+      }),
+    ]);
+
     if (duplicateProductId) {
       throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
+    }
+
+    if (duplicateSlug) {
+      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
     }
 
     // save product in database
@@ -76,6 +87,47 @@ export class ProductsService {
       statusCode: HttpStatus.OK,
       data: {
         products,
+      },
+    };
+  }
+
+  async update(
+    id: string,
+    body: UpdateProductDto,
+  ): Promise<ResponseFormat<any>> {
+    // prevent duplicate productId and slug
+    const [duplicateProductId, duplicateSlug] = await Promise.all([
+      this.productRepository.findOne({
+        productId: body.productId,
+      }),
+      this.productRepository.findOne({
+        slug: body.slug,
+      }),
+    ]);
+
+    if (duplicateProductId) {
+      throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
+    }
+
+    if (duplicateSlug) {
+      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
+    }
+
+    // update product in database
+    const updatedResult = await this.productRepository.findByIdAndUpdate(
+      id,
+      body,
+    );
+    if (!updatedResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_PRODUCT,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        product: updatedResult,
       },
     };
   }

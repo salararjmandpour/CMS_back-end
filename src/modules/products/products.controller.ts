@@ -16,6 +16,8 @@ import { GetProductDecoratpr } from './decorators/get-product.decorator';
 import { CreateProductDecorator } from './decorators/create-product.decorator';
 import { GetProductsDecorator } from './decorators/get-products.decorator';
 import { number } from 'joi';
+import { UpdateProductDecorator } from './decorators/update-product.decorator';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -45,4 +47,11 @@ export class ProductsController {
   ) {
     return this.productService.getProductList(+page, +limit, search);
   }
+
+  // update product by product id
+  @UpdateProductDecorator()
+  updateProduct(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: UpdateProductDto,
+  ) {}
 }
