@@ -2,6 +2,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { AddressesRepository } from './addresses.repository';
@@ -59,6 +60,27 @@ export class AddressesService {
       data: {
         addresses,
       },
+    };
+  }
+
+  async deleteById(id: string): Promise<ResponseFormat<any>> {
+    // check exist address
+    const address = await this.addressRepository.findById(id);
+    if (!address) {
+      throw new NotFoundException(ResponseMessages.ADDRESS_NOT_FOUND);
+    }
+
+    // delete address
+    const deletedResult = await this.addressRepository.deleteById(id);
+    if (deletedResult.deletedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_ADDRESS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.ADDRESS_DELETED,
     };
   }
 }

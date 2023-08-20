@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ProjectionFields, QueryOptions } from 'mongoose';
 
 import { CreateAddressDto } from './dtoc/create-address.dto';
-import { Address, AddressDocument } from './schemas/address.schema';
 import { UpdateAddressDto } from './dtoc/update-address.dto';
+import { Address, AddressDocument } from './schemas/address.schema';
 
 @Injectable()
 export class AddressesRepository {
@@ -30,5 +30,9 @@ export class AddressesRepository {
     options?: QueryOptions<Address>,
   ) {
     return this.addressModel.findOneAndUpdate({ _id }, data, options);
+  }
+
+  deleteById(_id: string, options?: QueryOptions<Address>) {
+    return this.addressModel.deleteOne({ _id }, options);
   }
 }

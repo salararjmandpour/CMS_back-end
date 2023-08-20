@@ -12,6 +12,7 @@ import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { CreateAddressDecorator } from './decorators/create-address.decorator';
 import { UpdateAddressDecorator } from './decorators/update-address.decorator';
 import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
+import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Addresses')
@@ -36,5 +37,10 @@ export class AddressesController {
   @GteAddressListDecorator()
   getAddressList() {
     return this.addressesService.getAddressList();
+  }
+
+  @DeleteAddresstDecorator()
+  deleteOne(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.addressesService.deleteById(id);
   }
 }
