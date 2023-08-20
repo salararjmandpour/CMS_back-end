@@ -1,13 +1,17 @@
 import { Request } from 'express';
-import { Body, Controller, Param, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Req } from '@nestjs/common';
 
 import { AddressesService } from './addresses.service';
+
 import { CreateAddressDto } from './dtoc/create-address.dto';
+import { UpdateAddressDto } from './dtoc/update-address.dto';
+
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+
 import { CreateAddressDecorator } from './decorators/create-address.decorator';
 import { UpdateAddressDecorator } from './decorators/update-address.decorator';
-import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
-import { UpdateAddressDto } from './dtoc/update-address.dto';
+import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Addresses')
@@ -27,5 +31,10 @@ export class AddressesController {
     @Body() body: UpdateAddressDto,
   ) {
     return this.addressesService.update(id, body);
+  }
+
+  @GteAddressListDecorator()
+  getAddressList() {
+    return this.addressesService.getAddressList();
   }
 }

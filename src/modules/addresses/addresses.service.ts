@@ -3,11 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+
 import { AddressesRepository } from './addresses.repository';
 import { CreateAddressDto } from './dtoc/create-address.dto';
+import { UpdateAddressDto } from './dtoc/update-address.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { UpdateAddressDto } from './dtoc/update-address.dto';
 
 @Injectable()
 export class AddressesService {
@@ -41,6 +42,22 @@ export class AddressesService {
       statusCode: HttpStatus.OK,
       data: {
         address: updatedResult,
+      },
+    };
+  }
+
+  async getAddressList(): Promise<ResponseFormat<any>> {
+    const addresses = await this.addressRepository.findAll();
+    if (!addresses) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_ADDRESS_LIST,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        addresses,
       },
     };
   }
