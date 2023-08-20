@@ -7,10 +7,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 })
 export class Address {
   @Prop({
-    type: [Types.ObjectId],
-    default: [],
+    type: Types.ObjectId,
+    required: true,
   })
-  user: Types.ObjectId[];
+  user: Types.ObjectId;
 
   @Prop({
     type: String,

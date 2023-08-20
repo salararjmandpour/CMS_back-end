@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ProjectionFields } from 'mongoose';
+import { Model, ProjectionFields, QueryOptions } from 'mongoose';
 
 import { CreateAddressDto } from './dtoc/create-address.dto';
 import { Address, AddressDocument } from './schemas/address.schema';
+import { UpdateAddressDto } from './dtoc/update-address.dto';
 
 @Injectable()
 export class AddressesRepository {
@@ -21,5 +22,13 @@ export class AddressesRepository {
 
   findAll() {
     return this.addressModel.find();
+  }
+
+  updateById(
+    _id: string,
+    data: UpdateAddressDto,
+    options?: QueryOptions<Address>,
+  ) {
+    return this.addressModel.findOneAndUpdate({ _id }, data, options);
   }
 }
