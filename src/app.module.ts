@@ -14,6 +14,7 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { OrderModule } from './modules/order/order.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { AddressesModule } from './modules/addresses/addresses.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     OrderModule,
     ProductsModule,
     CategoriesModule,
+    AddressesModule,
   ],
   controllers: [],
   providers: [],

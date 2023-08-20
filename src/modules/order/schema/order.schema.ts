@@ -20,6 +20,7 @@ export class Order {
 
   @Prop({
     type: Types.ObjectId,
+    required: true,
   })
   customer: Types.ObjectId;
 
@@ -48,6 +49,67 @@ export class Order {
     type: StatusEnum,
   })
   address: StatusEnum;
+
+  @Prop({
+    type: String,
+  })
+  factor: string;
+
+  @Prop({
+    type: String,
+  })
+  // مرحله
+  level: string;
+
+  @Prop({
+    type: Date,
+  })
+  // زمان تحویل
+  deliveryTime: Date;
+
+  @Prop({
+    type: Number,
+  })
+  // هزینه ارسال
+  shippingCost: number;
+
+  @Prop({
+    type: Number,
+  })
+  // کد رهگیری
+  shipmentTrackingCode: number;
+
+  @Prop({
+    type: String,
+  })
+  // نوع ارسال
+  postType: string;
+
+  @Prop({
+    type: String,
+  })
+  // شیوه ارسال
+  shippingMethod: string;
+
+  @Prop({
+    type: String,
+  })
+  paymentStatus: string;
+
+  @Prop({
+    type: Number,
+  })
+  postalCode: number;
+
+  @Prop({
+    type: Number,
+  })
+  mobile: number;
+
+  @Prop({
+    type: Number,
+  })
+  telephone: number;
 }
 
 export type OrderDocument = Order & Document;
