@@ -15,7 +15,7 @@ import { GteAddressListDecorator } from './decorators/get-address-list.decorator
 import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 
 @ApiBearerAuth()
-@ApiTags('Addresses')
+@ApiTags('Addresses (UserProfile)')
 @Controller('addresses')
 export class AddressesController {
   constructor(private addressesService: AddressesService) {}

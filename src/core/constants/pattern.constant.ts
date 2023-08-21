@@ -6,3 +6,4 @@ export const telephonePattern = /^0[0-9]{10}$/;
 export const rolesPattern = /(SUPERADMIN|ADMIN|SUPPLIER|USER)/i;
 export const objectIdPattern = /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i;
 export const postalCodePattern = /^\d{10}$/;
+export const paymentStatusPattern = /(paid|unpaid)/i;

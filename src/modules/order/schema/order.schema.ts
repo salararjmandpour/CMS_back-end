@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { nanoidNumber } from 'src/core/utils/nanoid.util';
 
 export enum StatusEnum {
   IN_PROGRESS = 'IN_PROGRESS',
@@ -15,6 +16,8 @@ export enum StatusEnum {
 export class Order {
   @Prop({
     type: Number,
+    default: nanoidNumber(12),
+    required: true,
   })
   orderId: number;
 
@@ -26,6 +29,7 @@ export class Order {
 
   @Prop({
     type: Date,
+    default: Date.now(),
   })
   orderDate: Date;
 
@@ -41,25 +45,26 @@ export class Order {
   totalAmount: number;
 
   @Prop({
-    type: StatusEnum,
+    type: String,
+    default: StatusEnum.IN_PROGRESS,
+    enum: [
+      StatusEnum.IN_PROGRESS,
+      StatusEnum.COMPLETED,
+      StatusEnum.CANCELED,
+      StatusEnum.RETURNED,
+    ],
   })
-  status: StatusEnum;
+  status: string;
 
   @Prop({
-    type: StatusEnum,
+    type: Types.ObjectId,
   })
-  address: StatusEnum;
+  address: string;
 
   @Prop({
     type: String,
   })
   factor: string;
-
-  @Prop({
-    type: String,
-  })
-  // مرحله
-  level: string;
 
   @Prop({
     type: Date,
@@ -95,21 +100,6 @@ export class Order {
     type: String,
   })
   paymentStatus: string;
-
-  @Prop({
-    type: Number,
-  })
-  postalCode: number;
-
-  @Prop({
-    type: Number,
-  })
-  mobile: number;
-
-  @Prop({
-    type: Number,
-  })
-  telephone: number;
 }
 
 export type OrderDocument = Order & Document;

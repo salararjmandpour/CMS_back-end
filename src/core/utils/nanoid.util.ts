@@ -11,3 +11,7 @@ export const alphabetAll = alphabetNumber + alphabetLetters + alphabetSymbols;
 export const nanoid = (alphabet = alphabetAll, length = 8) => {
   return customAlphabet(alphabet, length)();
 };
+
+export const nanoidNumber = (length = 8) => {
+  return +customAlphabet(alphabetNumber, length)();
+};
