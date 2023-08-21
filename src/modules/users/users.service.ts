@@ -1,16 +1,18 @@
 import {
-  BadRequestException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { UserRepository } from './users.repository';
 import { FileService } from 'src/modules/file/file.service';
+import { ProductsRepository } from '../products/products.repository';
+
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
@@ -19,6 +21,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 export class UsersService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly productsRepository: ProductsRepository,
     private readonly fileService: FileService,
   ) {}
 
@@ -79,6 +82,39 @@ export class UsersService {
     return {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.UPLOADED_AVATAR,
+    };
+  }
+
+  async addToWishlist(userId: string, productId: string) {
+    const [existProduct, hasInWishlist] = await Promise.all([
+      this.productsRepository.findById(productId),
+      this.userRepository.findOneFromWishlist(userId, productId),
+    ]);
+    if (!existProduct) {
+      throw new BadRequestException(ResponseMessages.PRODUCT_NOT_FOUND);
+    }
+    if (hasInWishlist) {
+      throw new BadRequestException(
+        ResponseMessages.PRODUCT_ALREADY_EXIST_IN_WISHLIST,
+      );
+    }
+
+    const updateResult = await this.userRepository.addOneToWishlist(
+      userId,
+      productId,
+      { new: true },
+    );
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_ADD_TO_WISHLIST,
+      );
+    }
+
+    return {
+      statusCoed: HttpStatus.OK,
+      data: {
+        wishlist: updateResult.wishlist,
+      },
     };
   }
 }

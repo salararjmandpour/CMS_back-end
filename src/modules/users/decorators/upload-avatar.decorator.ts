@@ -5,7 +5,7 @@ import {
   applyDecorators,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { CheckPermission } from 'src/core/guards/check-permission.guard';
@@ -17,6 +17,7 @@ import { fileStorage } from 'src/core/utils/upload-storage.util';
 
 export const UploadAvatarDecorator = () => {
   return applyDecorators(
+    ApiTags('Profile'),
     ApiOperation({
       summary: 'upload avatar',
       description: `upload a photo for user avatar`,

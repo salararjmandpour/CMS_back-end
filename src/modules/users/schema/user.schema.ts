@@ -1,10 +1,11 @@
 import * as bcrypt from 'bcryptjs';
-import { Document as MongooseDocument } from 'mongoose';
+import { Document as MongooseDocument, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   emailPattern,
   persianNationalId,
 } from 'src/core/constants/pattern.constant';
+import { Product } from 'src/modules/products/schema/product.schema';
 
 export enum RolesEnum {
   SUPERADMIN = 'SUPERADMIN',
@@ -153,6 +154,13 @@ export class User {
     type: String,
   })
   birthdate: string;
+
+  @Prop({
+    type: [Types.ObjectId],
+    default: [],
+    ref: Product.name,
+  })
+  wishlist: string[];
 
   async comparePassword(enteredPassword: string): Promise<boolean> {
     return bcrypt.compare(enteredPassword, this.password);

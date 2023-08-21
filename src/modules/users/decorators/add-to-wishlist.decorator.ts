@@ -1,13 +1,13 @@
 import { Get, UseGuards, applyDecorators } from '@nestjs/common';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { ApiGetMe } from '../docs/get-me.doc';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiAddToWishlist } from '../docs/add-to-wishlist.doc';
 
-export const GetMeDecorator = () => {
+export const AddToWishlistDecorator = () => {
   return applyDecorators(
-    ApiTags('Users'),
-    ApiGetMe(),
+    ApiTags('Profile'),
+    ApiAddToWishlist(),
     UseGuards(AuthGuard),
-    Get('@me'),
+    Get('wishlist/add/:productId'),
   );
 };

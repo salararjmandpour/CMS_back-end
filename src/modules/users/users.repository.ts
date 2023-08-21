@@ -1,5 +1,5 @@
-import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model, ProjectionType, QueryOptions, Types } from 'mongoose';
 
 import { User, UserDocument } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
@@ -65,5 +65,43 @@ export class UserRepository {
       { [isEmail ? 'email' : 'mobile']: mobileOrEmail },
       { $set: fields },
     );
+  }
+
+  addOneToWishlist(
+    userId: string,
+    productId: string,
+    options?: QueryOptions<User>,
+  ) {
+    return this.userModel
+      .findOneAndUpdate(
+        { _id: userId },
+        { $push: { wishlist: productId } },
+        options,
+      )
+      .populate('wishlist');
+  }
+
+  deleteOneFromWishlist(
+    userId: string,
+    productId: string,
+    options?: QueryOptions<User>,
+  ) {
+    return this.userModel
+      .findOneAndUpdate(
+        { _id: userId },
+        { $pull: { wishlist: productId } },
+        options,
+      )
+      .populate('wishlist');
+  }
+
+  findOneFromWishlist(
+    userId: string,
+    productId: string,
+    projection?: ProjectionType<User>,
+  ) {
+    return this.userModel
+      .findOne({ _id: userId, wishlist: productId }, projection)
+      .populate('wishlist');
   }
 }

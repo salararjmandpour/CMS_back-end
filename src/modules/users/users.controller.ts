@@ -1,12 +1,13 @@
 import { Request } from 'express';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Controller, Req, UploadedFile } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Param, Req, UploadedFile } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { GetMeDecorator } from './decorators/get-me.decorator';
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
+import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 
-@ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
@@ -20,5 +21,14 @@ export class UsersController {
   @UploadAvatarDecorator()
   uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
     return this.usersService.uploadAvatar(file, req);
+  }
+
+  @AddToWishlistDecorator()
+  addToWishlist(
+    @Param('productId', ParseObjectIdPipe) productId: string,
+    @Req() req: Request,
+  ) {
+    const userId = req.user?.id;
+    return this.usersService.addToWishlist(userId, productId);
   }
 }
