@@ -7,6 +7,7 @@ import { GetMeDecorator } from './decorators/get-me.decorator';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
 import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
+import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -30,5 +31,14 @@ export class UsersController {
   ) {
     const userId = req.user?.id;
     return this.usersService.addToWishlist(userId, productId);
+  }
+
+  @DeleteFromWishlistDecorator()
+  deleteFromWishlist(
+    @Param('productId', ParseObjectIdPipe) productId: string,
+    @Req() req: Request,
+  ) {
+    const userId = req.user?.id;
+    return this.usersService.deleteFromWishlist(userId, productId);
   }
 }

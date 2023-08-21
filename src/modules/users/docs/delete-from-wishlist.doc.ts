@@ -1,22 +1,22 @@
 import {
   ApiOperation,
+  ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiAddToWishlist = () => {
+export const ApiDeleteFromWishlist = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'add product to wishlist',
-      description: 'add product to wishlist by productId',
+      summary: 'delete product from wishlist',
+      description: 'delete product from wishlist by productId',
     }),
-    ApiCreatedResponse({
+    ApiOkResponse({
       schema: {
         example: {
-          statusCode: HttpStatus.CREATED,
+          statusCode: HttpStatus.OK,
           data: {},
         },
       },

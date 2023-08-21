@@ -85,7 +85,10 @@ export class UsersService {
     };
   }
 
-  async addToWishlist(userId: string, productId: string) {
+  async addToWishlist(
+    userId: string,
+    productId: string,
+  ): Promise<ResponseFormat<any>> {
     const [existProduct, hasInWishlist] = await Promise.all([
       this.productsRepository.findById(productId),
       this.userRepository.findOneFromWishlist(userId, productId),
@@ -111,10 +114,39 @@ export class UsersService {
     }
 
     return {
-      statusCoed: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       data: {
         wishlist: updateResult.wishlist,
       },
+    };
+  }
+
+  async deleteFromWishlist(userId: string, productId: string) {
+    const hasInWishlist = await this.userRepository.findOneFromWishlist(
+      userId,
+      productId,
+    );
+
+    if (!hasInWishlist) {
+      throw new BadRequestException(
+        ResponseMessages.NOT_FOUND_PRODUCT_IN_WISHLIST,
+      );
+    }
+
+    const updateResult = await this.userRepository.deleteOneFromWishlist(
+      userId,
+      productId,
+      { new: true },
+    );
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_ADD_TO_WISHLIST,
+      );
+    }
+
+    return {
+      statusCoed: HttpStatus.OK,
+      message: ResponseMessages.REMOVED_PRODUCT_FROM_WISHLIST,
     };
   }
 }
