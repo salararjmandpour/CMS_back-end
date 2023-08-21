@@ -17,7 +17,7 @@ export const ApiDeleteFromWishlist = () => {
       schema: {
         example: {
           statusCode: HttpStatus.OK,
-          data: {},
+          message: ResponseMessages.REMOVED_PRODUCT_FROM_WISHLIST,
         },
       },
     }),

@@ -104,4 +104,10 @@ export class UserRepository {
       .findOne({ _id: userId, wishlist: productId }, projection)
       .populate('wishlist');
   }
+
+  findAllWishlist(userId: string, projection?: ProjectionType<User>) {
+    return this.userModel
+      .findOne({ _id: userId }, projection)
+      .populate('wishlist');
+  }
 }

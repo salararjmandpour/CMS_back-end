@@ -85,6 +85,7 @@ export class UsersService {
     };
   }
 
+  // add product in wishlist in user profile
   async addToWishlist(
     userId: string,
     productId: string,
@@ -121,6 +122,7 @@ export class UsersService {
     };
   }
 
+  // delete product from wishlist in user profile
   async deleteFromWishlist(userId: string, productId: string) {
     const hasInWishlist = await this.userRepository.findOneFromWishlist(
       userId,
@@ -147,6 +149,20 @@ export class UsersService {
     return {
       statusCoed: HttpStatus.OK,
       message: ResponseMessages.REMOVED_PRODUCT_FROM_WISHLIST,
+    };
+  }
+
+  // get wishlist in user profile
+  async getWishlist(userId: string) {
+    const wishlist = await this.userRepository.findAllWishlist(userId);
+
+    if (!wishlist) {
+      throw new BadRequestException(ResponseMessages.FAILED_GET_WISHLIST);
+    }
+
+    return {
+      statusCoed: HttpStatus.OK,
+      wishlist: wishlist.wishlist,
     };
   }
 }
