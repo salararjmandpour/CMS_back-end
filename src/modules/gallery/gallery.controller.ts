@@ -1,7 +1,10 @@
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Controller, UploadedFile } from '@nestjs/common';
+import { Controller, Param, UploadedFile } from '@nestjs/common';
+
 import { GalleryService } from './gallery.service';
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
+import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -13,5 +16,14 @@ export class GalleryController {
   @AddToGalleryDecorator()
   addToGallery(@UploadedFile() file: Express.Multer.File) {
     return this.galleryService.addToGaller(file);
+  }
+
+  // update file in gallery
+  @UpdateInGalleryDecorator()
+  updateInGallery(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id', ParseObjectIdPipe) id: string,
+  ) {
+    return this.galleryService.updateInGallery(id, file);
   }
 }

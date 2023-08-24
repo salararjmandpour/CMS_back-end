@@ -1,24 +1,24 @@
 import {
   ApiOperation,
-  ApiCreatedResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiAddToGallery = () => {
+export const ApiUpdateInGallery = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'add file to gallery',
-      description: 'add file to gallery',
+      summary: 'update file in gallery',
+      description: 'update file in gallery',
     }),
-    ApiCreatedResponse({
+    ApiOkResponse({
       schema: {
         example: {
-          statusCode: 201,
-          message: 'FILE_ADDED_TO_GALLERY',
+          statusCode: 200,
+          message: 'FILE_UPDATED_IN_GALLERY',
           data: {
             file: {
               src: 'uploads/gallery/xszd4az2tvs6l2db.mp3',

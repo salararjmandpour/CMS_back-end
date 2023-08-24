@@ -1,6 +1,7 @@
 import {
   HttpStatus,
   Injectable,
+  NotFoundException,
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -44,6 +45,48 @@ export class GalleryService {
       message: ResponseMessages.FILE_ADDED_TO_GALLERY,
       data: {
         file: createdResult,
+      },
+    };
+  }
+
+  async updateInGallery(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ResponseFormat<any>> {
+    // check exist file
+    if (!file) {
+      throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
+    }
+
+    // check exist file in galley
+    const existFile = await this.galleryRepositoy.findById(id);
+    if (!existFile) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
+    }
+
+    // delete prev file
+    this.fileService.deleteFileByPath(existFile.src);
+
+    const src = file?.path?.replace(/\\/g, '/');
+    const extname = this.fileService.getExtname(file.filename);
+    const type = getTypeFile(fileExtensions, extname);
+
+    const updatedResult = await this.galleryRepositoy.update(
+      id,
+      { src, type },
+      { new: true },
+    );
+    if (!updatedResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_FILE_IN_GALLERY,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.FILE_UPDATED_IN_GALLERY,
+      data: {
+        file: updatedResult,
       },
     };
   }
