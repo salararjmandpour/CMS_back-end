@@ -85,4 +85,8 @@ export class FileService {
       throw new BadRequestException('Error uploading image.');
     }
   }
+
+  getExtname(filename: string) {
+    return path.extname(filename);
+  }
 }
