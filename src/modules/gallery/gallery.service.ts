@@ -90,4 +90,28 @@ export class GalleryService {
       },
     };
   }
+
+  async deleteFileInGallery(id: string): Promise<ResponseFormat<any>> {
+    // check exist file in galley
+    const existFile = await this.galleryRepositoy.findById(id);
+    if (!existFile) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
+    }
+
+    // delete prev file in file system
+    this.fileService.deleteFileByPath(existFile.src);
+
+    // delete file in database
+    const deleteResult = await this.galleryRepositoy.deleteById(id);
+    if (deleteResult.deletedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_FILE_IN_GALLERY,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.FILE_DELETED_IN_GALLERY,
+    };
+  }
 }

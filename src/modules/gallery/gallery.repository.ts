@@ -24,4 +24,8 @@ export class GalleryRepository {
   findById(id: string) {
     return this.galleryModel.findById(id);
   }
+
+  deleteById(_id: string, options?: QueryOptions<Gallery>) {
+    return this.galleryModel.deleteOne({ _id }, options);
+  }
 }
