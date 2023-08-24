@@ -8,7 +8,6 @@ export const DeleteInGalleryDecorator = () => {
   return applyDecorators(
     Delete(':id'),
     UseGuards(AuthGuard),
-    ApiConsumes('multipart/form-data'),
     ApiDeleteInGallery(),
   );
 };

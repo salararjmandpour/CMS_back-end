@@ -1,6 +1,5 @@
 import {
   Patch,
-  Post,
   UseGuards,
   UseInterceptors,
   applyDecorators,

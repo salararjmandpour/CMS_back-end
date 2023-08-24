@@ -6,6 +6,7 @@ import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
 import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorator';
 import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
+import { GetGalleryDecorator } from './decorators/get-gallery.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -32,5 +33,11 @@ export class GalleryController {
   @DeleteInGalleryDecorator()
   deleteInGallery(@Param('id', ParseObjectIdPipe) id: string) {
     return this.galleryService.deleteFileInGallery(id);
+  }
+
+  // delete file in gallery
+  @GetGalleryDecorator()
+  getGallery() {
+    return this.galleryService.getGallery();
   }
 }

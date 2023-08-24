@@ -114,4 +114,19 @@ export class GalleryService {
       message: ResponseMessages.FILE_DELETED_IN_GALLERY,
     };
   }
+
+  async getGallery(): Promise<ResponseFormat<any>> {
+    // check exist file in galley
+    const gallery = await this.galleryRepositoy.findAll();
+    if (!gallery) {
+      throw new NotFoundException(ResponseMessages.FAILED_GET_GALLERY);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        gallery,
+      },
+    };
+  }
 }
