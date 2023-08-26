@@ -16,6 +16,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
+import { SeoModule } from './modules/seo/seo.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { GalleryModule } from './modules/gallery/gallery.module';
     CategoriesModule,
     AddressesModule,
     GalleryModule,
+    SeoModule,
   ],
   controllers: [],
   providers: [],
