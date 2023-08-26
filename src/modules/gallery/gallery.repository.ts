@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryOptions } from 'mongoose';
 import { Gallery } from './schemas/gallery.schema';
+import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 
 @Injectable()
 export class GalleryRepository {
@@ -9,8 +10,8 @@ export class GalleryRepository {
     @InjectModel(Gallery.name) private galleryModel: Model<Gallery>,
   ) {}
 
-  create(src: string, type: string) {
-    return this.galleryModel.create({ src, type });
+  create(data: AddToGalleryDto) {
+    return this.galleryModel.create(data);
   }
 
   update(

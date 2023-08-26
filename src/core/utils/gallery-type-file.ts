@@ -1,9 +1,13 @@
-/**
- * get type file from extname
- * @param extensions allowed extensions
- * @param filename file name
- */
+const defaultAllowedTypes = ['image', 'video', 'audio'];
+
 export const getTypeFile = (
-  extensions: { [key: string]: string },
-  extname: string,
-) => extensions[extname];
+  mimetype: string,
+  allowedTypes: string[] = defaultAllowedTypes,
+): string => {
+  const typeMap: Record<string, string> = {};
+  allowedTypes.forEach((type) => {
+    typeMap[`${type}/`] = type;
+  });
+  const type = allowedTypes.find((type) => mimetype.startsWith(`${type}/`));
+  return type ? typeMap[`${type}/`] : 'unknown';
+};

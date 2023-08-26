@@ -5,11 +5,12 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import imageSize from 'image-size';
 
 import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
+import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { getTypeFile } from 'src/core/utils/gallery-type-file';
-import { fileExtensions } from 'src/core/constants/gallery-extname';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
@@ -20,20 +21,26 @@ export class GalleryService {
     private galleryRepositoy: GalleryRepository,
   ) {}
 
-  async addToGaller(file: Express.Multer.File): Promise<ResponseFormat<any>> {
+  async addToGaller(
+    file: any,
+    body: AddToGalleryDto,
+  ): Promise<ResponseFormat<any>> {
     // check exist file
     if (!file) {
       throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
     }
+    const path = file?.path?.replace(/\\/g, '/');
+    const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+    const dimensions = type === 'image' ? imageSize(path) : undefined;
+    const size = file.size;
 
-    const fileAddress = file?.path?.replace(/\\/g, '/');
-    const extname = this.fileService.getExtname(file.filename);
-    const fileType = getTypeFile(fileExtensions, extname);
-
-    const createdResult = await this.galleryRepositoy.create(
-      fileAddress,
-      fileType,
-    );
+    const createdResult = await this.galleryRepositoy.create({
+      ...body,
+      path,
+      type,
+      size,
+      dimensions,
+    });
     if (!createdResult) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_ADD_TO_GALLERY,
@@ -44,7 +51,7 @@ export class GalleryService {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.FILE_ADDED_TO_GALLERY,
       data: {
-        file: createdResult,
+        file: 'createdResult',
       },
     };
   }
@@ -65,15 +72,14 @@ export class GalleryService {
     }
 
     // delete prev file
-    this.fileService.deleteFileByPath(existFile.src);
+    this.fileService.deleteFileByPath(existFile.path);
 
-    const src = file?.path?.replace(/\\/g, '/');
-    const extname = this.fileService.getExtname(file.filename);
-    const type = getTypeFile(fileExtensions, extname);
+    const path = file?.path?.replace(/\\/g, '/');
+    const type = getTypeFile(file.mimetype);
 
     const updatedResult = await this.galleryRepositoy.update(
       id,
-      { src, type },
+      { src: path, type },
       { new: true },
     );
     if (!updatedResult) {
@@ -99,7 +105,7 @@ export class GalleryService {
     }
 
     // delete prev file in file system
-    this.fileService.deleteFileByPath(existFile.src);
+    this.fileService.deleteFileByPath(existFile.path);
 
     // delete file in database
     const deleteResult = await this.galleryRepositoy.deleteById(id);
