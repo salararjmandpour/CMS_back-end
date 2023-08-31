@@ -6,7 +6,7 @@ export class SEO {
   @Prop({
     type: Array<String>,
   })
-  variables: string;
+  title: string[];
 
   @Prop({
     type: String,
@@ -19,5 +19,5 @@ export class SEO {
   description: string;
 }
 
-export type SEODocument = SEO & Document;
-export const SEOSchema = SchemaFactory.createForClass(SEO);
+export type SeoDocument = SEO & Document;
+export const SeoSchema = SchemaFactory.createForClass(SEO);

@@ -24,7 +24,7 @@ export const ApiCheckOTP = () => {
             accessToken:
               'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGM2NTU2ZTE0YmEyMDFlMDUwNGEyYzMiLCJpYXQiOjE2OTExNDQyMjYsImV4cCI6MTY5MzczNjIyNn0.qLQnHnJAFTEHJV9UoTx2VZ8ipN6uxO0c8pGPi7Ba_pE',
             refreshToken:
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGM2NTU2ZTE0YmEyMDFlMDUwNGEyYzMiLCJpYXQiOjE2OTExNDQyMjYsImV4cCI6MTcyMjcwMTgyNn0.trTzZYj4P_4p1JqILs5Dos-gkKZxjZKaizQBUlhqcTg',
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGM3YzZiZTdjZDk4NDU5OTNjODgyM2QiLCJpYXQiOjE2OTM0ODY3ODcsImV4cCI6MTY5NjA3ODc4N30.Gm4dkNIwt_1TNaim83wYkZDqeOWvXL2yS75DvLO9fIc',
           },
         },
       },

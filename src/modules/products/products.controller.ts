@@ -37,9 +37,6 @@ export class ProductsController {
     return {
       statusCode: 200,
       message: 'PRODUCT_CREATED_SUCCESS',
-      data: {
-        product: 'product data test',
-      },
     };
   }
 

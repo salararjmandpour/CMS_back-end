@@ -149,16 +149,7 @@ export class GalleryService {
     if (type && type !== 'all') query.type = type;
     if (search) query['$text'] = { $search: search };
     if (date) {
-      moment();
     }
-
-    var date = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-
-    let localTime = moment.utc(date).toDate();
-
-    let local = moment(localTime).format('YYYY-MM-DD HH:mm:ss');
-
-    // console.log({ local, localTime, date });
 
     const gallery = await this.galleryRepositoy.findAll(query);
     if (!gallery) {

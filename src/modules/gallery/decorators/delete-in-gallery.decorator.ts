@@ -6,7 +6,7 @@ import { ApiDeleteInGallery } from '../docs/delete-in-gallery.doc';
 export const DeleteInGalleryDecorator = () => {
   return applyDecorators(
     Delete(':id'),
-    UseGuards(AuthGuard),
+    // UseGuards(AuthGuard),
     ApiDeleteInGallery(),
   );
 };

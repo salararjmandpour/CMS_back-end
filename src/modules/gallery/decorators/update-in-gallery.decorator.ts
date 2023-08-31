@@ -15,7 +15,7 @@ import { ApiUpdateInGallery } from '../docs/update-in-gallery.doc';
 export const UpdateInGalleryDecorator = () => {
   return applyDecorators(
     Patch(':id'),
-    UseGuards(AuthGuard),
+    // UseGuards(AuthGuard),
     ApiConsumes('multipart/form-data'),
     ApiUpdateInGallery(),
     UseInterceptors(

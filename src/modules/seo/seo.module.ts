@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { SeoService } from './seo.service';
-import { SeoController } from './seo.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SEO, SEOSchema } from './schemas/seo.schema';
+
+import { SeoService } from './seo.service';
+import { SeoRepository } from './seo.repository';
+import { SeoController } from './seo.controller';
+import { SEO, SeoSchema } from './schemas/seo.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: SEO.name, schema: SEOSchema }])],
-  providers: [SeoService],
+  imports: [MongooseModule.forFeature([{ name: SEO.name, schema: SeoSchema }])],
+  providers: [SeoService, SeoRepository],
   controllers: [SeoController],
 })
 export class SeoModule {}

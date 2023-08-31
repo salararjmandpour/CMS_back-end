@@ -27,7 +27,7 @@ const SpecificationsValidator = Joi.object({
   value: Joi.string().required(),
 });
 
-export const createProductValidator = Joi.object({
+export const ProductValidator = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   shortDescription: Joi.string().required(),
@@ -71,4 +71,11 @@ export const createProductValidator = Joi.object({
 
   //transportation
   size: SizeValidator,
+});
+
+export const SEOValidator = Joi.object({});
+
+export const createProductValidator = Joi.object({
+  product: ProductValidator,
+  seo: SEOValidator,
 });

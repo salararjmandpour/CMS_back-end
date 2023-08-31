@@ -19,7 +19,7 @@ import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorat
 import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
 import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @ApiTags('Gallery')
 @Controller('gallery')
 export class GalleryController {

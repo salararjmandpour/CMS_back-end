@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -168,4 +170,12 @@ export class CreateProductDto {
 
   supplier: string;
   images: string[];
+}
+
+export class CreateProductWithCeoDto {
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductDto)
+  product: CreateProductDto;
+  
+  seo: {}
 }
