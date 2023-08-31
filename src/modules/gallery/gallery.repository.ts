@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryOptions } from 'mongoose';
 import { Gallery } from './schemas/gallery.schema';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
+import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 
 @Injectable()
 export class GalleryRepository {
@@ -16,7 +17,7 @@ export class GalleryRepository {
 
   update(
     _id: string,
-    update: { src: string; type: string },
+    update: UpdateFromGalleryDto,
     options?: QueryOptions<Gallery>,
   ) {
     return this.galleryModel.findOneAndUpdate({ _id }, update, options);

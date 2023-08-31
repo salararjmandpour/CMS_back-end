@@ -5,6 +5,7 @@ import { GalleryService } from './gallery.service';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
+import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { GetGalleryDecorator } from './decorators/get-gallery.decorator';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
 import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorator';
@@ -28,10 +29,11 @@ export class GalleryController {
   // update file in gallery
   @UpdateInGalleryDecorator()
   updateInGallery(
-    @UploadedFile() file: Express.Multer.File,
+    @Body() body: UpdateFromGalleryDto,
     @Param('id', ParseObjectIdPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.galleryService.updateInGallery(id, file);
+    return this.galleryService.updateInGallery(id, body, file);
   }
 
   // delete file in gallery

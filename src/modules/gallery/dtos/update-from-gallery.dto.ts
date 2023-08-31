@@ -1,30 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddToGalleryDto {
+export class UpdateFromGalleryDto {
   @ApiProperty({
     type: 'string',
     format: 'binary',
-    required: true,
   })
   file: any;
 
   @ApiProperty({
     type: String,
-    required: true,
     default: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
   })
   alternativeText: string;
 
   @ApiProperty({
     type: String,
-    required: true,
     default: 'مانيتور جی پلاس',
   })
   title: string;
 
   @ApiProperty({
     type: String,
-    required: true,
     default: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
   })
   description: string;

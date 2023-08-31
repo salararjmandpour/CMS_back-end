@@ -14,6 +14,7 @@ import { getTypeFile } from 'src/core/utils/gallery-type-file';
 import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 
 @Injectable()
 export class GalleryService {
@@ -67,43 +68,51 @@ export class GalleryService {
 
   async updateInGallery(
     id: string,
+    body: UpdateFromGalleryDto,
     file: Express.Multer.File,
   ): Promise<ResponseFormat<any>> {
-    // check exist file
-    if (!file) {
-      throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
-    }
+    try {
+      // check exist file
+      if (!file) {
+        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
+      }
 
-    // check exist file in galley
-    const existFile = await this.galleryRepositoy.findById(id);
-    if (!existFile) {
-      throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
-    }
+      // check exist file in galley
+      const existFile = await this.galleryRepositoy.findById(id);
+      if (!existFile) {
+        throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
+      }
 
-    // delete prev file
-    this.fileService.deleteFileByPath(existFile.path);
+      // delete prev file
+      this.fileService.deleteFileByPath(existFile.path);
 
-    const path = file?.path?.replace(/\\/g, '/');
-    const type = getTypeFile(file.mimetype);
-
-    const updatedResult = await this.galleryRepositoy.update(
-      id,
-      { src: path, type },
-      { new: true },
-    );
-    if (!updatedResult) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_UPDATE_FILE_IN_GALLERY,
+      const path = file?.path?.replace(/\\/g, '/');
+      const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+      const updatedResult = await this.galleryRepositoy.update(
+        id,
+        { ...body, path, type },
+        { new: true },
       );
-    }
+      if (!updatedResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_UPDATE_FILE_IN_GALLERY,
+        );
+      }
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: ResponseMessages.FILE_UPDATED_IN_GALLERY,
-      data: {
-        file: updatedResult,
-      },
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        message: ResponseMessages.FILE_UPDATED_IN_GALLERY,
+        data: {
+          file: updatedResult,
+        },
+      };
+    } catch (error) {
+      if (file) {
+        const path = file?.path?.replace(/\\/g, '/');
+        this.fileService.deleteFileByPath(path);
+      }
+      throw new CustomException(error.message, error.status);
+    }
   }
 
   async deleteFileInGallery(id: string): Promise<ResponseFormat<any>> {

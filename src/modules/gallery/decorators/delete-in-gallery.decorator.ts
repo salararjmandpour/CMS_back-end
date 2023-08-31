@@ -1,4 +1,3 @@
-import { ApiConsumes } from '@nestjs/swagger';
 import { Delete, UseGuards, applyDecorators } from '@nestjs/common';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
