@@ -12,7 +12,7 @@ import { CheckPermission } from 'src/core/guards/check-permission.guard';
 
 import { ApiFile } from 'src/core/decorators/api-file.decorator';
 
-import { imageFilter } from 'src/core/utils/image-filter.util';
+import { imageFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 
 export const UploadAvatarDecorator = () => {

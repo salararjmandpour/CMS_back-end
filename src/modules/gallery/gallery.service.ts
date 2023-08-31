@@ -11,6 +11,7 @@ import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { getTypeFile } from 'src/core/utils/gallery-type-file';
+import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
@@ -25,35 +26,43 @@ export class GalleryService {
     file: any,
     body: AddToGalleryDto,
   ): Promise<ResponseFormat<any>> {
-    // check exist file
-    if (!file) {
-      throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
-    }
-    const path = file?.path?.replace(/\\/g, '/');
-    const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
-    const dimensions = type === 'image' ? imageSize(path) : undefined;
-    const size = file.size;
+    try {
+      // check exist file
+      if (!file) {
+        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
+      }
+      const path = file?.path?.replace(/\\/g, '/');
+      const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+      const dimensions = type === 'image' ? imageSize(path) : undefined;
+      const size = file.size;
 
-    const createdResult = await this.galleryRepositoy.create({
-      ...body,
-      path,
-      type,
-      size,
-      dimensions,
-    });
-    if (!createdResult) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_ADD_TO_GALLERY,
-      );
-    }
+      const createdResult = await this.galleryRepositoy.create({
+        ...body,
+        path,
+        type,
+        size,
+        dimensions,
+      });
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_ADD_TO_GALLERY,
+        );
+      }
 
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: ResponseMessages.FILE_ADDED_TO_GALLERY,
-      data: {
-        file: 'createdResult',
-      },
-    };
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: ResponseMessages.FILE_ADDED_TO_GALLERY,
+        data: {
+          file: createdResult,
+        },
+      };
+    } catch (error) {
+      if (file) {
+        const path = file?.path?.replace(/\\/g, '/');
+        this.fileService.deleteFileByPath(path);
+      }
+      throw new CustomException(error.message, error.status);
+    }
   }
 
   async updateInGallery(

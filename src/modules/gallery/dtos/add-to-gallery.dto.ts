@@ -29,4 +29,7 @@ export class AddToGalleryDto {
     width: number;
     height: number;
   };
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: any;
 }

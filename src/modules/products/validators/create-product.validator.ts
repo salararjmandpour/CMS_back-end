@@ -1,17 +1,25 @@
 import * as Joi from 'joi';
-import { objectIdPattern } from 'src/core/constants/pattern.constant';
+import {
+  objectIdPattern,
+  discountDatePattern,
+  productUnitPattern,
+  productWeightUnit,
+  productDimensionsUnit,
+} from 'src/core/constants/pattern.constant';
 
 const SizeValidator = Joi.object({
-  length: Joi.number().required(),
-  height: Joi.number().required(),
-  width: Joi.number().required(),
-  weight: Joi.number().required(),
+  length: Joi.number().min(0).required(),
+  height: Joi.number().min(0).required(),
+  width: Joi.number().min(0).required(),
+  weight: Joi.number().min(0).required(),
   weightUnit: Joi.string()
-    .pattern(/(g|kg)/i)
-    .required(),
+    .pattern(productWeightUnit)
+    .required()
+    .error(new Error('Invalid weightUnit')),
   dimensionsUnit: Joi.string()
-    .pattern(/(cm|m)/i)
-    .required(),
+    .pattern(productDimensionsUnit)
+    .required()
+    .error(new Error('Invalid dimensionsUnit')),
 });
 
 const SpecificationsValidator = Joi.object({
@@ -20,19 +28,47 @@ const SpecificationsValidator = Joi.object({
 });
 
 export const createProductValidator = Joi.object({
-  productId: Joi.string().required(),
-  slug: Joi.string().required(),
   title: Joi.string().required(),
   description: Joi.string().required(),
   shortDescription: Joi.string().required(),
-  price: Joi.number().required(),
-  discount: Joi.number().required(),
-  count: Joi.number().required(),
-  size: SizeValidator,
-  inStock: Joi.boolean().required(),
-  category: Joi.string()
-    .pattern(objectIdPattern)
+  draft: Joi.boolean(),
+  category: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
     .required()
-    .error(new Error('category should be objectId')),
+    .error(new Error('category should be array from objectId')),
+
+  // price and discount
+  regularPrice: Joi.number().required(),
+  discountedPrice: Joi.number(),
+  discountDate: Joi.string()
+    .pattern(discountDatePattern)
+    .error(new Error('Invalid discountDate')),
+
+  // warehouse info
+  productId: Joi.string().required(),
+  inStock: Joi.boolean().required(),
+  shortageInStock: Joi.number().min(0).required(),
+  count: Joi.number().min(0).required(),
+  warehouseName: Joi.string().required(),
+  productUnit: Joi.string()
+    .pattern(productUnitPattern)
+    .required()
+    .error(new Error('Invalid productUnit')),
+  warehouseShelfId: Joi.string().required(),
+
+  // linked products
+  encourageMorePurchases: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
+    .required()
+    .error(new Error('encourageMorePurchases should be array from objectId')),
+  similarProducts: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
+    .required()
+    .error(new Error('similarProducts should be array from objectId')),
+
+  // specifications product
   specifications: Joi.array().items(SpecificationsValidator),
+
+  //transportation
+  size: SizeValidator,
 });

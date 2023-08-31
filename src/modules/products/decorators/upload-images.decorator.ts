@@ -9,7 +9,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { ApiUploadImages } from '../docs/upload-images.doc';
-import { imageFilter } from 'src/core/utils/image-filter.util';
+import { imageFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFiles } from 'src/core/decorators/api-file.decorator';
 

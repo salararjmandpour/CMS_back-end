@@ -7,3 +7,7 @@ export const rolesPattern = /(SUPERADMIN|ADMIN|SUPPLIER|USER)/i;
 export const objectIdPattern = /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i;
 export const postalCodePattern = /^\d{10}$/;
 export const paymentStatusPattern = /(paid|unpaid)/i;
+export const discountDatePattern = /^(14\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
+export const productUnitPattern = /(number|package|carton|meter|centimeter|kilogram|gram)/i;
+export const productWeightUnit =  /(gram|kilogram)/i;
+export const productDimensionsUnit =  /(centimeter|meter)/i;

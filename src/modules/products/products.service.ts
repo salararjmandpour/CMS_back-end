@@ -23,22 +23,22 @@ export class ProductsService {
 
   async create(body: CreateProductDto): Promise<ResponseFormat<any>> {
     // prevent duplicate productId and slug
-    const [duplicateProductId, duplicateSlug] = await Promise.all([
+    const [duplicateProductId] = await Promise.all([
       this.productRepository.findOne({
         productId: body.productId,
       }),
-      this.productRepository.findOne({
-        slug: body.slug,
-      }),
+      // this.productRepository.findOne({
+      //   slug: body.slug,
+      // }),
     ]);
 
     if (duplicateProductId) {
       throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
     }
 
-    if (duplicateSlug) {
-      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
-    }
+    // if (duplicateSlug) {
+    //   throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
+    // }
 
     // save product in database
     const createdResult = await this.productRepository.create(body);

@@ -7,7 +7,14 @@ import {
   alphabetLowerCaseLetters,
 } from 'src/core/utils/nanoid.util';
 
-const UPLOADS_DIR = './uploads';
+const createRoute = (dirName: string) => {
+  const date = new Date();
+  const year = date.getFullYear().toString();
+  const month = date.getMonth().toString();
+  const day = date.getDate().toString();
+  const directory = path.join('uploads', dirName, year, month, day);
+  return directory;
+};
 
 async function ensureDirectoryExists(directory: string) {
   try {
@@ -21,10 +28,12 @@ async function ensureDirectoryExists(directory: string) {
   }
 }
 
-export function fileStorage(dirName: string) {
+export function fileStorage(dirName: string, directoryFormat?: 'date') {
   return diskStorage({
     destination: async function (req, file, cb) {
-      const uploadDir = path.join(UPLOADS_DIR, dirName);
+      const uploadDir = directoryFormat
+        ? createRoute(dirName)
+        : path.join('uploads', dirName);
       try {
         await ensureDirectoryExists(uploadDir);
       } catch (error) {

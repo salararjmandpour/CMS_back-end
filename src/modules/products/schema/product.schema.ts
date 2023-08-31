@@ -11,8 +11,28 @@ interface ISize {
   height: number;
   width: number;
   weight: number;
-  weightUnit: 'g' | 'kg';
-  dimensionsUnit: 'cm' | 'm';
+  weightUnit: WeightUnitEnum.GRAM | WeightUnitEnum.KILOGRAM;
+  dimensionsUnit: DimensionsUnitEnum.CENTIMETER | DimensionsUnitEnum.METER;
+}
+
+enum WeightUnitEnum {
+  GRAM = 'gram',
+  KILOGRAM = 'kilogram',
+}
+
+enum DimensionsUnitEnum {
+  CENTIMETER = 'centimeter',
+  METER = 'meter',
+}
+
+export enum ProductUnitEnum {
+  NUMBER = 'number',
+  PACKAGE = 'package',
+  CARTON = 'carton',
+  METER = 'meter',
+  CENTIMETER = 'centimeter',
+  KILOGRAM = 'kilogram',
+  GRAM = 'gram',
 }
 
 // Specifications Schema
@@ -69,16 +89,16 @@ class Size {
   @Prop({
     type: String,
     required: true,
-    default: 'g',
+    enum: [WeightUnitEnum.GRAM, WeightUnitEnum.KILOGRAM],
   })
-  weightUnit: 'g' | 'kg'; // g or kg
+  weightUnit: WeightUnitEnum;
 
   @Prop({
     type: String,
     required: true,
-    default: 'cm',
+    enum: [DimensionsUnitEnum.CENTIMETER, DimensionsUnitEnum.METER],
   })
-  dimensionsUnit: 'cm' | 'm'; // cm or m
+  dimensionsUnit: DimensionsUnitEnum;
 }
 
 const SizeSchema = SchemaFactory.createForClass(Size);
@@ -90,13 +110,6 @@ const SpecificationsSchema = SchemaFactory.createForClass(Specifications);
   versionKey: false,
 })
 export class Product {
-  @Prop({
-    type: String,
-    required: true,
-    unique: true,
-  })
-  productId: string;
-
   @Prop({
     type: String,
     required: true,
@@ -115,29 +128,10 @@ export class Product {
   shortDescription: string;
 
   @Prop({
-    type: String,
-    required: true,
-    unique: true,
+    type: Boolean,
+    default: false,
   })
-  slug: string;
-
-  @Prop({
-    type: Number,
-    required: true,
-  })
-  price: number;
-
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  discount: string;
-
-  @Prop({
-    type: Number,
-    required: true,
-  })
-  count: string;
+  draft: boolean;
 
   @Prop({
     type: Types.ObjectId,
@@ -146,39 +140,131 @@ export class Product {
   supplier: string;
 
   @Prop({
-    type: [Types.ObjectId],
+    type: Array<Types.ObjectId>,
     default: [],
   })
   comments: string[];
 
+  @Prop({
+    type: Array<String>,
+    default: [],
+  })
+  images: [];
+
+  @Prop({
+    type: Array<Types.ObjectId>,
+    required: true,
+  })
+  category: string[];
+
+  // *** Price and Discount ***
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  regularPrice: number;
+
+  @Prop({
+    type: Number,
+    default: null,
+  })
+  discountedPrice: number;
+
+  @Prop({
+    type: Number,
+    default: null,
+    min: 0,
+    max: 100,
+  })
+  discount: number;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  discountDate: string;
+
+  // *** Warehouse info ***
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
+  productId: string;
+
+  @Prop({
+    type: Boolean,
+    default: true,
+  })
+  inStock: boolean;
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  shortageInStock: number;
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  count: number;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  warehouseName: string;
+
+  @Prop({
+    type: String,
+    required: true,
+    enum: [
+      ProductUnitEnum.NUMBER,
+      ProductUnitEnum.PACKAGE,
+      ProductUnitEnum.CARTON,
+      ProductUnitEnum.METER,
+      ProductUnitEnum.CENTIMETER,
+      ProductUnitEnum.KILOGRAM,
+      ProductUnitEnum.GRAM,
+    ],
+  })
+  productUnit: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  warehouseShelfId: string;
+
+  // *** Linked products ***
+  @Prop({
+    type: Array<Types.ObjectId>,
+    default: [],
+  })
+  encourageMorePurchases: string[];
+
+  @Prop({
+    type: Array<Types.ObjectId>,
+    default: [],
+  })
+  similarProducts: string[];
+
+  // *** specifications product ***
+  @Prop({
+    type: [{ type: SpecificationsSchema }],
+    default: [],
+  })
+  specifications: ISpecifications[];
+
+  // *** Transportation ***
   @Prop({
     type: SizeSchema,
     required: true,
   })
   size: ISize;
 
-  @Prop({
-    type: [String],
-    default: [],
-  })
-  images: [];
-
-  @Prop({
-    type: Boolean,
-  })
-  inStock: string;
-
-  @Prop({
-    type: Types.ObjectId,
-    required: true,
-  })
-  category: string;
-
-  @Prop({
-    type: [{ type: SpecificationsSchema }],
-    default: [],
-  })
-  specifications: ISpecifications[];
+  // *** SMS ***
 }
 
 export type ProductDocument = Product & Document;

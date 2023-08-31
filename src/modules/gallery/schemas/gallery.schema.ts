@@ -31,10 +31,10 @@ export class Gallery {
   size: number;
 
   @Prop({
-    type: String,
+    type: Object,
     default: null,
   })
-  dimensions: Object;
+  dimensions: object;
 
   @Prop({
     type: String,

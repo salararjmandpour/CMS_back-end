@@ -32,7 +32,15 @@ export class ProductsController {
   @CreateProductDecorator()
   createProduct(@Body() body: CreateProductDto, @Req() req: Request) {
     body.supplier = req?.user?._id;
-    return this.productService.create(body);
+    // return this.productService.create(body);
+
+    return {
+      statusCode: 200,
+      message: 'PRODUCT_CREATED_SUCCESS',
+      data: {
+        product: 'product data test',
+      },
+    };
   }
 
   // get one product by ID

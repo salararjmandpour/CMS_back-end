@@ -8,7 +8,7 @@ import { ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { fileFilter } from 'src/core/utils/image-filter.util';
+import { fileFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFile } from 'src/core/decorators/api-file.decorator';
 import { ApiUpdateInGallery } from '../docs/update-in-gallery.doc';
