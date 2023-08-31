@@ -32,7 +32,11 @@ export class ProductsRepository {
     return this.productModel.findById(id, projection);
   }
 
-  getProductList(page: number = 1, limit: number = 10, search?: string) {
+  getProductList(
+    page: number = 1,
+    limit: number = 10,
+    search?: string | undefined,
+  ) {
     return this.productModel
       .find(search ? { $text: { $search: search } } : {})
       .sort({ createdAt: -1 })

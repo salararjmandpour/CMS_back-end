@@ -21,11 +21,22 @@ export const ApiUpdateInGallery = () => {
           message: 'FILE_UPDATED_IN_GALLERY',
           data: {
             file: {
-              src: 'uploads/gallery/xszd4az2tvs6l2db.mp3',
-              type: 'audio',
-              _id: '64e766f4e6edc2b07f650afe',
-              createdAt: '2023-08-24T14:19:32.838Z',
-              updatedAt: '2023-08-24T14:19:32.838Z',
+              path: 'uploads/gallery/2023/7/31/n8aq8j9unlqlaya2.jpg',
+              type: 'image',
+              size: 115183,
+              dimensions: {
+                height: 2880,
+                width: 5120,
+                type: 'jpg',
+              },
+              alternativeText:
+                'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
+              title: 'مانيتور جی پلاس',
+              description:
+                'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
+              _id: '64f07cf0aeedb01979b21bc4',
+              createdAt: '2023-08-31T11:43:44.599Z',
+              updatedAt: '2023-08-31T11:43:44.599Z',
             },
           },
         },

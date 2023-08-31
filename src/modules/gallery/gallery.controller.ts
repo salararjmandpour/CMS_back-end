@@ -1,5 +1,12 @@
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Param, UploadedFile } from '@nestjs/common';
+import {
+  Body,
+  Query,
+  Param,
+  Controller,
+  UploadedFile,
+  ValidationPipe,
+} from '@nestjs/common';
 
 import { GalleryService } from './gallery.service';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
@@ -10,6 +17,7 @@ import { GetGalleryDecorator } from './decorators/get-gallery.decorator';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
 import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorator';
 import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
+import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -44,7 +52,17 @@ export class GalleryController {
 
   // delete file in gallery
   @GetGalleryDecorator()
-  getGallery() {
-    return this.galleryService.getGallery();
+  getGallery(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: GetGalleryQueryDto,
+  ) {
+    const { search, date, type } = query;
+    return this.galleryService.getGallery(search, date, type);
   }
 }

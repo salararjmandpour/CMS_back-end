@@ -58,4 +58,4 @@ export class Gallery {
 export type GalleryDocument = Gallery & Document;
 export const GallerySchema = SchemaFactory.createForClass(Gallery);
 
-GallerySchema.index({ title: 'text', description: 'text' });
+GallerySchema.index({ title: 'text' });

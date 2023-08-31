@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import imageSize from 'image-size';
+import * as moment from 'moment-timezone';
 
 import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
@@ -139,9 +140,27 @@ export class GalleryService {
     };
   }
 
-  async getGallery(): Promise<ResponseFormat<any>> {
-    // check exist file in galley
-    const gallery = await this.galleryRepositoy.findAll();
+  async getGallery(
+    search?: string,
+    date?: string | undefined,
+    type?: 'image' | 'audio' | 'video' | 'all',
+  ): Promise<ResponseFormat<any>> {
+    let query: any = {};
+    if (type && type !== 'all') query.type = type;
+    if (search) query['$text'] = { $search: search };
+    if (date) {
+      moment();
+    }
+
+    var date = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+
+    let localTime = moment.utc(date).toDate();
+
+    let local = moment(localTime).format('YYYY-MM-DD HH:mm:ss');
+
+    // console.log({ local, localTime, date });
+
+    const gallery = await this.galleryRepositoy.findAll(query);
     if (!gallery) {
       throw new NotFoundException(ResponseMessages.FAILED_GET_GALLERY);
     }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryOptions } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
+
 import { Gallery } from './schemas/gallery.schema';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
@@ -27,8 +28,8 @@ export class GalleryRepository {
     return this.galleryModel.findById(id);
   }
 
-  findAll() {
-    return this.galleryModel.find();
+  findAll(filter?: FilterQuery<Gallery>, projection?: ProjectionType<Gallery>) {
+    return this.galleryModel.find(filter, projection);
   }
 
   deleteById(_id: string, options?: QueryOptions<Gallery>) {
