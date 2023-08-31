@@ -6,6 +6,7 @@ import {
   productWeightUnit,
   productDimensionsUnit,
 } from 'src/core/constants/pattern.constant';
+import { createSeoValidator } from 'src/modules/seo/validators/create-seo-validator';
 
 const SizeValidator = Joi.object({
   length: Joi.number().min(0).required(),
@@ -71,11 +72,9 @@ export const ProductValidator = Joi.object({
 
   //transportation
   size: SizeValidator,
-});
-
-export const SEOValidator = Joi.object({});
+}).required();
 
 export const createProductValidator = Joi.object({
   product: ProductValidator,
-  seo: SEOValidator,
+  seo: createSeoValidator,
 });

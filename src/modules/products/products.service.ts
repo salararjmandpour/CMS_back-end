@@ -9,23 +9,28 @@ import {
 import { FileService } from '../file/file.service';
 import { ProductsRepository } from './products.repository';
 import { UpdateProductDto } from './dtos/update-product.dto';
-import { CreateProductDto } from './dtos/create-product.dto';
+import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
+import { calculateDiscountPercentage } from 'src/core/utils/discount-percentage.util';
+import { SeoService } from '../seo/seo.service';
+import { copyObject } from 'src/core/utils/copy-object';
+import { ProductDocument } from './schema/product.schema';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    private seoService: SeoService,
     private fileService: FileService,
     private productRepository: ProductsRepository,
   ) {}
 
-  async create(body: CreateProductDto): Promise<ResponseFormat<any>> {
+  async create(body: CreateProductWithCeoDto): Promise<ResponseFormat<any>> {
     // prevent duplicate productId and slug
     const [duplicateProductId] = await Promise.all([
       this.productRepository.findOne({
-        productId: body.productId,
+        productId: body.product.productId,
       }),
       // this.productRepository.findOne({
       //   slug: body.slug,
@@ -40,19 +45,38 @@ export class ProductsService {
     //   throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
     // }
 
+    // *** calculate discount percentage ***
+    const { regularPrice, discountedPrice, discountDate } = body.product;
+
+    if (!!discountedPrice) {
+      if (regularPrice < discountedPrice) {
+        throw new BadRequestException(
+          ResponseMessages.REGULAR_PRICE_SHOULD_BE_GREATER_THAN_DISCOUNTED_PRICE,
+        );
+      }
+      const discount = calculateDiscountPercentage(
+        regularPrice,
+        discountedPrice,
+      );
+
+      body.product.discount = discount;
+    }
+
     // save product in database
-    const createdResult = await this.productRepository.create(body);
+    const createdResult = await this.productRepository.create(body.product);
     if (!createdResult) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_CREATE_PRODUCT,
       );
     }
 
+    // save seo in database
+    const product: ProductDocument = copyObject(createdResult);
+    await this.seoService.create({ ...body.seo, product: product._id });
+
     return {
       statusCode: HttpStatus.CREATED,
-      data: {
-        product: createdResult,
-      },
+      message: ResponseMessages.PRODUCT_CREATED_SUCCESS,
     };
   }
 

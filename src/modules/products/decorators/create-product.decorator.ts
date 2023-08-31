@@ -7,7 +7,7 @@ import { ApiCreateProduct } from '../docs/create-product.doc';
 export const CreateProductDecorator = () => {
   return applyDecorators(
     UsePipes(new JoiValidatorPipe(createProductValidator)),
-    // UseGuards(AuthGuard),
+    UseGuards(AuthGuard),
     ApiCreateProduct(),
     Post(),
   );

@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -54,6 +55,8 @@ export class CreateProductDto {
     default: 250_000,
   })
   discountedPrice: number;
+
+  discount: number;
 
   @ApiProperty({
     type: String,
@@ -173,9 +176,19 @@ export class CreateProductDto {
 }
 
 export class CreateProductWithCeoDto {
-  @ValidateNested({ each: true })
+  @ApiProperty({
+    type: CreateProductDto,
+    default: CreateProductDto,
+  })
+  @ValidateNested()
   @Type(() => CreateProductDto)
   product: CreateProductDto;
-  
-  seo: {}
+
+  @ApiProperty({
+    type: CreateSeoDto,
+    default: CreateSeoDto,
+  })
+  @ValidateNested()
+  @Type(() => CreateSeoDto)
+  seo: CreateSeoDto;
 }

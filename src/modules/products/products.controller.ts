@@ -11,7 +11,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ProductsService } from './products.service';
 
-import { CreateProductDto } from './dtos/create-product.dto';
+import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
@@ -30,14 +30,9 @@ export class ProductsController {
 
   // create product
   @CreateProductDecorator()
-  createProduct(@Body() body: CreateProductDto, @Req() req: Request) {
-    body.supplier = req?.user?._id;
-    // return this.productService.create(body);
-
-    return {
-      statusCode: 200,
-      message: 'PRODUCT_CREATED_SUCCESS',
-    };
+  createProduct(@Body() body: CreateProductWithCeoDto, @Req() req: Request) {
+    body.product.supplier = req?.user?._id;
+    return this.productService.create(body);
   }
 
   // get one product by ID
