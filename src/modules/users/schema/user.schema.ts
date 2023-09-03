@@ -175,18 +175,7 @@ export type UserDocumentOptional = Partial<User & MongooseDocument>;
 export type UserDocument = User & MongooseDocument;
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre('save', async function (next) {
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});
-
 UserSchema.methods.comparePassword = function (enteredPassword: string) {
-  console.log('Inside comparePassword: ', {
-    enteredPassword,
-    password: this.password,
-  });
   return bcrypt.compareSync(enteredPassword, this.password);
 };
 
