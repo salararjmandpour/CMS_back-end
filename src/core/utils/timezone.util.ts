@@ -1,4 +1,3 @@
-import * as moment from 'moment-timezone';
 import { timezoneList } from '../constants/timezone-list.constant';
 
 export const getTimezone = (timezone: string) => {
@@ -6,5 +5,5 @@ export const getTimezone = (timezone: string) => {
 };
 
 export const setDefaultTimezone = (timezone: string) => {
-  moment.tz.setDefault(timezone);
+  return new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' });
 };

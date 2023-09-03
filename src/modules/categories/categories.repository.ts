@@ -39,7 +39,7 @@ export class CategoriesRepository {
     return this.categoryModel.find();
   }
 
-  deleteById(_id: string) {
+  deleteById(_id: string): Promise<any> {
     return this.categoryModel.deleteOne({ _id });
   }
 }

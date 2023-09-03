@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcryptjs';
+import { Document } from 'mongoose';
 import { Document as MongooseDocument, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
@@ -27,13 +28,14 @@ enum GenderEnum {
 export enum AuthProviderEnum {
   GOOGLE = 'GOOGLE',
   OTP = 'OTP',
+  LOCAL = 'LOCAL',
 }
 
 @Schema({
   timestamps: true,
   versionKey: false,
 })
-export class User {
+export class User extends Document {
   @Prop({
     type: String,
   })
@@ -61,7 +63,11 @@ export class User {
 
   @Prop({
     type: String,
-    enum: [AuthProviderEnum.GOOGLE, AuthProviderEnum.OTP],
+    enum: [
+      AuthProviderEnum.GOOGLE,
+      AuthProviderEnum.OTP,
+      AuthProviderEnum.LOCAL,
+    ],
     default: AuthProviderEnum.OTP,
   })
   authProvider: string;
@@ -162,11 +168,10 @@ export class User {
   })
   wishlist: string[];
 
-  async comparePassword(enteredPassword: string): Promise<boolean> {
-    return bcrypt.compare(enteredPassword, this.password);
-  }
+  comparePassword: Function;
 }
 
+export type UserDocumentOptional = Partial<User & MongooseDocument>;
 export type UserDocument = User & MongooseDocument;
 export const UserSchema = SchemaFactory.createForClass(User);
 
@@ -174,5 +179,22 @@ UserSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
+  next();
+});
+
+UserSchema.methods.comparePassword = function (enteredPassword: string) {
+  console.log('Inside comparePassword: ', {
+    enteredPassword,
+    password: this.password,
+  });
+  return bcrypt.compareSync(enteredPassword, this.password);
+};
+
+UserSchema.pre('save', function (next) {
+  if (!this.isModified('password') || !this.isNew) return next();
+  if (!this.password) return next();
+
+  const salt = bcrypt.genSaltSync(10);
+  this.password = bcrypt.hashSync(this.password, salt);
   next();
 });

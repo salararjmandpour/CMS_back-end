@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ProjectionType, QueryOptions, Types } from 'mongoose';
 
-import { User, UserDocument } from './schema/user.schema';
+import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
 
 export class UserRepository {
@@ -32,7 +32,7 @@ export class UserRepository {
     });
   }
 
-  create(properties: any) {
+  create(properties: UserDocumentOptional) {
     return this.userModel.create(properties);
   }
 
@@ -65,6 +65,10 @@ export class UserRepository {
       { [isEmail ? 'email' : 'mobile']: mobileOrEmail },
       { $set: fields },
     );
+  }
+
+  deleteOneById(_id: string): Promise<any> {
+    return this.userModel.deleteOne({ _id });
   }
 
   addOneToWishlist(

@@ -32,7 +32,7 @@ export class AddressesRepository {
     return this.addressModel.findOneAndUpdate({ _id }, data, options);
   }
 
-  deleteById(_id: string, options?: QueryOptions<Address>) {
+  deleteById(_id: string, options?: QueryOptions<Address>): Promise<any> {
     return this.addressModel.deleteOne({ _id }, options);
   }
 }

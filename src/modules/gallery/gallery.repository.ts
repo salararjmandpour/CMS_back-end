@@ -32,7 +32,7 @@ export class GalleryRepository {
     return this.galleryModel.find(filter, projection);
   }
 
-  deleteById(_id: string, options?: QueryOptions<Gallery>) {
+  deleteById(_id: string, options?: QueryOptions<Gallery>): Promise<any> {
     return this.galleryModel.deleteOne({ _id }, options);
   }
 }

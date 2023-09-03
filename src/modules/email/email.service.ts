@@ -26,6 +26,7 @@ export class EmailService {
         template: 'verify-email.ejs',
       });
     } catch (err) {
+      console.log(err)
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_OTP_EMAIL,
       );

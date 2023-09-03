@@ -17,6 +17,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
 import { SeoModule } from './modules/seo/seo.module';
+import { MainEmailModule } from './modules/main-email/main-email.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { SeoModule } from './modules/seo/seo.module';
     AddressesModule,
     GalleryModule,
     SeoModule,
+    MainEmailModule,
   ],
   controllers: [],
   providers: [],
