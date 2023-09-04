@@ -44,7 +44,6 @@ export class AdminAuthService {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
 
-    console.log({ user });
     // check match password
     const comparedPassword = user.comparePassword(data.password);
     if (!comparedPassword) {

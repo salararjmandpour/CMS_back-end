@@ -10,7 +10,7 @@ export class MainEmailService {
   async sendًPasswordToAdmin(email: string, password: string) {
     try {
       await this.mailerService.sendMail({
-        from: configService.get('SENDER_EMAIL'),
+        from: 'mailTest@mail.com',
         to: email,
         subject: `ارسال پسورد ورود به پنل ادمین - شرکت آرشیدا تب ترنج`,
         context: {
@@ -19,6 +19,7 @@ export class MainEmailService {
         template: 'send-password.ejs',
       });
     } catch (err) {
+      console.log(err);
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
       );
