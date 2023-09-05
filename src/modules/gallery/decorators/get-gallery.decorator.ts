@@ -16,7 +16,7 @@ export const GetGalleryDecorator = () => {
     ApiQuery({ name: 'date', required: false, type: String }),
     ApiQuery({ name: 'type', required: false, type: String, enum: TypeEnum }),
     Get(),
-    // UseGuards(AuthGuard),
+    UseGuards(AuthGuard),
     ApiGetGallery(),
   );
 };

@@ -1,25 +1,28 @@
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
+  Req,
   Body,
   Query,
   Param,
   Controller,
   UploadedFile,
   ValidationPipe,
-  Req,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { GalleryService } from './gallery.service';
-import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
+import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
+import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
+import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
+
 import { GetGalleryDecorator } from './decorators/get-gallery.decorator';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
-import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorator';
-import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
-import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
+import { DeleteOneInGalleryDecorator } from './decorators/delete-one-in-gallery.decorator';
+import { UpdateFromGalleryDecorator } from './decorators/update-in-gallery.decorator';
+import { DeleteManyInGalleryDecorator } from './decorators/delete-many-in-gallery.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -38,22 +41,27 @@ export class GalleryController {
   }
 
   // update file in gallery
-  @UpdateInGalleryDecorator()
+  @UpdateFromGalleryDecorator()
   updateInGallery(
-    @Body() body: UpdateFromGalleryDto,
     @Param('id', ParseObjectIdPipe) id: string,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() body: UpdateFromGalleryDto,
   ) {
-    return this.galleryService.updateInGallery(id, body, file);
+    return this.galleryService.updateInGallery(id, body);
   }
 
-  // delete file in gallery
-  @DeleteInGalleryDecorator()
-  deleteInGallery(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.galleryService.deleteFileInGallery(id);
+  // delete one file in gallery by ID
+  @DeleteOneInGalleryDecorator()
+  deleteOneById(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.galleryService.deleteOneFile(id);
   }
 
-  // delete file in gallery
+  // delete many files in gallery by IDs
+  @DeleteManyInGalleryDecorator()
+  deleteManyByIds(@Body() body: DeleteManyInGalleryDto) {
+    return this.galleryService.deleteManyFile(body);
+  }
+
+  // get gallery list
   @GetGalleryDecorator()
   getGallery(
     @Query(

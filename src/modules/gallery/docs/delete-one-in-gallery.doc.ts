@@ -8,26 +8,17 @@ import {
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiDeleteInGallery = () => {
+export const ApiOneDeleteInGallery = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'delete file in gallery',
-      description: 'delete file in gallery',
+      summary: 'delete one file in gallery',
+      description: 'delete one file in gallery',
     }),
     ApiOkResponse({
       schema: {
         example: {
           statusCode: 200,
           message: ResponseMessages.FILE_DELETED_IN_GALLERY,
-          data: {
-            file: {
-              src: 'uploads/gallery/xszd4az2tvs6l2db.mp3',
-              type: 'audio',
-              _id: '64e766f4e6edc2b07f650afe',
-              createdAt: '2023-08-24T14:19:32.838Z',
-              updatedAt: '2023-08-24T14:19:32.838Z',
-            },
-          },
         },
       },
     }),

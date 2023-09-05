@@ -16,6 +16,7 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { Request } from 'express';
+import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
 
 @Injectable()
 export class GalleryService {
@@ -76,53 +77,34 @@ export class GalleryService {
   async updateInGallery(
     id: string,
     body: UpdateFromGalleryDto,
-    file: Express.Multer.File,
   ): Promise<ResponseFormat<any>> {
-    try {
-      // check exist file
-      if (!file) {
-        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
-      }
-
-      // check exist file in galley
-      const existFile = await this.galleryRepositoy.findById(id);
-      if (!existFile) {
-        throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
-      }
-
-      // delete prev file
-      this.fileService.deleteFileByPath(existFile.path);
-
-      const path = file?.path?.replace(/\\/g, '/');
-      const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
-      const updatedResult = await this.galleryRepositoy.update(
-        id,
-        { ...body, path, type },
-        { new: true },
-      );
-      if (!updatedResult) {
-        throw new InternalServerErrorException(
-          ResponseMessages.FAILED_UPDATE_FILE_IN_GALLERY,
-        );
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: ResponseMessages.FILE_UPDATED_IN_GALLERY,
-        data: {
-          file: updatedResult,
-        },
-      };
-    } catch (error) {
-      if (file) {
-        const path = file?.path?.replace(/\\/g, '/');
-        this.fileService.deleteFileByPath(path);
-      }
-      throw new CustomException(error.message, error.status);
+    // check exist file in galley
+    const existFile = await this.galleryRepositoy.findById(id);
+    if (!existFile) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_FILE_IN_GALLERY);
     }
+
+    const updatedResult = await this.galleryRepositoy.update(
+      id,
+      { ...body },
+      { new: true },
+    );
+    if (!updatedResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_FILE_IN_GALLERY,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.FILE_UPDATED_IN_GALLERY,
+      data: {
+        file: updatedResult,
+      },
+    };
   }
 
-  async deleteFileInGallery(id: string): Promise<ResponseFormat<any>> {
+  async deleteOneFile(id: string): Promise<ResponseFormat<any>> {
     // check exist file in galley
     const existFile = await this.galleryRepositoy.findById(id);
     if (!existFile) {
@@ -133,7 +115,7 @@ export class GalleryService {
     this.fileService.deleteFileByPath(existFile.path);
 
     // delete file in database
-    const deleteResult = await this.galleryRepositoy.deleteById(id);
+    const deleteResult = await this.galleryRepositoy.deleteOneById(id);
     if (deleteResult.deletedCount !== 1) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_DELETE_FILE_IN_GALLERY,
@@ -143,6 +125,51 @@ export class GalleryService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.FILE_DELETED_IN_GALLERY,
+    };
+  }
+
+  async deleteManyFile(
+    body: DeleteManyInGalleryDto,
+  ): Promise<ResponseFormat<any>> {
+    // check exist files in galley
+    const nonExistentIds = [];
+    const filesPath = [];
+    for (const fileId of body.files) {
+      const file = await this.galleryRepositoy.findById(fileId);
+      if (!file) nonExistentIds.push(fileId);
+      if (file) filesPath.push(file.path);
+    }
+
+    if (nonExistentIds.length > 0) {
+      throw new NotFoundException(
+        `Files not found: ${nonExistentIds.join(', ')}`,
+      );
+    }
+
+    // delete prev files in files system
+    for (const filePath of filesPath) {
+      filePath && this.fileService.deleteFileByPath(filePath);
+    }
+
+    // delete all files in database
+    try {
+      const deleteResult = await this.galleryRepositoy.deleteManyByIds(
+        body.files,
+      );
+      if (deleteResult.deletedCount !== body.files.length) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_DELETE_FILES,
+        );
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_FILES,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.FILES_DELETED_SUCCESS,
     };
   }
 

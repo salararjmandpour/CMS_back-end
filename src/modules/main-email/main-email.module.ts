@@ -10,31 +10,20 @@ const providersAndExports = [MainEmailService];
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: (config: ConfigService) => {
-        console.log({
+      useFactory: (config: ConfigService) => ({
+        transport: {
           host: config.get<string>('EMAIL_HOST'),
           port: config.get<number>('EMAIL_PORT'),
           auth: {
             user: config.get<string>('EMAIL_USER'),
             pass: config.get<string>('EMAIL_PASS'),
           },
-          testEmailSender: config.get('SENDER_EMAIL')
-        });
-        return {
-          transport: {
-            host: config.get<string>('EMAIL_HOST'),
-            port: config.get<number>('EMAIL_PORT'),
-            auth: {
-              user: config.get<string>('EMAIL_USER'),
-              pass: config.get<string>('EMAIL_PASS'),
-            },
-          },
-          template: {
-            dir: join(resolve(), 'templates'),
-            adapter: new EjsAdapter(),
-          },
-        };
-      },
+        },
+        template: {
+          dir: join(resolve(), 'templates'),
+          adapter: new EjsAdapter(),
+        },
+      }),
       inject: [ConfigService],
     }),
   ],

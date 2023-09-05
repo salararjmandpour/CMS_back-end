@@ -1,31 +1,11 @@
-import {
-  Patch,
-  UseGuards,
-  UseInterceptors,
-  applyDecorators,
-} from '@nestjs/common';
-import { ApiConsumes } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
-
+import { Patch, UseGuards, applyDecorators } from '@nestjs/common';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { fileFilter } from 'src/core/utils/file-filter.util';
-import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiUpdateInGallery } from '../docs/update-in-gallery.doc';
 
-export const UpdateInGalleryDecorator = () => {
+export const UpdateFromGalleryDecorator = () => {
   return applyDecorators(
     Patch(':id'),
-    // UseGuards(AuthGuard),
-    ApiConsumes('multipart/form-data'),
+    UseGuards(AuthGuard),
     ApiUpdateInGallery(),
-    UseInterceptors(
-      FileInterceptor('file', {
-        limits: {
-          fileSize: 1024 * 1024 * 10,
-        },
-        storage: fileStorage('gallery', 'date'),
-        fileFilter: fileFilter,
-      }),
-    ),
   );
 };

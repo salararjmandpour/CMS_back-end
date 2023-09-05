@@ -5,6 +5,7 @@ import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Gallery } from './schemas/gallery.schema';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
+import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
 
 @Injectable()
 export class GalleryRepository {
@@ -32,7 +33,14 @@ export class GalleryRepository {
     return this.galleryModel.find(filter, projection);
   }
 
-  deleteById(_id: string, options?: QueryOptions<Gallery>): Promise<any> {
+  deleteOneById(_id: string, options?: QueryOptions<Gallery>): Promise<any> {
     return this.galleryModel.deleteOne({ _id }, options);
+  }
+
+  deleteManyByIds(
+    files: string[],
+    options?: QueryOptions<Gallery>,
+  ): Promise<any> {
+    return this.galleryModel.deleteMany({ _id: { $in: files } }, options);
   }
 }
