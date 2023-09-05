@@ -11,7 +11,7 @@ export class UpdateFromGalleryDto {
     type: String,
     default: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
   })
-  alternativeText: string;
+  alt: string;
 
   @ApiProperty({
     type: String,

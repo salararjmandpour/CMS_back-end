@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import imageSize from 'image-size';
-import * as moment from 'moment-timezone';
 
 import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
@@ -16,6 +15,7 @@ import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class GalleryService {
@@ -25,8 +25,9 @@ export class GalleryService {
   ) {}
 
   async addToGaller(
-    file: any,
+    file: Express.Multer.File,
     body: AddToGalleryDto,
+    req: Request,
   ): Promise<ResponseFormat<any>> {
     try {
       // check exist file
@@ -37,6 +38,7 @@ export class GalleryService {
       const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
       const dimensions = type === 'image' ? imageSize(path) : undefined;
       const size = file.size;
+      const userId = req.user?._id;
 
       const createdResult = await this.galleryRepositoy.create({
         ...body,
@@ -44,6 +46,10 @@ export class GalleryService {
         type,
         size,
         dimensions,
+        filename: file.filename,
+        mimetype: file.mimetype,
+        uploadedBy: userId,
+        uploadedIn: userId,
       });
       if (!createdResult) {
         throw new InternalServerErrorException(

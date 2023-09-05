@@ -29,8 +29,7 @@ export const ApiUpdateInGallery = () => {
                 width: 5120,
                 type: 'jpg',
               },
-              alternativeText:
-                'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
+              alt: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
               title: 'مانيتور جی پلاس',
               description:
                 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',

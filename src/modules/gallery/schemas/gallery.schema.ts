@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
 export enum TypeEnum {
   IMAGE = 'image',
@@ -25,6 +26,18 @@ export class Gallery {
   type: TypeEnum;
 
   @Prop({
+    type: String,
+    required: true,
+  })
+  filename: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  mimetype: string;
+
+  @Prop({
     type: Number,
     required: true,
   })
@@ -40,7 +53,7 @@ export class Gallery {
     type: String,
     required: true,
   })
-  alternativeText: string;
+  alt: string;
 
   @Prop({
     type: String,
@@ -53,6 +66,18 @@ export class Gallery {
     required: true,
   })
   description: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+  })
+  uploadedBy: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+  })
+  uploadedIn: string;
 }
 
 export type GalleryDocument = Gallery & Document;

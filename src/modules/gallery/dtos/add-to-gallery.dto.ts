@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class AddToGalleryDto {
   @ApiProperty({
@@ -10,30 +11,37 @@ export class AddToGalleryDto {
 
   @ApiProperty({
     type: String,
-    required: true,
-    default: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
+    required: false,
   })
-  alternativeText: string;
+  @IsString()
+  @IsNotEmpty()
+  alt: string;
 
   @ApiProperty({
     type: String,
-    required: true,
-    default: 'مانيتور جی پلاس',
+    required: false,
   })
+  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty({
     type: String,
-    required: true,
-    default: 'مانيتور مخصوص بازی جی پلاس مدل GGM-L328QN سايز 32 اينچ',
+    required: false,
   })
+  @IsString()
+  @IsNotEmpty()
   description: string;
 
   path: string;
   type: 'image' | 'video' | 'audio';
+  filename: string;
+  mimetype: string;
   size: number;
   dimensions: {
     width: number;
     height: number;
   };
+  uploadedBy: string;
+  uploadedIn: string;
 }

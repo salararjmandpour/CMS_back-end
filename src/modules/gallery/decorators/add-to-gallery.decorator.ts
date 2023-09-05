@@ -1,8 +1,8 @@
 import {
   Post,
   UseGuards,
-  UseInterceptors,
   applyDecorators,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,7 +15,7 @@ import { fileStorage } from 'src/core/utils/upload-storage.util';
 export const AddToGalleryDecorator = () => {
   return applyDecorators(
     Post(),
-    // UseGuards(AuthGuard),
+    UseGuards(AuthGuard),
     ApiConsumes('multipart/form-data'),
     ApiAddToGallery(),
     UseInterceptors(

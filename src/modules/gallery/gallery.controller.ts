@@ -6,7 +6,9 @@ import {
   Controller,
   UploadedFile,
   ValidationPipe,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { GalleryService } from './gallery.service';
 import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
@@ -19,7 +21,7 @@ import { DeleteInGalleryDecorator } from './decorators/delete-in-gallery.decorat
 import { UpdateInGalleryDecorator } from './decorators/update-in-gallery.decorator';
 import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 
-// @ApiBearerAuth()
+@ApiBearerAuth()
 @ApiTags('Gallery')
 @Controller('gallery')
 export class GalleryController {
@@ -28,10 +30,11 @@ export class GalleryController {
   // add file to gallery
   @AddToGalleryDecorator()
   addToGallery(
+    @Req() req: Request,
     @Body() body: AddToGalleryDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.galleryService.addToGaller(file, body);
+    return this.galleryService.addToGaller(file, body, req);
   }
 
   // update file in gallery
