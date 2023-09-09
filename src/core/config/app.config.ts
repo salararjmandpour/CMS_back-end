@@ -27,7 +27,7 @@ export interface Configs {
   GOOGLE_OAUTH_CLIENT_SECRET: string;
   GOOGLE_OAUTH_REDIRECT_URL: string;
 
-  ENCRYPTION_SECRET_KEY: string;
+  CRYPTO_SECRET_KEY: string;
 }
 
 export default (): Configs => ({
@@ -57,7 +57,7 @@ export default (): Configs => ({
   GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
   GOOGLE_OAUTH_REDIRECT_URL: process.env.GOOGLE_OAUTH_REDIRECT_URL,
 
-  ENCRYPTION_SECRET_KEY: process.env.ENCRYPTION_SECRET_KEY,
+  CRYPTO_SECRET_KEY: process.env.CRYPTO_SECRET_KEY,
 });
 
 export const configService: ConfigService<Configs> =

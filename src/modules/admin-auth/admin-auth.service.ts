@@ -8,29 +8,33 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as crypto from 'crypto-js';
+import * as cryptoJs from 'crypto-js';
 
 import { JwtService } from '../jwt/jwt.service';
+import { MainEmailService } from '../main-email/main-email.service';
 import { configService } from 'src/core/config/app.config';
 import { UserRepository } from '../users/users.repository';
+
 import {
   RolesEnum,
   UserDocument,
   AuthProviderEnum,
 } from '../users/schema/user.schema';
 
-import { LoginAdminDto } from './dtos/login-admin.dto';
-import { SignupAdminDto } from './dtos/signup-admin.dto';
-import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import {
   nanoid,
   alphabetNumber,
   alphabetLetters,
   alphabetLowerCaseLetters,
 } from 'src/core/utils/nanoid.util';
-import { MainEmailService } from '../main-email/main-email.service';
+import * as crypto from 'src/core/utils/crypto.util';
 import { CustomException } from 'src/core/utils/custom-exception.util';
+
+import { ResponseFormat } from 'src/core/interfaces/response.interface';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+
+import { LoginAdminDto } from './dtos/login-admin.dto';
+import { SignupAdminDto } from './dtos/signup-admin.dto';
 import { PostResetPasswordDto } from './dtos/forgot-password.dto';
 
 @Injectable()
@@ -53,7 +57,7 @@ export class AdminAuthService {
     const comparedPassword = user.comparePassword(data.password);
     if (!comparedPassword) {
       throw new UnauthorizedException(
-        ResponseMessages.INVALID_EMAIL_OR_USERNAME,
+        ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
       );
     }
 
@@ -71,12 +75,15 @@ export class AdminAuthService {
       configService.get('REFRESH_TOKEN_EXPIRES'),
     );
 
+    // encrypt access token and refresh token
+    const encryptedData = crypto.encrypt(
+      JSON.stringify({ accessToken, refreshToken }),
+      configService.get('CRYPTO_SECRET_KEY'),
+    );
+
     return {
       statusCode: HttpStatus.CREATED,
-      data: {
-        accessToken,
-        refreshToken,
-      },
+      encryptedData,
     };
   }
 
@@ -133,16 +140,11 @@ export class AdminAuthService {
     // generate a unique password reset token
     const token = nanoid(alphabetLowerCaseLetters + alphabetNumber, 60);
 
-    // generate iv for encrypt forgot password token
-    const randomBytes = crypto.lib.WordArray.random(20);
-    const iv = crypto.enc.Hex.stringify(randomBytes);
-
     // encrypted forgot password token
-    const encryptedToken: string = crypto.AES.encrypt(
+    const encryptedToken: string = crypto.encrypt(
       token,
-      configService.get('ENCRYPTION_SECRET_KEY'),
-      { iv: crypto.enc.Utf8.parse(iv) },
-    ).toString();
+      configService.get('CRYPTO_SECRET_KEY'),
+    );
 
     // check exist user by email
     const user = await this.userRepository.findByEmail(email);
@@ -154,7 +156,7 @@ export class AdminAuthService {
     const resetPasswordExpires = Date.now() + 3600000;
 
     const updatedResult = await this.userRepository.updateById(user._id, {
-      resetPasswordToken: encryptedToken,
+      resetPasswordToken: token,
       resetPasswordExpires,
     });
     if (updatedResult.modifiedCount !== 1) {
@@ -163,7 +165,9 @@ export class AdminAuthService {
       );
     }
 
-    const link = `${configService.get('HOST')}/v1/admin-auth/fogor-`;
+    const link = `${configService.get(
+      'HOST',
+    )}/v1/admin-auth/reset-password?token=${token}`;
 
     await this.mainEmailService.sendًForgotPassword(email, link);
 
@@ -175,21 +179,21 @@ export class AdminAuthService {
 
   // render reset password form
   async getResetPassword(res: Response, token: string) {
-    res.render('auth/new-password', { token });
+    res.render('new-password.ejs', { token });
   }
 
   // render reset password form
   async postResetPassword(body: PostResetPasswordDto) {
     // decrypt the token
-    const decryptedBytes = crypto.AES.decrypt(
-      body.token,
-      configService.get('ENCRYPTION_SECRET_KEY'),
-      { iv: crypto.enc.Hex.parse('5s12fdsdf') },
-    );
-    const decryptedToken = decryptedBytes.toString(crypto.enc.Utf8);
+    const decryptedBytes = crypto.decrypt(
+      body.encryptedData,
+      configService.get('CRYPTO_SECRET_KEY'),
+    ) as any;
+
+    const data: any = JSON.parse(decryptedBytes);
 
     const user = await this.userRepository.findOne({
-      resetPasswordToken: decryptedToken,
+      resetPasswordToken: data.token,
       resetPasswordExpires: { $gt: Date.now() },
     });
     if (!user) {
@@ -197,7 +201,7 @@ export class AdminAuthService {
     }
 
     await this.userRepository.updateById(user._id, {
-      password: body.password,
+      password: decryptedBytes.password,
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });

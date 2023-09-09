@@ -13,11 +13,5 @@ export class PostResetPasswordDto {
     type: String,
     example: '',
   })
-  password: string;
-
-  @ApiProperty({
-    type: String,
-    example: '',
-  })
-  token: string;
+  encryptedData: string;
 }

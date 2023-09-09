@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { bold } from 'chalk';
 import * as moment from 'moment-timezone';
 
@@ -32,6 +33,9 @@ async function bootstrap() {
   app.enableCors(corsOptions);
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('v1');
+  app.useStaticAssets(path.join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(path.join(__dirname, '..', 'templates'));
+  app.setViewEngine('ejs');
 
   SwaggerConfig(app);
 

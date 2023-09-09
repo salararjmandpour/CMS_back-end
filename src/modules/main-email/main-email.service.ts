@@ -24,7 +24,7 @@ export class MainEmailService {
       );
     }
   }
-  
+
   async sendًForgotPassword(email: string, link: string) {
     try {
       await this.mailerService.sendMail({
@@ -34,7 +34,7 @@ export class MainEmailService {
         context: {
           link,
         },
-        template: 'send-password.ejs',
+        template: 'reset-password.ejs',
       });
     } catch (err) {
       throw new InternalServerErrorException(

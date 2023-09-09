@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Query, Res } from '@nestjs/common';
 
@@ -13,8 +14,6 @@ import {
   ForgotPasswordDto,
   PostResetPasswordDto,
 } from './dtos/forgot-password.dto';
-import { GetResetPasswordDecorator } from './decorators/get-reset-password.decorator';
-import { Response } from 'express';
 import { PostResetPasswordDecorator } from './decorators/post-reset-password.decorator';
 
 @ApiTags('Admin Auth')
@@ -37,8 +36,10 @@ export class AdminAuthController {
     return this.adminAuthService.forgotPassword(body.email);
   }
 
-  @GetResetPasswordDecorator()
-  getResetPassword(@Res() res: Response, @Query('token') token: string) {
+  // @GetResetPasswordDecorator()
+
+  @Get('reset-password')
+  getResetPassword(@Query('token') token: string, @Res() res: Response) {
     return this.adminAuthService.getResetPassword(res, token);
   }
 

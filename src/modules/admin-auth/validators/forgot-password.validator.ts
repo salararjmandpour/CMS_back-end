@@ -5,6 +5,5 @@ export const forgotPasswordValidator = Joi.object({
 });
 
 export const postResetPasswordValidator = Joi.object({
-  password: Joi.string().min(8).required(),
-  token: Joi.string().required(),
+  encryptedData: Joi.string().required(),
 });
