@@ -5,17 +5,20 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import imageSize from 'image-size';
 
 import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
-import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
+
 import { getTypeFile } from 'src/core/utils/gallery-type-file';
 import { CustomException } from 'src/core/utils/custom-exception.util';
+
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+
+import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
-import { Request } from 'express';
 import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
 
 @Injectable()
@@ -175,14 +178,15 @@ export class GalleryService {
 
   async getGallery(
     search?: string,
-    date?: string | undefined,
     type?: 'image' | 'audio' | 'video' | 'all',
+    startDate?: Date,
+    endDate?: Date,
   ): Promise<ResponseFormat<any>> {
     let query: any = {};
     if (type && type !== 'all') query.type = type;
     if (search) query['$text'] = { $search: search };
-    if (date) {
-    }
+    if (startDate && endDate)
+      query['createdAt'] = { $gte: startDate, $lt: endDate };
 
     const gallery = await this.galleryRepositoy.findAll(query);
     if (!gallery) {

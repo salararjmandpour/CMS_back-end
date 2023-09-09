@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
 import { IsJalaliDateFormat } from 'src/core/validators/jalali-date-format.validator';
 
 export enum TypeEnum {
@@ -14,8 +14,12 @@ export class GetGalleryQueryDto {
   search: string;
 
   @IsOptional()
-  @IsJalaliDateFormat()
-  date: string;
+  @IsDate()
+  startDate: Date;
+
+  @IsOptional()
+  @IsDate()
+  endDate: Date;
 
   @IsOptional()
   @IsEnum(TypeEnum)

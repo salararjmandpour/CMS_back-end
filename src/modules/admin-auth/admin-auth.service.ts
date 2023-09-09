@@ -2,10 +2,13 @@ import {
   HttpStatus,
   Injectable,
   ConflictException,
+  NotFoundException,
   ForbiddenException,
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { Response } from 'express';
+import * as crypto from 'crypto-js';
 
 import { JwtService } from '../jwt/jwt.service';
 import { configService } from 'src/core/config/app.config';
@@ -24,9 +27,11 @@ import {
   nanoid,
   alphabetNumber,
   alphabetLetters,
+  alphabetLowerCaseLetters,
 } from 'src/core/utils/nanoid.util';
 import { MainEmailService } from '../main-email/main-email.service';
 import { CustomException } from 'src/core/utils/custom-exception.util';
+import { PostResetPasswordDto } from './dtos/forgot-password.dto';
 
 @Injectable()
 export class AdminAuthService {
@@ -122,5 +127,84 @@ export class AdminAuthService {
       }
       throw new CustomException(error.message, error.status);
     }
+  }
+
+  async forgotPassword(email: string): Promise<ResponseFormat<any>> {
+    // generate a unique password reset token
+    const token = nanoid(alphabetLowerCaseLetters + alphabetNumber, 60);
+
+    // generate iv for encrypt forgot password token
+    const randomBytes = crypto.lib.WordArray.random(20);
+    const iv = crypto.enc.Hex.stringify(randomBytes);
+
+    // encrypted forgot password token
+    const encryptedToken: string = crypto.AES.encrypt(
+      token,
+      configService.get('ENCRYPTION_SECRET_KEY'),
+      { iv: crypto.enc.Utf8.parse(iv) },
+    ).toString();
+
+    // check exist user by email
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    }
+
+    // token expires in 1 hour
+    const resetPasswordExpires = Date.now() + 3600000;
+
+    const updatedResult = await this.userRepository.updateById(user._id, {
+      resetPasswordToken: encryptedToken,
+      resetPasswordExpires,
+    });
+    if (updatedResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_RESET_PASSWORD,
+      );
+    }
+
+    const link = `${configService.get('HOST')}/v1/admin-auth/fogor-`;
+
+    await this.mainEmailService.sendًForgotPassword(email, link);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.PASSWORD_RESET_EMAIL_SENT,
+    };
+  }
+
+  // render reset password form
+  async getResetPassword(res: Response, token: string) {
+    res.render('auth/new-password', { token });
+  }
+
+  // render reset password form
+  async postResetPassword(body: PostResetPasswordDto) {
+    // decrypt the token
+    const decryptedBytes = crypto.AES.decrypt(
+      body.token,
+      configService.get('ENCRYPTION_SECRET_KEY'),
+      { iv: crypto.enc.Hex.parse('5s12fdsdf') },
+    );
+    const decryptedToken = decryptedBytes.toString(crypto.enc.Utf8);
+
+    const user = await this.userRepository.findOne({
+      resetPasswordToken: decryptedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+    if (!user) {
+      throw new ForbiddenException(ResponseMessages.INVALID_OR_EXPIRED_TOKEN);
+    }
+
+    await this.userRepository.updateById(user._id, {
+      password: body.password,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.PASSWORD_RESET_SUCCESSFULLY,
+    };
   }
 }

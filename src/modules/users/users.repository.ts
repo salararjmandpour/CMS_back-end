@@ -1,5 +1,11 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ProjectionType, QueryOptions, Types } from 'mongoose';
+import {
+  FilterQuery,
+  Model,
+  ProjectionType,
+  QueryOptions,
+  Types,
+} from 'mongoose';
 
 import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
@@ -19,6 +25,14 @@ export class UserRepository {
 
   findByMobile(mobile: string) {
     return this.userModel.findOne({ mobile });
+  }
+
+  findOne(
+    filter?: FilterQuery<User>,
+    projection?: ProjectionType<User>,
+    options?: QueryOptions<User>,
+  ) {
+    return this.userModel.findOne(filter, projection, options);
   }
 
   createByEmailOrMobile(

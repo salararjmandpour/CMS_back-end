@@ -13,7 +13,8 @@ enum TypeEnum {
 export const GetGalleryDecorator = () => {
   return applyDecorators(
     ApiQuery({ name: 'search', required: false, type: String }),
-    ApiQuery({ name: 'date', required: false, type: String }),
+    ApiQuery({ name: 'startDate', required: false, type: String }),
+    ApiQuery({ name: 'endDate', required: false, type: String }),
     ApiQuery({ name: 'type', required: false, type: String, enum: TypeEnum }),
     Get(),
     UseGuards(AuthGuard),

@@ -73,7 +73,7 @@ export class GalleryController {
     )
     query: GetGalleryQueryDto,
   ) {
-    const { search, date, type } = query;
-    return this.galleryService.getGallery(search, date, type);
+    const { search, type, startDate, endDate } = query;
+    return this.galleryService.getGallery(search, type, startDate, endDate);
   }
 }

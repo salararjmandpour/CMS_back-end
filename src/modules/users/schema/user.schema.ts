@@ -79,6 +79,16 @@ export class User extends Document {
   password: string;
 
   @Prop({
+    type: String,
+  })
+  resetPasswordToken: string;
+
+  @Prop({
+    type: Date,
+  })
+  resetPasswordExpires: Date;
+
+  @Prop({
     type: Object,
     default: {
       code: '0',

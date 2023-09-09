@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 export interface Configs {
   PORT: string;
+  HOST: string;
   NODE_ENV: string;
   MONGO_URI: string;
   REDIS_URL: string;
@@ -25,10 +26,13 @@ export interface Configs {
   GOOGLE_OAUTH_CLIENT_ID: string;
   GOOGLE_OAUTH_CLIENT_SECRET: string;
   GOOGLE_OAUTH_REDIRECT_URL: string;
+
+  ENCRYPTION_SECRET_KEY: string;
 }
 
 export default (): Configs => ({
   PORT: process.env.PORT,
+  HOST: process.env.HOST,
   NODE_ENV: process.env.NODE_ENV,
 
   MONGO_URI: process.env.MONGO_URI,
@@ -52,6 +56,8 @@ export default (): Configs => ({
   GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
   GOOGLE_OAUTH_REDIRECT_URL: process.env.GOOGLE_OAUTH_REDIRECT_URL,
+
+  ENCRYPTION_SECRET_KEY: process.env.ENCRYPTION_SECRET_KEY,
 });
 
 export const configService: ConfigService<Configs> =

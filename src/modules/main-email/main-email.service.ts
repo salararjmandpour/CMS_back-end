@@ -24,4 +24,22 @@ export class MainEmailService {
       );
     }
   }
+  
+  async sendًForgotPassword(email: string, link: string) {
+    try {
+      await this.mailerService.sendMail({
+        from: 'mailTest@mail.com',
+        to: email,
+        subject: `بازنشانی رمز عبور - شرکت آرشیدا تب ترنج`,
+        context: {
+          link,
+        },
+        template: 'send-password.ejs',
+      });
+    } catch (err) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
+      );
+    }
+  }
 }
