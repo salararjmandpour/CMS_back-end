@@ -8,18 +8,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as cryptoJs from 'crypto-js';
+import * as bcrypt from 'bcryptjs';
 
 import { JwtService } from '../jwt/jwt.service';
 import { MainEmailService } from '../main-email/main-email.service';
 import { configService } from 'src/core/config/app.config';
 import { UserRepository } from '../users/users.repository';
 
-import {
-  RolesEnum,
-  UserDocument,
-  AuthProviderEnum,
-} from '../users/schema/user.schema';
+import { RolesEnum, AuthProviderEnum } from '../users/schema/user.schema';
 
 import {
   nanoid,
@@ -45,17 +41,29 @@ export class AdminAuthService {
     private readonly mainEmailService: MainEmailService,
   ) {}
 
-  async login(data: LoginAdminDto): Promise<ResponseFormat<any>> {
-    const user: UserDocument | null =
-      await this.userRepository.findByEmailOrUsername(data.field);
+  async login(body: LoginAdminDto): Promise<ResponseFormat<any>> {
+    const data: any = JSON.parse(
+      crypto.decrypt(
+        body.encryptedData,
+        configService.get('CRYPTO_SECRET_KEY'),
+      ) as any,
+    );
+    console.log('Inside Login ADMIN (data): ', data);
+    const user = await this.userRepository.findByEmailOrUsername(data.field);
+    console.log('Inside Login ADMIN (user): ', user);
+    if (!user) {
+      throw new UnauthorizedException(
+        ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
+      );
+    }
+    console.log('');
     // check exist user and user role
-    if (!user || user.role !== 'SUPERADMIN') {
+    if (user?.role !== 'SUPERADMIN') {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
-
     // check match password
     const comparedPassword = user.comparePassword(data.password);
-    if (!comparedPassword) {
+    if (!user || !comparedPassword) {
       throw new UnauthorizedException(
         ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
       );
@@ -152,6 +160,10 @@ export class AdminAuthService {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
 
+    if (user.role !== RolesEnum.SUPERADMIN) {
+      throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
+    }
+
     // token expires in 1 hour
     const resetPasswordExpires = Date.now() + 3600000;
 
@@ -199,12 +211,21 @@ export class AdminAuthService {
     if (!user) {
       throw new ForbiddenException(ResponseMessages.INVALID_OR_EXPIRED_TOKEN);
     }
-
-    await this.userRepository.updateById(user._id, {
-      password: decryptedBytes.password,
+    console.log('Inside post reset password 1: ', data);
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(data.password, salt);
+    console.log('Inside post reset password 2: ', hashedPassword);
+    const updatedPassword = await this.userRepository.updateById(user._id, {
+      password: hashedPassword,
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });
+
+    if (updatedPassword.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_RESET_PASSWORD,
+      );
+    }
 
     return {
       statusCode: HttpStatus.OK,

@@ -36,8 +36,6 @@ export class AdminAuthController {
     return this.adminAuthService.forgotPassword(body.email);
   }
 
-  // @GetResetPasswordDecorator()
-
   @Get('reset-password')
   getResetPassword(@Query('token') token: string, @Res() res: Response) {
     return this.adminAuthService.getResetPassword(res, token);

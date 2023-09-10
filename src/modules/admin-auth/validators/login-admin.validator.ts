@@ -7,8 +7,5 @@ const fieldSchema = joi.alternatives().try(
 );
 
 export const loginAdminValidator = joi.object({
-  field: fieldSchema
-    .required()
-    .error(new Error(ResponseMessages.INVALID_EMAIL_OR_USERNAME)),
-  password: joi.string().min(8).required(),
+  encryptedData: joi.string().required(),
 });

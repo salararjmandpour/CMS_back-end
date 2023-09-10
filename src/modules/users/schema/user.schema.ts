@@ -192,7 +192,6 @@ UserSchema.methods.comparePassword = function (enteredPassword: string) {
 UserSchema.pre('save', function (next) {
   if (!this.isModified('password') || !this.isNew) return next();
   if (!this.password) return next();
-
   const salt = bcrypt.genSaltSync(10);
   this.password = bcrypt.hashSync(this.password, salt);
   next();
