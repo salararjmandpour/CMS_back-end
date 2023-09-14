@@ -128,4 +128,11 @@ export class UserRepository {
       .findOne({ _id: userId }, projection)
       .populate('wishlist');
   }
+
+  findAllUsers(
+    filter?: FilterQuery<UserDocument>,
+    projection?: ProjectionType<UserDocument>,
+  ) {
+    return this.userModel.find(filter, projection);
+  }
 }

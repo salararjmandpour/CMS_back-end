@@ -165,4 +165,27 @@ export class UsersService {
       wishlist: wishlist.wishlist,
     };
   }
+
+  async getAllUsers(): Promise<ResponseFormat<any>> {
+    const users = await this.userRepository.findAllUsers(
+      {},
+      {
+        otp: 0,
+        resetPasswordExpires: 0,
+        resetPasswordToken: 0,
+      },
+    );
+    if (!users) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_USERS_LIST,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        users,
+      },
+    };
+  }
 }

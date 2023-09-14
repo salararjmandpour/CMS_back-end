@@ -1,6 +1,14 @@
 import { Request } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Param, Req, UploadedFile } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UploadedFile,
+  UseGuards,
+} from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
@@ -10,6 +18,8 @@ import { GetWishlistDecorator } from './decorators/get-wishlist.decorator';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
 import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
+import { AuthGuard } from 'src/core/guards/auth.guard';
+import { getUsersListDecorator } from './decorators/get-users-list.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -53,5 +63,10 @@ export class UsersController {
   getWishlist(@Req() req: Request) {
     const userId = req.user?.id;
     return this.usersService.getWishlist(userId);
+  }
+
+  @getUsersListDecorator()
+  getUsers() {
+    return this.usersService.getAllUsers();
   }
 }

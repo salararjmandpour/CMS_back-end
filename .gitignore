@@ -42,3 +42,6 @@ temp-47522.rdb
 package-lock.json
 
 /uploads
+/.cloud/
+.cloud/
+/.cloud

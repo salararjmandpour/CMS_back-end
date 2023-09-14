@@ -7,8 +7,8 @@ const confirmPasswordError = document.querySelector('#config_password_error');
 
 const passwordParent = password.parentNode;
 const confirmPasswordParent = confirmPassword.parentNode;
-// const url = 'https://api-arshida.iran.liara.run/v1/admin-auth/reset-password';
-const url = 'http://localhost:3000/v1/admin-auth/reset-password';
+const url = 'https://api-arshida.iran.liara.run/v1/admin-auth/reset-password';
+// const url = 'http://localhost:3000/v1/admin-auth/reset-password';
 const secretKey =
   '42757476C1B4429E823B36F26BE7F4460570E3ED9182710923D0939365584FD7';
 

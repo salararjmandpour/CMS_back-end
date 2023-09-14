@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddToGalleryDto {
   @ApiProperty({
@@ -14,7 +14,7 @@ export class AddToGalleryDto {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   alt: string;
 
   @ApiProperty({
@@ -22,7 +22,7 @@ export class AddToGalleryDto {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   title: string;
 
   @ApiProperty({
@@ -30,7 +30,7 @@ export class AddToGalleryDto {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   path: string;
