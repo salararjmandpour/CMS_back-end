@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -20,6 +21,8 @@ import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
+import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
+import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -68,5 +71,11 @@ export class UsersController {
   @getUsersListDecorator()
   getUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  // delete one or many users by IDs
+  @DeleteManyUserDecorator()
+  deleteManyUserByIds(@Body() body: DeleteManyUsersDto) {
+    return this.usersService.deleteManyUserByIds(body.usersIds);
   }
 }

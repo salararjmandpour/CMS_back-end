@@ -188,4 +188,28 @@ export class UsersService {
       },
     };
   }
+
+  async deleteManyUserByIds(usersIds: string[]): Promise<ResponseFormat<any>> {
+    //  check exist users
+    const users = await this.userRepository.findAllUsers({
+      _id: { $in: usersIds },
+    });
+    console.log(users?.length !== usersIds.length);
+    if (!users || users?.length !== usersIds.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
+    }
+
+    // delete users in database
+    const deleteResult = await this.userRepository.deleteManyByIds(usersIds);
+    if (deleteResult.deletedCount !== usersIds.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_USERS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.USERS_DELETED_SUCCESS,
+    };
+  }
 }

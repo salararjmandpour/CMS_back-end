@@ -135,4 +135,8 @@ export class UserRepository {
   ) {
     return this.userModel.find(filter, projection);
   }
+
+  deleteManyByIds(IDs: string[]): Promise<any> {
+    return this.userModel.deleteMany({ _id: { $in: IDs } });
+  }
 }

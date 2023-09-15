@@ -48,15 +48,14 @@ export class AdminAuthService {
         configService.get('CRYPTO_SECRET_KEY'),
       ) as any,
     );
-    console.log('Inside Login ADMIN (data): ', data);
+
     const user = await this.userRepository.findByEmailOrUsername(data.field);
-    console.log('Inside Login ADMIN (user): ', user);
     if (!user) {
       throw new UnauthorizedException(
         ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
       );
     }
-    console.log('');
+
     // check exist user and user role
     if (user?.role !== 'SUPERADMIN') {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
@@ -211,10 +210,9 @@ export class AdminAuthService {
     if (!user) {
       throw new ForbiddenException(ResponseMessages.INVALID_OR_EXPIRED_TOKEN);
     }
-    console.log('Inside post reset password 1: ', data);
+
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(data.password, salt);
-    console.log('Inside post reset password 2: ', hashedPassword);
     const updatedPassword = await this.userRepository.updateById(user._id, {
       password: hashedPassword,
       resetPasswordToken: null,
