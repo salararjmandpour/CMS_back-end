@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Get, UseGuards, applyDecorators } from '@nestjs/common';
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { ApiGetUsersList } from '../docs/get-users-list.doc';
@@ -9,5 +9,7 @@ export const getUsersListDecorator = () => {
     ApiTags('Users'),
     UseGuards(AuthGuard),
     ApiGetUsersList(),
+    ApiQuery({ name: 'role', required: false }),
+    ApiQuery({ name: 'search', required: false }),
   );
 };

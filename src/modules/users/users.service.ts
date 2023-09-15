@@ -15,6 +15,7 @@ import { ProductsRepository } from '../products/products.repository';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { RolesEnum } from './schema/user.schema';
 
 @ApiBearerAuth()
 @Injectable()
@@ -166,15 +167,19 @@ export class UsersService {
     };
   }
 
-  async getAllUsers(): Promise<ResponseFormat<any>> {
-    const users = await this.userRepository.findAllUsers(
-      {},
-      {
-        otp: 0,
-        resetPasswordExpires: 0,
-        resetPasswordToken: 0,
-      },
-    );
+  async getAllUsers(
+    role: RolesEnum,
+    search: string,
+  ): Promise<ResponseFormat<any>> {
+    const query: any = {};
+    if (role) query.role = role;
+    if (search) query['$text'] = { $search: search };
+
+    const users = await this.userRepository.findAllUsers(query, {
+      otp: 0,
+      resetPasswordExpires: 0,
+      resetPasswordToken: 0,
+    });
     if (!users) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_USERS_LIST,

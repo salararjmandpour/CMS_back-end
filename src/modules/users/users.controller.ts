@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -23,6 +24,8 @@ import { AuthGuard } from 'src/core/guards/auth.guard';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
 import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
 import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
+import { RolesEnum } from './schema/user.schema';
+import { string } from 'joi';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -69,8 +72,8 @@ export class UsersController {
   }
 
   @getUsersListDecorator()
-  getUsers() {
-    return this.usersService.getAllUsers();
+  getUsers(@Query('role') role: RolesEnum, @Query('search') search: string) {
+    return this.usersService.getAllUsers(role, search);
   }
 
   // delete one or many users by IDs

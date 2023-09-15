@@ -196,3 +196,11 @@ UserSchema.pre('save', function (next) {
   this.password = bcrypt.hashSync(this.password, salt);
   next();
 });
+
+UserSchema.index({
+  firstName: 'text',
+  lastName: 'text',
+  email: 'text',
+  username: 'text',
+  mobile: 'text',
+});
