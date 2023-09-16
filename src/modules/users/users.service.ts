@@ -9,22 +9,29 @@ import {
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { UserRepository } from './users.repository';
+import { RolesEnum } from './schema/user.schema';
+import { SmsService } from '../sms/sms.service';
 import { FileService } from 'src/modules/file/file.service';
+import { MainEmailService } from '../main-email/main-email.service';
+
+import { UserRepository } from './users.repository';
 import { ProductsRepository } from '../products/products.repository';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { RolesEnum } from './schema/user.schema';
+
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 
 @ApiBearerAuth()
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly productsRepository: ProductsRepository,
+    private readonly smsService: SmsService,
     private readonly fileService: FileService,
+    private readonly userRepository: UserRepository,
+    private readonly mainEmailService: MainEmailService,
+    private readonly productsRepository: ProductsRepository,
   ) {}
 
   // get logged in user
@@ -268,6 +275,37 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.USER_UPDATED_SUCCESS,
+    };
+  }
+
+  // send new password and send(email/sms) for user
+  async setNewPassword(body: SetNewPasswordDto): Promise<ResponseFormat<any>> {
+    const [user, updatedResult] = await Promise.all([
+      this.userRepository.findById(body.id),
+      this.userRepository.updateById(body.id, { password: body.password }),
+    ]);
+
+    if (!user) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
+    }
+
+    if (updatedResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_NEW_PASSWORD,
+      );
+    }
+
+    // send password(email/sms) to user
+    if (user.email) {
+      this.mainEmailService.sendًPasswordToUser(user.email, body.password);
+    }
+    if (user.mobile) {
+      this.smsService.sendPasswordToUser_ippanel(user.mobile, body.password);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.PASSWORD_SENT_FOR_USER,
     };
   }
 }

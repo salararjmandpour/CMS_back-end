@@ -40,6 +40,37 @@ export class SmsService {
     }
   }
 
+  // send password to user sms (ippanel)
+  async sendPasswordToUser_ippanel(mobile: string, password: string) {
+    const apiKey = configService.get('IPPANEL_API_KEY');
+    const baseUrl = configService.get('IPPANEL_BASE_URL');
+    const pattern_code = configService.get('IPPANEL_PATTERN');
+
+    const data = {
+      pattern_code,
+      originator: '+985000404223',
+      recipient: mobile,
+      values: {
+        'verification-code': password,
+      },
+    };
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `AccessKey ${apiKey}`,
+      },
+    };
+
+    try {
+      return await this.httpService.post(baseUrl, data, config).toPromise();
+    } catch (err) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SEND_PASSWORD_SMS,
+      );
+    }
+  }
+
   // send otp sms (sms.ir)
   async sendOtpSms_smsDotIr(mobile: string, code: string, apiKey: string) {
     const apiUrl = 'https://api.sms.ir/v1/send/verify';
@@ -107,8 +138,5 @@ export class SmsService {
     }
   }
 
-
-  sendStatusOrder(status: StatusEnum) {
-    
-  }
+  sendStatusOrder(status: StatusEnum) {}
 }

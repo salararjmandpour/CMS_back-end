@@ -25,6 +25,24 @@ export class MainEmailService {
     }
   }
 
+  async sendًPasswordToUser(email: string, password: string) {
+    try {
+      await this.mailerService.sendMail({
+        from: 'mailTest@mail.com',
+        to: email,
+        subject: `ارسال پسورد - شرکت آرشیدا تب ترنج`,
+        context: {
+          password,
+        },
+        template: 'send-password.ejs',
+      });
+    } catch (err) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
+      );
+    }
+  }
+
   async sendًForgotPassword(email: string, link: string) {
     try {
       await this.mailerService.sendMail({

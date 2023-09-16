@@ -26,6 +26,8 @@ import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.d
 
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
+import { SetNewPasswordDto } from './dtos/set-new-password.dto';
+import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -97,5 +99,10 @@ export class UsersController {
     @Param('userId', ParseObjectIdPipe) userId: string,
   ) {
     return this.usersService.updateUser(userId, body);
+  }
+
+  @SetNewPasswordDecorator()
+  setNewPassword(body: SetNewPasswordDto) {
+    return this.usersService.setNewPassword(body);
   }
 }

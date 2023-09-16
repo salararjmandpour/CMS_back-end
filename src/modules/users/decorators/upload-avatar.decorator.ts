@@ -14,7 +14,7 @@ import { ApiFile } from 'src/core/decorators/api-file.decorator';
 
 import { imageFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
-import { ApiUploadAvatar } from '../docs/upload-avatar.dto';
+import { ApiUploadAvatar } from '../docs/upload-avatar.doc';
 
 export const UploadAvatarDecorator = () => {
   return applyDecorators(
