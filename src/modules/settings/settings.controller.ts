@@ -5,12 +5,12 @@ import { SettingsService } from './settings.service';
 
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
+import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 
 import { GetSmsConfigDecorator } from './decorators/get-sms-config.decorator';
 import { SetSmsConfigDecorator } from './decorators/set-sms-config.decorator';
 import { GetEmailConfigDecorator } from './decorators/get-email-config.decorator';
 import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator';
-import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
 
 @ApiTags('Settings')

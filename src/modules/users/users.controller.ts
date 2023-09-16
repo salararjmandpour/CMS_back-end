@@ -1,31 +1,31 @@
-import { Request } from 'express';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
   Req,
+  Body,
+  Param,
+  Query,
+  Controller,
   UploadedFile,
-  UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
-import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { RolesEnum } from './schema/user.schema';
+
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
 
 import { GetMeDecorator } from './decorators/get-me.decorator';
+import { UpdateUserDecorator } from './decorators/update-user.decorator';
 import { GetWishlistDecorator } from './decorators/get-wishlist.decorator';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
-import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
-import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
-import { AuthGuard } from 'src/core/guards/auth.guard';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
-import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
+import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
-import { RolesEnum } from './schema/user.schema';
-import { string } from 'joi';
+import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
+
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -38,10 +38,19 @@ export class UsersController {
     return this.usersService.getMe(req);
   }
 
-  // upload avatar in user profile
+  // upload avatar for user profile
   @UploadAvatarDecorator()
-  uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
-    return this.usersService.uploadAvatar(file, req);
+  uploadAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('id', ParseObjectIdPipe) id: string,
+  ) {
+    return this.usersService.uploadAvatar(file, id);
+  }
+
+  // delete avatar for user profile
+  @DeleteAvatarDecorator()
+  deleteAvatar(@Query('id', ParseObjectIdPipe) id: string) {
+    return this.usersService.deleteAvatar(id);
   }
 
   // add product in wishlist in user profile
@@ -80,5 +89,13 @@ export class UsersController {
   @DeleteManyUserDecorator()
   deleteManyUserByIds(@Body() body: DeleteManyUsersDto) {
     return this.usersService.deleteManyUserByIds(body.usersIds);
+  }
+
+  @UpdateUserDecorator()
+  updateUser(
+    @Body() body: UpdateUserDto,
+    @Param('userId', ParseObjectIdPipe) userId: string,
+  ) {
+    return this.usersService.updateUser(userId, body);
   }
 }

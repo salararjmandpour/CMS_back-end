@@ -15,12 +15,12 @@ export enum RolesEnum {
   USER = 'USER',
 }
 
-enum NationalityEnum {
+export enum NationalityEnum {
   IRANIAN = 'iranian',
   FOREIGNER = 'foreigner',
 }
 
-enum GenderEnum {
+export enum GenderEnum {
   MALE = 'male',
   FEMALE = 'female',
 }
@@ -31,6 +31,79 @@ export enum AuthProviderEnum {
   LOCAL = 'LOCAL',
 }
 
+/**
+ * Address Schema
+ */
+@Schema({
+  versionKey: false,
+  timestamps: true,
+})
+export class Address {
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+  })
+  user: Types.ObjectId;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  first_name: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  last_name: string;
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  mobile: number;
+
+  @Prop({
+    type: Number,
+  })
+  telephone: number;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  titleAddress: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  state: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  city: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  postalAddress: string;
+
+  @Prop({
+    type: Number,
+  })
+  postalCode: number;
+}
+
+export type AddressDocument = Address & Document;
+export const AddressSchema = SchemaFactory.createForClass(Address);
+
+/**
+ * User Schema
+ */
 @Schema({
   timestamps: true,
   versionKey: false,
@@ -84,9 +157,9 @@ export class User extends Document {
   resetPasswordToken: string;
 
   @Prop({
-    type: Date,
+    type: Number,
   })
-  resetPasswordExpires: Date;
+  resetPasswordExpires: Number;
 
   @Prop({
     type: Object,
@@ -119,7 +192,7 @@ export class User extends Document {
 
   @Prop({
     type: String,
-    default: '',
+    default: null,
   })
   avatar: string;
 
@@ -162,9 +235,10 @@ export class User extends Document {
   postalCode: string;
 
   @Prop({
-    type: String,
+    type: Address,
+    default: [],
   })
-  address: string;
+  addresses: AddressDocument;
 
   @Prop({
     type: String,

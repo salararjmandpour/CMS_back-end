@@ -5,6 +5,7 @@ import {
   ProjectionType,
   QueryOptions,
   Types,
+  UpdateQuery,
 } from 'mongoose';
 
 import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
@@ -54,8 +55,8 @@ export class UserRepository {
     return this.userModel.create({ email, otp });
   }
 
-  updateById(id: string | Types.ObjectId, fields: any) {
-    return this.userModel.updateOne({ _id: id }, { $set: fields });
+  updateById(id: string | Types.ObjectId, update?: UserDocumentOptional) {
+    return this.userModel.updateOne({ _id: id }, { $set: update });
   }
 
   updateByMobile(mobile: string, fields: any) {

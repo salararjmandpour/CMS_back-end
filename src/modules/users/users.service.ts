@@ -16,6 +16,7 @@ import { ProductsRepository } from '../products/products.repository';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { RolesEnum } from './schema/user.schema';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @ApiBearerAuth()
 @Injectable()
@@ -49,18 +50,17 @@ export class UsersService {
   // upload user avatar
   async uploadAvatar(
     file: Express.Multer.File,
-    req: Request,
+    id: string,
   ): Promise<ResponseFormat<any>> {
     // check exist file
     if (!file) {
       throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
     }
 
-    const userId = req?.user?._id;
     const avatar = file?.path?.replace(/\\/g, '/');
 
     // check exist user
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
@@ -71,7 +71,7 @@ export class UsersService {
     }
 
     // update new avatar
-    const uploadedAvatar = await this.userRepository.updateById(userId, {
+    const uploadedAvatar = await this.userRepository.updateById(id, {
       avatar,
     });
     if (uploadedAvatar.modifiedCount !== 1) {
@@ -82,7 +82,35 @@ export class UsersService {
 
     return {
       statusCode: HttpStatus.CREATED,
-      message: ResponseMessages.UPLOADED_AVATAR,
+      message: ResponseMessages.AVATAR_UPLOADED_SUCCESS,
+    };
+  }
+
+  // delete user avatar
+  async deleteAvatar(userId: string): Promise<ResponseFormat<any>> {
+    // check exist user
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    }
+    const avatar = user.avatar;
+
+    // delete avatar from database
+    const updateResult = await this.userRepository.updateById(userId, {
+      avatar: null,
+    });
+    if (updateResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_AVATAR,
+      );
+    }
+
+    // delete avatar from file system
+    this.fileService.deleteFileByPath(avatar);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.AVATAR_DELETED_SUCCESS,
     };
   }
 
@@ -215,6 +243,31 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.USERS_DELETED_SUCCESS,
+    };
+  }
+
+  // update user
+  async updateUser(
+    userId: string,
+    body: UpdateUserDto,
+  ): Promise<ResponseFormat<any>> {
+    // check exist user
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
+    }
+
+    // update user
+    const updatedResult = await this.userRepository.updateById(userId, body);
+    if (updatedResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_USER,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.USER_UPDATED_SUCCESS,
     };
   }
 }
