@@ -1,5 +1,11 @@
+import {
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SetNewPasswordDto {
   @ApiProperty({
@@ -16,5 +22,6 @@ export class SetNewPasswordDto {
   })
   @IsString()
   @IsOptional()
+  @MinLength(8)
   password: string;
 }

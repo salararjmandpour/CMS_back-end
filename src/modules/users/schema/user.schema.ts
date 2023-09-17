@@ -40,12 +40,6 @@ export enum AuthProviderEnum {
 })
 export class Address {
   @Prop({
-    type: Types.ObjectId,
-    required: true,
-  })
-  user: Types.ObjectId;
-
-  @Prop({
     type: String,
     required: true,
   })
@@ -147,7 +141,7 @@ export class User extends Document {
 
   @Prop({
     type: String,
-    min: 8,
+    minlength: 8,
   })
   password: string;
 

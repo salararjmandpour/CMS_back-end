@@ -186,7 +186,7 @@ export class CreateProductWithCeoDto {
 
   @ApiProperty({
     type: CreateSeoDto,
-    default: CreateSeoDto,
+    default: [],
   })
   @ValidateNested()
   @Type(() => CreateSeoDto)

@@ -55,7 +55,7 @@ export class UserRepository {
     return this.userModel.create({ email, otp });
   }
 
-  updateById(id: string | Types.ObjectId, update?: UserDocumentOptional) {
+  updateById(id: string | Types.ObjectId, update?: any) {
     return this.userModel.updateOne({ _id: id }, { $set: update });
   }
 

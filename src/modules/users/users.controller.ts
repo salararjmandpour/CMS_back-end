@@ -55,9 +55,19 @@ export class UsersController {
     return this.usersService.deleteAvatar(id);
   }
 
+  // set new password for new by superadmin (admin pannel)
   @SetNewPasswordDecorator()
   setNewPassword(@Body() body: SetNewPasswordDto) {
     return this.usersService.setNewPassword(body);
+  }
+
+  // update user profile by superadmin (admin pannel)
+  @UpdateUserDecorator()
+  updateUser(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: UpdateUserDto,
+  ) {
+    return this.usersService.updateUser(id, body);
   }
 
   // add product in wishlist in user profile
@@ -96,13 +106,5 @@ export class UsersController {
   @DeleteManyUserDecorator()
   deleteManyUserByIds(@Body() body: DeleteManyUsersDto) {
     return this.usersService.deleteManyUserByIds(body.usersIds);
-  }
-
-  @UpdateUserDecorator()
-  updateUser(
-    @Body() body: UpdateUserDto,
-    @Param('userId', ParseObjectIdPipe) userId: string,
-  ) {
-    return this.usersService.updateUser(userId, body);
   }
 }
