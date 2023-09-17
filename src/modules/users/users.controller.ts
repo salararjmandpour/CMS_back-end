@@ -55,6 +55,11 @@ export class UsersController {
     return this.usersService.deleteAvatar(id);
   }
 
+  @SetNewPasswordDecorator()
+  setNewPassword(@Body() body: SetNewPasswordDto) {
+    return this.usersService.setNewPassword(body);
+  }
+
   // add product in wishlist in user profile
   @AddToWishlistDecorator()
   addToWishlist(
@@ -99,10 +104,5 @@ export class UsersController {
     @Param('userId', ParseObjectIdPipe) userId: string,
   ) {
     return this.usersService.updateUser(userId, body);
-  }
-
-  @SetNewPasswordDecorator()
-  setNewPassword(body: SetNewPasswordDto) {
-    return this.usersService.setNewPassword(body);
   }
 }

@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import { Document } from 'mongoose';
+import { Document, UpdateQuery } from 'mongoose';
 import { Document as MongooseDocument, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
@@ -235,7 +235,7 @@ export class User extends Document {
   postalCode: string;
 
   @Prop({
-    type: Address,
+    type: Array<Address>,
     default: [],
   })
   addresses: AddressDocument;
@@ -268,6 +268,15 @@ UserSchema.pre('save', function (next) {
   if (!this.password) return next();
   const salt = bcrypt.genSaltSync(10);
   this.password = bcrypt.hashSync(this.password, salt);
+  next();
+});
+
+UserSchema.pre('updateOne', function (next) {
+  const update: UpdateQuery<UserDocument> = this.getUpdate();
+  if (update.$set && update.$set.password) {
+    const salt = bcrypt.genSaltSync(10);
+    update.$set.password = bcrypt.hashSync(update.$set.password, salt);
+  }
   next();
 });
 

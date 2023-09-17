@@ -54,7 +54,6 @@ export class SmsService {
         'verification-code': password,
       },
     };
-
     const config = {
       headers: {
         'Content-Type': 'application/json',

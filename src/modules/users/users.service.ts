@@ -234,7 +234,6 @@ export class UsersService {
     const users = await this.userRepository.findAllUsers({
       _id: { $in: usersIds },
     });
-    console.log(users?.length !== usersIds.length);
     if (!users || users?.length !== usersIds.length) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
     }
@@ -284,11 +283,9 @@ export class UsersService {
       this.userRepository.findById(body.id),
       this.userRepository.updateById(body.id, { password: body.password }),
     ]);
-
     if (!user) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
     }
-
     if (updatedResult.modifiedCount !== 1) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SET_NEW_PASSWORD,
@@ -297,10 +294,16 @@ export class UsersService {
 
     // send password(email/sms) to user
     if (user.email) {
-      this.mainEmailService.sendًPasswordToUser(user.email, body.password);
+      await this.mainEmailService.sendًPasswordToUser(
+        user.email,
+        body.password,
+      );
     }
     if (user.mobile) {
-      this.smsService.sendPasswordToUser_ippanel(user.mobile, body.password);
+      await this.smsService.sendPasswordToUser_ippanel(
+        user.mobile,
+        body.password,
+      );
     }
 
     return {
