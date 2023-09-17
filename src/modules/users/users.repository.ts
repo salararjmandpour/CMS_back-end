@@ -10,18 +10,23 @@ import {
 
 import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 export class UserRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  findById(id: string, fields?: UserNumberType) {
-    return this.userModel.findOne({ _id: id }, fields);
+  findById(id: string, projection?: ProjectionType<User>) {
+    return this.userModel.findOne({ _id: id }, projection);
   }
 
   findByEmail(email: string, fields?: UserNumberType): Promise<UserDocument> {
     return this.userModel.findOne({ email }, fields);
+  }
+
+  findByUsername(username: string, projection?: ProjectionType<User>) {
+    return this.userModel.findOne({ username }, projection);
   }
 
   findByMobile(mobile: string) {
@@ -47,7 +52,7 @@ export class UserRepository {
     });
   }
 
-  create(properties: UserDocumentOptional) {
+  create(properties: UserDocumentOptional | CreateUserDto) {
     return this.userModel.create(properties);
   }
 

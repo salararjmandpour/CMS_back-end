@@ -28,6 +28,8 @@ import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
 import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateUserDecorator } from './decorators/create-user.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -106,5 +108,11 @@ export class UsersController {
   @DeleteManyUserDecorator()
   deleteManyUserByIds(@Body() body: DeleteManyUsersDto) {
     return this.usersService.deleteManyUserByIds(body.usersIds);
+  }
+
+  // craete user (admin panel)
+  @CreateUserDecorator()
+  createUser(@Body() body: CreateUserDto) {
+    return this.usersService.createUser(body);
   }
 }

@@ -130,6 +130,11 @@ export class User extends Document {
 
   @Prop({
     type: String,
+  })
+  username: number;
+
+  @Prop({
+    type: String,
     enum: [
       AuthProviderEnum.GOOGLE,
       AuthProviderEnum.OTP,

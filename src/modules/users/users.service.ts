@@ -5,6 +5,7 @@ import {
   BadRequestException,
   UnauthorizedException,
   InternalServerErrorException,
+  ConflictException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -22,6 +23,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { SetNewPasswordDto } from './dtos/set-new-password.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @ApiBearerAuth()
 @Injectable()
@@ -309,6 +311,33 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.PASSWORD_SENT_FOR_USER,
+    };
+  }
+
+  async createUser(body: CreateUserDto): Promise<ResponseFormat<any>> {
+    const [duplicatedEmail, duplicatedUsername] = await Promise.all([
+      this.userRepository.findByEmail(body.email),
+      this.userRepository.findByEmailOrUsername(body.username),
+    ]);
+    if (duplicatedEmail) {
+      throw new ConflictException(ResponseMessages.EMAIL_ALREADY_EXIST);
+    }
+    if (duplicatedUsername) {
+      throw new ConflictException(ResponseMessages.USERNAME_ALREADY_EXIST);
+    }
+
+    const user = await this.userRepository.create(body);
+    if (!user) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_CREATE_USER,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        user,
+      },
     };
   }
 }
