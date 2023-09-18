@@ -1,46 +1,76 @@
 import {
   HttpStatus,
   Injectable,
+  NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  ConflictException,
 } from '@nestjs/common';
 
+import { FileService } from '../file/file.service';
 import { CategoriesRepository } from './categories.repository';
+
 import { CreateCategoryDto } from './dtos/create-category.dto';
+import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private categoriesRepository: CategoriesRepository) {}
+  constructor(
+    private fileService: FileService,
+    private categoriesRepository: CategoriesRepository,
+  ) {}
 
-  async create(body: CreateCategoryDto): Promise<ResponseFormat<any>> {
-    // prevent duplicate title and name
-    const [duplicateTitle, duplicateName] = await Promise.all([
-      this.categoriesRepository.findByTitle(body.title),
-      this.categoriesRepository.findByName(body.name),
-    ]);
-    if (duplicateTitle) {
-      throw new BadRequestException(ResponseMessages.TITLE_ALREADY_EXIST);
-    }
-    if (duplicateName) {
-      throw new BadRequestException(ResponseMessages.NAME_ALREADY_EXIST);
-    }
+  async create(
+    file: Express.Multer.File,
+    body: CreateCategoryDto,
+  ): Promise<ResponseFormat<any>> {
+    try {
+      // check exist file
+      if (!file) {
+        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
+      }
+      const image = file?.path?.replace(/\\/g, '/');
 
-    // save category in database
-    const category = await this.categoriesRepository.create(body);
-    if (!category) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_CREATE_CATEGORY,
-      );
-    }
+      // prevent duplicate title and slug
+      const [duplicateTitle, duplicateSlug, existParent] = await Promise.all([
+        this.categoriesRepository.findByTitle(body.title),
+        this.categoriesRepository.findByName(body.slug),
+        this.categoriesRepository.findById(body.parent),
+      ]);
+      if (duplicateTitle) {
+        throw new ConflictException(ResponseMessages.TITLE_ALREADY_EXIST);
+      }
+      if (duplicateSlug) {
+        throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
+      }
+      if (body.parent && !existParent) {
+        throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
+      }
 
-    return {
-      statusCode: HttpStatus.CREATED,
-      data: {
-        category,
-      },
-    };
+      // save category in database
+      const category = await this.categoriesRepository.create({
+        ...body,
+        image,
+      });
+      if (!category) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_CATEGORY,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          category,
+        },
+      };
+    } catch (error) {
+      const path = file?.path?.replace(/\\/g, '/');
+      this.fileService.deleteFileByPath(path);
+      throw new CustomException(error.message, error.status);
+    }
   }
 
   async update(
@@ -48,10 +78,10 @@ export class CategoriesService {
     update: CreateCategoryDto,
   ): Promise<ResponseFormat<any>> {
     // prevent duplicate title and name
-    const [existCategory, duplicateTitle, duplicateName] = await Promise.all([
+    const [existCategory, duplicateTitle, duplicateSlug] = await Promise.all([
       this.categoriesRepository.findById(id),
       this.categoriesRepository.findByTitle(update.title),
-      this.categoriesRepository.findByName(update.name),
+      this.categoriesRepository.findByName(update.slug),
     ]);
     if (!existCategory) {
       throw new BadRequestException(ResponseMessages.CATEGORY_NOT_FOUND);
@@ -59,8 +89,8 @@ export class CategoriesService {
     if (duplicateTitle) {
       throw new BadRequestException(ResponseMessages.TITLE_ALREADY_EXIST);
     }
-    if (duplicateName) {
-      throw new BadRequestException(ResponseMessages.NAME_ALREADY_EXIST);
+    if (duplicateSlug) {
+      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
     }
 
     // update category by id

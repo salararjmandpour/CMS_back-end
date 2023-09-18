@@ -1,11 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    required: true,
+  })
+  image: any;
+
   @ApiProperty({
     type: String,
     required: true,
     example: 'تجهیرات پزشکی',
   })
+  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty({
@@ -13,17 +23,26 @@ export class CreateCategoryDto {
     required: true,
     example: 'medical-equipment',
   })
-  name: string;
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
 
   @ApiProperty({
-    type: Boolean,
-    default: false,
+    type: String,
+    default: '',
   })
-  disabled: boolean;
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 
   @ApiProperty({
     type: String,
     example: '6470a3fbbb82534053e8bb86',
+    required: false,
   })
-  parent?: string;
+  @IsMongoId()
+  @IsOptional()
+  parent: string;
+
+  count: number;
 }

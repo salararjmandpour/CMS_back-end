@@ -18,13 +18,13 @@ export class Category {
     unique: true,
     required: true,
   })
-  name: string;
+  slug: string;
 
   @Prop({
-    type: Boolean,
-    default: false,
+    type: String,
+    required: true,
   })
-  disabled: boolean;
+  description: boolean;
 
   @Prop({
     type: Types.ObjectId,
@@ -32,6 +32,16 @@ export class Category {
     ref: Category.name,
   })
   parent: Types.ObjectId;
+
+  @Prop({
+    type: String,
+  })
+  image: string;
+
+  @Prop({
+    type: Number,
+  })
+  count: number;
 }
 
 export type CategoryDocument = Category & Document;

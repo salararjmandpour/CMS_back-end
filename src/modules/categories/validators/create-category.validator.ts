@@ -4,7 +4,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 
 export const createCategoryValidator = Joi.object({
   title: Joi.string().required(),
-  name: Joi.string().required(),
+  slug: Joi.string().required(),
   disabled: Joi.boolean(),
   parent: Joi.string()
     .pattern(objectIdPattern)
