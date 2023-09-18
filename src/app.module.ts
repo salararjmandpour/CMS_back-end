@@ -14,7 +14,6 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { OrderModule } from './modules/order/order.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { AddressesModule } from './modules/addresses/addresses.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
 import { SeoModule } from './modules/seo/seo.module';
 import { MainEmailModule } from './modules/main-email/main-email.module';
@@ -39,7 +38,6 @@ import { MainEmailModule } from './modules/main-email/main-email.module';
     OrderModule,
     ProductsModule,
     CategoriesModule,
-    AddressesModule,
     GalleryModule,
     SeoModule,
     MainEmailModule,
