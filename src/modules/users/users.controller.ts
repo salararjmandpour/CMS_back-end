@@ -36,6 +36,7 @@ import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.d
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { updateAddressValidator } from './validator/update-address.validator';
+import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -128,6 +129,7 @@ export class UsersController {
     return this.usersService.createAddress(userId, body);
   }
 
+  // update one address by userId and addressId in user profile
   @UpdateAddressDecorator()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -137,5 +139,11 @@ export class UsersController {
     joiValidation(updateAddressValidator, body);
     const userId = req.user?._id;
     return this.usersService.updateAddress(userId, id, body);
+  }
+
+  @DeleteAddresstDecorator()
+  deleteOne(@Param('id', ParseObjectIdPipe) id: string, @Req() req: Request) {
+    const userId = req.user?._id;
+    return this.usersService.deleteAddressById(userId, id);
   }
 }

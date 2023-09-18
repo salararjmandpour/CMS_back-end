@@ -1,11 +1,7 @@
-import { Controller, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
 import { AddressesService } from './addresses.service';
-import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
-
 import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
-import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Addresses (UserProfile)')
@@ -16,10 +12,5 @@ export class AddressesController {
   @GteAddressListDecorator()
   getAddressList() {
     return this.addressesService.getAddressList();
-  }
-
-  @DeleteAddresstDecorator()
-  deleteOne(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.addressesService.deleteById(id);
   }
 }

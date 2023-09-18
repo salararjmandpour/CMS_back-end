@@ -386,7 +386,7 @@ export class UsersService {
     if (!existUser) {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
-    console.log({existAddress})
+    console.log({ existAddress });
     if (!existAddress) {
       throw new NotFoundException(ResponseMessages.ADDRESS_NOT_FOUND);
     }
@@ -401,6 +401,33 @@ export class UsersService {
       data: {
         address: updatedResult,
       },
+    };
+  }
+
+  async deleteAddressById(
+    userId: string,
+    addressId: string,
+  ): Promise<ResponseFormat<any>> {
+    const [existUser, existAddress, deletedResult] = await Promise.all([
+      this.userRepository.findById(userId),
+      this.userRepository.findAddressById(userId, addressId),
+      this.userRepository.deleteAddressById(userId, addressId),
+    ]);
+    if (!existUser) {
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    }
+    if (!existAddress) {
+      throw new NotFoundException(ResponseMessages.ADDRESS_NOT_FOUND);
+    }
+    if (deletedResult.deletedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_ADDRESS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.ADDRESS_DELETED,
     };
   }
 }
