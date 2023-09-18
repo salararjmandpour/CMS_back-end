@@ -6,7 +6,7 @@ import {
 } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const addressValidator = Joi.object({
+export const createAddressValidator = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
   mobile: Joi.string()

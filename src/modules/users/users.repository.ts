@@ -1,16 +1,16 @@
-import { InjectModel } from '@nestjs/mongoose';
 import {
-  FilterQuery,
-  Model,
-  ProjectionType,
-  QueryOptions,
   Types,
-  UpdateQuery,
+  Model,
+  FilterQuery,
+  QueryOptions,
+  ProjectionType,
 } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateAddressDto } from './dtos/create-address.dto';
 
 export class UserRepository {
   constructor(
@@ -144,5 +144,13 @@ export class UserRepository {
 
   deleteManyByIds(IDs: string[]): Promise<any> {
     return this.userModel.deleteMany({ _id: { $in: IDs } });
+  }
+
+  createAddress(userId: string, data: CreateAddressDto) {
+    const addressId = new Types.ObjectId();
+    return this.userModel.updateOne(
+      { _id: userId },
+      { $push: { addresses: { ...data, _id: addressId } } },
+    );
   }
 }

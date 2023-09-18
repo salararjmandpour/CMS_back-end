@@ -1,10 +1,14 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Patch, UseGuards, UsePipes, applyDecorators } from '@nestjs/common';
+import { Patch, UseGuards, applyDecorators } from '@nestjs/common';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { JoiValidatorPipe } from 'src/core/pipes/joi-validator.pipe';
-import { updateUserValidator } from '../validator/update-user.validator';
+import { ApiUpdateUser } from '../docs/update-user.doc';
 
 export const UpdateUserDecorator = () => {
-  return applyDecorators(Patch(':id'), ApiTags('Users'), UseGuards(AuthGuard));
+  return applyDecorators(
+    Patch(':id'),
+    ApiUpdateUser(),
+    ApiTags('Users'),
+    UseGuards(AuthGuard),
+  );
 };

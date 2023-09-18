@@ -1,11 +1,11 @@
 import {
   HttpStatus,
   Injectable,
+  ConflictException,
   NotFoundException,
   BadRequestException,
   UnauthorizedException,
   InternalServerErrorException,
-  ConflictException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -18,13 +18,14 @@ import { MainEmailService } from '../main-email/main-email.service';
 import { UserRepository } from './users.repository';
 import { ProductsRepository } from '../products/products.repository';
 
-import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateAddressDto } from './dtos/create-address.dto';
+import { SetNewPasswordDto } from './dtos/set-new-password.dto';
+
+import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @ApiBearerAuth()
 @Injectable()
@@ -260,14 +261,15 @@ export class UsersService {
     userId: string,
     body: UpdateUserDto,
   ): Promise<ResponseFormat<any>> {
-    // check exist user
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
+    // check exist user and update user
+    const [existUser, updatedResult] = await Promise.all([
+      this.userRepository.findById(userId),
+      this.userRepository.updateById(userId, body),
+    ]);
+
+    if (!existUser) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
     }
-
-    // update user
-    const updatedResult = await this.userRepository.updateById(userId, body);
     if (updatedResult.modifiedCount !== 1) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_UPDATE_USER,
@@ -349,6 +351,23 @@ export class UsersService {
       data: {
         user: excludedUser,
       },
+    };
+  }
+
+  async createAddress(
+    userId: string,
+    body: CreateAddressDto,
+  ): Promise<ResponseFormat<any>> {
+    const createdResult = await this.userRepository.createAddress(userId, body);
+    if (!createdResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_CREATE_PASSWORD,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: ResponseMessages.ADDRESS_CREATED_SUCCESS,
     };
   }
 }

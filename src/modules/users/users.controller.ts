@@ -13,23 +13,25 @@ import { UsersService } from './users.service';
 import { RolesEnum } from './schema/user.schema';
 
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateAddressDto } from './dtos/create-address.dto';
+import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
 
 import { GetMeDecorator } from './decorators/get-me.decorator';
 import { UpdateUserDecorator } from './decorators/update-user.decorator';
+import { CreateUserDecorator } from './decorators/create-user.decorator';
 import { GetWishlistDecorator } from './decorators/get-wishlist.decorator';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
+import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
+import { CreateAddressDecorator } from './decorators/create-address.decorator';
 import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
+import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
 import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
 
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
-import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
-import { SetNewPasswordDto } from './dtos/set-new-password.dto';
-import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { CreateUserDecorator } from './decorators/create-user.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -114,5 +116,11 @@ export class UsersController {
   @CreateUserDecorator()
   createUser(@Body() body: CreateUserDto) {
     return this.usersService.createUser(body);
+  }
+
+  @CreateAddressDecorator()
+  create(@Body() body: CreateAddressDto, @Req() req: Request) {
+    const userId = req.user._id;
+    return this.usersService.createAddress(userId, body);
   }
 }

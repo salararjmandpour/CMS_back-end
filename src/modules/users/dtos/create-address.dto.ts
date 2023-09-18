@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAddressDto {
-  user: string;
-
   @ApiProperty({
     type: String,
     required: true,

@@ -1,12 +1,11 @@
 import {
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 import { AddressesRepository } from './addresses.repository';
-import { CreateAddressDto } from './dtoc/create-address.dto';
 import { UpdateAddressDto } from './dtoc/update-address.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -14,17 +13,6 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 @Injectable()
 export class AddressesService {
   constructor(private addressRepository: AddressesRepository) {}
-
-  async create(body: CreateAddressDto): Promise<ResponseFormat<any>> {
-    const createdResult = await this.addressRepository.create(body);
-
-    return {
-      statusCode: HttpStatus.CREATED,
-      data: {
-        address: createdResult,
-      },
-    };
-  }
 
   async update(
     id: string,
