@@ -1,9 +1,10 @@
 import {
   ApiOperation,
+  ApiOkResponse,
+  ApiConflictResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiOkResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -22,8 +23,9 @@ export const ApiUpdateCategory = () => {
             product: {
               _id: '64e1338d1b15ee6ac6897ba3',
               title: 'تجهیرات پزشکی',
-              name: 'medical-equipment',
-              disabled: false,
+              slug: 'medical-equipment',
+              image: 'uploads/category/2023/8/19/n9n41mx8mxgbkv4p.png',
+              description: 'This is test message',
               parent: '6470a3fbbb82534053e8bb86',
               createdAt: '2023-08-19T21:26:37.181Z',
               updatedAt: '2023-08-19T21:26:37.181Z',
@@ -50,11 +52,23 @@ export const ApiUpdateCategory = () => {
         },
       },
     }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: [
+            ResponseMessages.CATEGORY_NOT_FOUND,
+            ResponseMessages.TITLE_ALREADY_EXIST,
+            ResponseMessages.SLUG_ALREADY_EXIST,
+          ],
+        },
+      },
+    }),
     ApiInternalServerErrorResponse({
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          message: ResponseMessages.FAILED_UPDATE_CATEGORY,
           error: 'Internal Server Error',
         },
       },

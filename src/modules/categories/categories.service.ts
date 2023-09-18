@@ -2,9 +2,9 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  ConflictException,
   BadRequestException,
   InternalServerErrorException,
-  ConflictException,
 } from '@nestjs/common';
 
 import { FileService } from '../file/file.service';
@@ -76,39 +76,56 @@ export class CategoriesService {
   async update(
     id: string,
     update: CreateCategoryDto,
+    file: Express.Multer.File,
   ): Promise<ResponseFormat<any>> {
-    // prevent duplicate title and name
-    const [existCategory, duplicateTitle, duplicateSlug] = await Promise.all([
-      this.categoriesRepository.findById(id),
-      this.categoriesRepository.findByTitle(update.title),
-      this.categoriesRepository.findByName(update.slug),
-    ]);
-    if (!existCategory) {
-      throw new BadRequestException(ResponseMessages.CATEGORY_NOT_FOUND);
-    }
-    if (duplicateTitle) {
-      throw new BadRequestException(ResponseMessages.TITLE_ALREADY_EXIST);
-    }
-    if (duplicateSlug) {
-      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
-    }
+    try {
+      // prevent duplicate title and name
+      const [existCategory, duplicateTitle, duplicateSlug] = await Promise.all([
+        this.categoriesRepository.findById(id),
+        this.categoriesRepository.findByTitle(update.title),
+        this.categoriesRepository.findByName(update.slug),
+      ]);
+      if (!existCategory) {
+        throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
+      }
+      if (duplicateTitle) {
+        throw new ConflictException(ResponseMessages.TITLE_ALREADY_EXIST);
+      }
+      if (duplicateSlug) {
+        throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
+      }
 
-    // update category by id
-    const category = await this.categoriesRepository.updateById(id, update, {
-      new: true,
-    });
-    if (!category) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_UPDATE_CATEGORY,
-      );
-    }
+      if (file) {
+        const image = file?.path?.replace(/\\/g, '/');
+        update.image = image;
 
-    return {
-      statusCode: HttpStatus.OK,
-      data: {
-        category,
-      },
-    };
+        // delete prevent image in file system
+        this.fileService.deleteFileByPath(existCategory.image);
+        console.log({ prevImage: existCategory.image });
+      }
+
+      // update category by id
+      const category = await this.categoriesRepository.updateById(id, update, {
+        new: true,
+      });
+      if (!category) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_UPDATE_CATEGORY,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: {
+          category,
+        },
+      };
+    } catch (error) {
+      const path = file?.path?.replace(/\\/g, '/');
+      console.log({path})
+      this.fileService.deleteFileByPath(path);
+      throw new CustomException(error.message, error.status);
+    }
   }
 
   async deleteById(id: string): Promise<ResponseFormat<any>> {

@@ -1,5 +1,6 @@
-import { Body, Controller, Param, UploadedFile } from '@nestjs/common';
+import { Express } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, UploadedFile } from '@nestjs/common';
 
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dtos/create-category.dto';
@@ -9,7 +10,7 @@ import { CreateCategoryDecorator } from './decorators/create-category.decorator'
 import { UpdateCategoryDecorator } from './decorators/update-category.decorator';
 import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
-import { Express } from 'express';
+import { UpdateCategoryDto } from './dtos/update-category.dto';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -30,9 +31,10 @@ export class CategoriesController {
   @UpdateCategoryDecorator()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
-    @Body() body: CreateCategoryDto,
+    @Body() body: UpdateCategoryDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.categoriesService.update(id, body);
+    return this.categoriesService.update(id, body, file);
   }
 
   // delete category by id
