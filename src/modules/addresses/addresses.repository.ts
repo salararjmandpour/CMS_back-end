@@ -13,11 +13,5 @@ export class AddressesRepository {
     return this.addressModel.findById(id, projection);
   }
 
-  findAll() {
-    return this.addressModel.find();
-  }
 
-  deleteById(_id: string, options?: QueryOptions<Address>): Promise<any> {
-    return this.addressModel.deleteOne({ _id }, options);
-  }
 }

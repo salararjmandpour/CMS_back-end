@@ -37,6 +37,7 @@ import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { updateAddressValidator } from './validator/update-address.validator';
 import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
+import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -141,9 +142,17 @@ export class UsersController {
     return this.usersService.updateAddress(userId, id, body);
   }
 
+  // delete address by userId and addressId in user profile
   @DeleteAddresstDecorator()
   deleteOne(@Param('id', ParseObjectIdPipe) id: string, @Req() req: Request) {
     const userId = req.user?._id;
     return this.usersService.deleteAddressById(userId, id);
+  }
+
+  // get address list by userId in user profile
+  @GteAddressListDecorator()
+  getAddressList(@Req() req: Request) {
+    const userId = req.user?._id;
+    return this.usersService.getAddressList(userId);
   }
 }

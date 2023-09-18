@@ -430,4 +430,20 @@ export class UsersService {
       message: ResponseMessages.ADDRESS_DELETED,
     };
   }
+
+  async getAddressList(userId: string): Promise<ResponseFormat<any>> {
+    const addresses = await this.userRepository.findAddressList(userId);
+    if (!addresses) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_ADDRESS_LIST,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        addresses: addresses.addresses,
+      },
+    };
+  }
 }

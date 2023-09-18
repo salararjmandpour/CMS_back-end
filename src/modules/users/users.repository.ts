@@ -177,4 +177,8 @@ export class UserRepository {
       'addresses._id': addressId,
     });
   }
+
+  findAddressList(userId: string) {
+    return this.userModel.findOne({ _id: userId }, { addresses: 1 });
+  }
 }
