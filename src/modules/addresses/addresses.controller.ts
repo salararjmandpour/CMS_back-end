@@ -1,11 +1,9 @@
+import { Controller, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Param } from '@nestjs/common';
 
 import { AddressesService } from './addresses.service';
-import { UpdateAddressDto } from './dtoc/update-address.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
-import { UpdateAddressDecorator } from './decorators/update-address.decorator';
 import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
 import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 
@@ -14,14 +12,6 @@ import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 @Controller('addresses')
 export class AddressesController {
   constructor(private addressesService: AddressesService) {}
-
-  @UpdateAddressDecorator()
-  update(
-    @Param('id', ParseObjectIdPipe) id: string,
-    @Body() body: UpdateAddressDto,
-  ) {
-    return this.addressesService.update(id, body);
-  }
 
   @GteAddressListDecorator()
   getAddressList() {

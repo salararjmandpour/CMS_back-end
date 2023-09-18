@@ -15,6 +15,7 @@ import { RolesEnum } from './schema/user.schema';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateAddressDto } from './dtos/create-address.dto';
+import { UpdateAddressDto } from './dtos/update-address.dto';
 import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { DeleteManyUsersDto } from './dtos/delete-many-users.dto';
 
@@ -25,13 +26,16 @@ import { GetWishlistDecorator } from './decorators/get-wishlist.decorator';
 import { UploadAvatarDecorator } from './decorators/upload-avatar.decorator';
 import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
+import { UpdateAddressDecorator } from './decorators/update-address.decorator';
 import { CreateAddressDecorator } from './decorators/create-address.decorator';
 import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
 import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
 import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
 
+import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { updateAddressValidator } from './validator/update-address.validator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -122,5 +126,16 @@ export class UsersController {
   create(@Body() body: CreateAddressDto, @Req() req: Request) {
     const userId = req.user._id;
     return this.usersService.createAddress(userId, body);
+  }
+
+  @UpdateAddressDecorator()
+  update(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: UpdateAddressDto,
+    @Req() req: Request,
+  ) {
+    joiValidation(updateAddressValidator, body);
+    const userId = req.user?._id;
+    return this.usersService.updateAddress(userId, id, body);
   }
 }

@@ -11,6 +11,8 @@ import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
 import { UserNumberType } from 'src/core/interfaces/user.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateAddressDto } from './dtos/create-address.dto';
+import { UpdateAddressDto } from './dtos/update-address.dto';
+import { UserModule } from './users.module';
 
 export class UserRepository {
   constructor(
@@ -151,6 +153,22 @@ export class UserRepository {
     return this.userModel.updateOne(
       { _id: userId },
       { $push: { addresses: { ...data, _id: addressId } } },
+    );
+  }
+
+  updateAddress(userId: string, addressId: string, data: UpdateAddressDto) {
+    return this.userModel.findOneAndUpdate(
+      { _id: userId, 'addresses._id': addressId },
+      { $set: { 'addresses.$': data } },
+    );
+  }
+
+  findAddressById(userId: string, addressId: string) {
+    console.log({ _id: userId, 'addresses._id': addressId });
+    return this.userModel.findOne(
+         { _id: userId.toString(), 'addresses._id': addressId },
+    { 'addresses': 1 }
+
     );
   }
 }

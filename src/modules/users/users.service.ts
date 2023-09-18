@@ -26,6 +26,7 @@ import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { UpdateAddressDto } from './dtos/update-address.dto';
 
 @ApiBearerAuth()
 @Injectable()
@@ -368,6 +369,38 @@ export class UsersService {
     return {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.ADDRESS_CREATED_SUCCESS,
+    };
+  }
+
+  async updateAddress(
+    userId: string,
+    addressId: string,
+    body: UpdateAddressDto,
+  ): Promise<ResponseFormat<any>> {
+    const [existUser, existAddress, updatedResult] = await Promise.all([
+      this.userRepository.updateById(userId),
+      this.userRepository.findAddressById(userId, addressId),
+      this.userRepository.updateAddress(userId, addressId, body),
+    ]);
+
+    if (!existUser) {
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    }
+    console.log({existAddress})
+    if (!existAddress) {
+      throw new NotFoundException(ResponseMessages.ADDRESS_NOT_FOUND);
+    }
+    if (!updatedResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_ADDRESS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        address: updatedResult,
+      },
     };
   }
 }

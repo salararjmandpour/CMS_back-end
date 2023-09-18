@@ -1,8 +1,8 @@
 import * as Joi from 'joi';
 import {
   mobilePattern,
-  postalCodePattern,
   telephonePattern,
+  postalCodePattern,
 } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
