@@ -122,7 +122,7 @@ export class CategoriesService {
       };
     } catch (error) {
       const path = file?.path?.replace(/\\/g, '/');
-      console.log({path})
+      console.log({ path });
       this.fileService.deleteFileByPath(path);
       throw new CustomException(error.message, error.status);
     }
@@ -142,6 +142,9 @@ export class CategoriesService {
         ResponseMessages.FAILED_DELETE_CATEGORY,
       );
     }
+
+    // delete category image in file system
+    this.fileService.deleteFileByPath(existCategory.image);
 
     return {
       statusCode: HttpStatus.OK,
