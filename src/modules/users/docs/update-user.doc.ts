@@ -12,7 +12,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 export const ApiUpdateUser = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'update user by id',
+      summary: 'update user by id (admin panel)',
       description: 'update user by id',
     }),
     ApiOkResponse({

@@ -217,8 +217,11 @@ export class UsersService {
 
     const users = await this.userRepository.findAllUsers(query, {
       otp: 0,
-      resetPasswordExpires: 0,
+      password: 0,
+      accessToken: 0,
+      refreshToken: 0,
       resetPasswordToken: 0,
+      resetPasswordExpires: 0,
     });
     if (!users) {
       throw new InternalServerErrorException(

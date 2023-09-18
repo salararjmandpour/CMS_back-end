@@ -9,7 +9,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 export const ApiDeleteMantUser = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'delete mant user by userIds',
+      summary: 'delete mant user by userIds (admin panel)',
       description: 'delete mant user by userIds',
     }),
     ApiOkResponse({

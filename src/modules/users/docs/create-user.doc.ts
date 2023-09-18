@@ -12,7 +12,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 export const ApiCreateUser = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'create user',
+      summary: 'create user (admin panel)',
       description: 'create user',
     }),
     ApiCreatedResponse({

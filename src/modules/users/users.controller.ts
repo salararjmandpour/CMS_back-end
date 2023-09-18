@@ -28,16 +28,18 @@ import { DeleteAvatarDecorator } from './decorators/delete-avatar.decorator';
 import { getUsersListDecorator } from './decorators/get-users-list.decorator';
 import { UpdateAddressDecorator } from './decorators/update-address.decorator';
 import { CreateAddressDecorator } from './decorators/create-address.decorator';
+import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
 import { AddToWishlistDecorator } from './decorators/add-to-wishlist.decorator';
 import { DeleteManyUserDecorator } from './decorators/delete-many-user.decorator';
+import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
 import { SetNewPasswordDecorator } from './decorators/set-new-password.decorator';
 import { DeleteFromWishlistDecorator } from './decorators/delete-from-wishlist.decorator';
 
+import { updateUserValidator } from './validator/update-user.validator';
+import { updateAddressValidator } from './validator/update-address.validator';
+
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
-import { updateAddressValidator } from './validator/update-address.validator';
-import { DeleteAddresstDecorator } from './decorators/delete-address.decorator';
-import { GteAddressListDecorator } from './decorators/get-address-list.decorator';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -77,6 +79,7 @@ export class UsersController {
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateUserDto,
   ) {
+    joiValidation(updateUserValidator, body);
     return this.usersService.updateUser(id, body);
   }
 

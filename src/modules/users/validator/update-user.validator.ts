@@ -6,7 +6,7 @@ import {
   jalaliDatePattern,
   nationalityPattern,
 } from 'src/core/constants/pattern.constant';
-import { updateAddressValidator } from './update-address.validator';
+import { createAddressValidator } from './create-address.validator';
 
 export const updateUserValidator = Joi.object({
   firstName: Joi.string(),
@@ -18,5 +18,5 @@ export const updateUserValidator = Joi.object({
   nationalId: Joi.string().pattern(persianNationalId),
   nationality: Joi.string().pattern(nationalityPattern),
   birthdate: Joi.string().pattern(jalaliDatePattern),
-  addresses: Joi.array().items(updateAddressValidator),
+  addresses: Joi.array().items(createAddressValidator).required(),
 });
