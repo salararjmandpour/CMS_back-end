@@ -1,12 +1,12 @@
 import * as Joi from 'joi';
 import {
   mobilePattern,
-  postalCodePattern,
   telephonePattern,
+  postalCodePattern,
 } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const createAddressValidator = Joi.object({
+export const addressValidator = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
   mobile: Joi.string()

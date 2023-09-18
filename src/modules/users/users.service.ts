@@ -24,6 +24,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
 
 @ApiBearerAuth()
 @Injectable()
@@ -322,7 +323,7 @@ export class UsersService {
     if (duplicatedEmail) {
       throw new ConflictException(ResponseMessages.EMAIL_ALREADY_EXIST);
     }
-    if (duplicatedUsername) {
+    if (body.username && duplicatedUsername) {
       throw new ConflictException(ResponseMessages.USERNAME_ALREADY_EXIST);
     }
 
@@ -333,10 +334,20 @@ export class UsersService {
       );
     }
 
+    const excludedUser = excludeObjectKeys(
+      user,
+      'otp',
+      'password',
+      'accessToken',
+      'refreshToken',
+      'resetPasswordToken',
+      'resetPasswordExpires',
+    );
+
     return {
       statusCode: HttpStatus.CREATED,
       data: {
-        user,
+        user: excludedUser,
       },
     };
   }
