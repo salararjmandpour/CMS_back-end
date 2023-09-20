@@ -51,6 +51,9 @@ export class UsersService {
         password: 0,
         accessToken: 0,
         refreshToken: 0,
+        authProvider: 0,
+        resetPasswordToken: 0,
+        resetPasswordExpires: 0,
       });
 
       return { statusCode: HttpStatus.OK, data: { user } };
@@ -136,10 +139,10 @@ export class UsersService {
       this.userRepository.findOneFromWishlist(userId, productId),
     ]);
     if (!existProduct) {
-      throw new BadRequestException(ResponseMessages.PRODUCT_NOT_FOUND);
+      throw new NotFoundException(ResponseMessages.PRODUCT_NOT_FOUND);
     }
     if (hasInWishlist) {
-      throw new BadRequestException(
+      throw new ConflictException(
         ResponseMessages.PRODUCT_ALREADY_EXIST_IN_WISHLIST,
       );
     }
@@ -198,7 +201,9 @@ export class UsersService {
     const wishlist = await this.userRepository.findAllWishlist(userId);
 
     if (!wishlist) {
-      throw new BadRequestException(ResponseMessages.FAILED_GET_WISHLIST);
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_WISHLIST,
+      );
     }
 
     return {
@@ -293,7 +298,7 @@ export class UsersService {
       this.userRepository.updateById(body.id, { password: body.password }),
     ]);
     if (!user) {
-      throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
     if (updatedResult.modifiedCount !== 1) {
       throw new InternalServerErrorException(
@@ -389,7 +394,6 @@ export class UsersService {
     if (!existUser) {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
-    console.log({ existAddress });
     if (!existAddress) {
       throw new NotFoundException(ResponseMessages.ADDRESS_NOT_FOUND);
     }

@@ -8,36 +8,6 @@ import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 export const ApiSetNewPassword = () => {
-  const internalServerErrorResponses = [
-    ApiInternalServerErrorResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_SET_NEW_PASSWORD,
-          error: 'Internal Server Error',
-        },
-      },
-    }),
-    ApiInternalServerErrorResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
-          error: 'Internal Server Error',
-        },
-      },
-    }),
-    ApiInternalServerErrorResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_SEND_PASSWORD_SMS,
-          error: 'Internal Server Error',
-        },
-      },
-    }),
-  ];
-
   return applyDecorators(
     ApiOperation({
       summary: 'set new password for user (admin pannel)',
@@ -60,6 +30,18 @@ export const ApiSetNewPassword = () => {
         },
       },
     }),
-    ...internalServerErrorResponses,
+    ApiInternalServerErrorResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: [
+            ResponseMessages.FAILED_SET_NEW_PASSWORD,
+            ResponseMessages.FAILED_SEND_PASSWORD_SMS,
+            ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
+          ],
+          error: 'Internal Server Error',
+        },
+      },
+    }),
   );
 };

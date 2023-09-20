@@ -1,12 +1,12 @@
-import { HttpStatus, applyDecorators } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
   ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 export const ApiUploadAvatar = () => {
@@ -14,6 +14,14 @@ export const ApiUploadAvatar = () => {
     ApiOperation({
       summary: 'upload user avatar',
       description: `upload a photo for user avatar`,
+    }),
+    ApiOkResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.OK,
+          message: ResponseMessages.AVATAR_UPLOADED_SUCCESS,
+        },
+      },
     }),
     ApiUnauthorizedResponse({
       schema: {
@@ -39,14 +47,6 @@ export const ApiUploadAvatar = () => {
           statusCode: HttpStatus.NOT_FOUND,
           message: ResponseMessages.USER_NOT_FOUND,
           error: 'Not Found',
-        },
-      },
-    }),
-    ApiOkResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.OK,
-          message: ResponseMessages.AVATAR_UPLOADED_SUCCESS,
         },
       },
     }),

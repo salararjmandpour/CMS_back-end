@@ -32,7 +32,6 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { LoginAdminDto } from './dtos/login-admin.dto';
 import { SignupAdminDto } from './dtos/signup-admin.dto';
 import { PostResetPasswordDto } from './dtos/forgot-password.dto';
-import { copyObject } from 'src/core/utils/copy-object';
 
 @Injectable()
 export class AdminAuthService {
@@ -47,22 +46,16 @@ export class AdminAuthService {
       body.encryptedData,
       configService.get('CRYPTO_SECRET_KEY'),
     );
-
     const parsedAuthInfo: any = JSON.parse(authInfo);
-    console.log(parsedAuthInfo);
+
     const user = await this.userRepository.findByEmail(parsedAuthInfo.field);
-    console.log('Log 1: ', {
-      user,
-      parsedAuthInfo,
-      email: parsedAuthInfo.field,
-    });
 
     if (!user) {
       throw new UnauthorizedException(
         ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
       );
     }
-    console.log('Exist user: ', !!user);
+
     // check exist user and user role
     if (user?.role !== 'SUPERADMIN') {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);

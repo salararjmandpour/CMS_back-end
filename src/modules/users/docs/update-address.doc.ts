@@ -1,6 +1,7 @@
 import {
   ApiOperation,
   ApiOkResponse,
+  ApiNotFoundResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
@@ -56,11 +57,23 @@ export const ApiUpdateAddress = () => {
         },
       },
     }),
+    ApiNotFoundResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: [
+            ResponseMessages.USER_NOT_FOUND,
+            ResponseMessages.ADDRESS_NOT_FOUND,
+          ],
+          error: 'Not Found',
+        },
+      },
+    }),
     ApiInternalServerErrorResponse({
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          message: ResponseMessages.FAILED_UPDATE_ADDRESS,
           error: 'Internal Server Error',
         },
       },

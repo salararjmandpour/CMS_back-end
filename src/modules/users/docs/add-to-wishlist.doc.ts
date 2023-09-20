@@ -1,8 +1,10 @@
 import {
   ApiOperation,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiConflictResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -86,11 +88,29 @@ export const ApiAddToWishlist = () => {
         },
       },
     }),
+    ApiNotFoundResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: ResponseMessages.PRODUCT_NOT_FOUND,
+          error: 'Not Found',
+        },
+      },
+    }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: ResponseMessages.PRODUCT_ALREADY_EXIST_IN_WISHLIST,
+          error: 'Conflict',
+        },
+      },
+    }),
     ApiInternalServerErrorResponse({
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          message: ResponseMessages.FAILED_ADD_TO_WISHLIST,
           error: 'Internal Server Error',
         },
       },

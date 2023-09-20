@@ -62,7 +62,7 @@ export const ApiGetAddressList = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          message: ResponseMessages.FAILED_GET_ADDRESS_LIST,
           error: 'Internal Server Error',
         },
       },
