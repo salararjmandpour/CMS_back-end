@@ -32,6 +32,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { LoginAdminDto } from './dtos/login-admin.dto';
 import { SignupAdminDto } from './dtos/signup-admin.dto';
 import { PostResetPasswordDto } from './dtos/forgot-password.dto';
+import { copyObject } from 'src/core/utils/copy-object';
 
 @Injectable()
 export class AdminAuthService {
@@ -42,26 +43,32 @@ export class AdminAuthService {
   ) {}
 
   async login(body: LoginAdminDto): Promise<ResponseFormat<any>> {
-    const data: any = JSON.parse(
-      crypto.decrypt(
-        body.encryptedData,
-        configService.get('CRYPTO_SECRET_KEY'),
-      ) as any,
+    const authInfo: string = crypto.decrypt(
+      body.encryptedData,
+      configService.get('CRYPTO_SECRET_KEY'),
     );
 
-    const user = await this.userRepository.findByEmailOrUsername(data.field);
+    const parsedAuthInfo: any = JSON.parse(authInfo);
+    console.log(parsedAuthInfo);
+    const user = await this.userRepository.findByEmail(parsedAuthInfo.field);
+    console.log('Log 1: ', {
+      user,
+      parsedAuthInfo,
+      email: parsedAuthInfo.field,
+    });
+
     if (!user) {
       throw new UnauthorizedException(
         ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
       );
     }
-
+    console.log('Exist user: ', !!user);
     // check exist user and user role
     if (user?.role !== 'SUPERADMIN') {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
     // check match password
-    const comparedPassword = user.comparePassword(data.password);
+    const comparedPassword = user.comparePassword(parsedAuthInfo.password);
     if (!user || !comparedPassword) {
       throw new UnauthorizedException(
         ResponseMessages.INVALID_EMAIL_OR_PASSWORD,
@@ -211,10 +218,8 @@ export class AdminAuthService {
       throw new ForbiddenException(ResponseMessages.INVALID_OR_EXPIRED_TOKEN);
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(data.password, salt);
     const updatedPassword = await this.userRepository.updateById(user._id, {
-      password: hashedPassword,
+      password: data.password,
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });

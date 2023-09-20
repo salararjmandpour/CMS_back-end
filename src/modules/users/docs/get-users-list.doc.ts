@@ -1,9 +1,11 @@
-import { applyDecorators } from '@nestjs/common';
 import {
-  ApiOkResponse,
   ApiOperation,
+  ApiOkResponse,
   ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { applyDecorators } from '@nestjs/common';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 export const ApiGetUsersList = () => {
   return applyDecorators(
@@ -37,6 +39,15 @@ export const ApiGetUsersList = () => {
           statusCode: 401,
           message: 'UNAUTHORIZED',
           error: 'Unauthorized',
+        },
+      },
+    }),
+    ApiInternalServerErrorResponse({
+      schema: {
+        example: {
+          statusCode: 500,
+          message: ResponseMessages.FAILED_GET_USERS_LIST,
+          error: 'Internal Server Error',
         },
       },
     }),

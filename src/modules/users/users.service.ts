@@ -21,12 +21,12 @@ import { ProductsRepository } from '../products/products.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateAddressDto } from './dtos/create-address.dto';
+import { UpdateAddressDto } from './dtos/update-address.dto';
 import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { UpdateAddressDto } from './dtos/update-address.dto';
 
 @ApiBearerAuth()
 @Injectable()

@@ -23,8 +23,11 @@ export class UserRepository {
     return this.userModel.findOne({ _id: id }, projection);
   }
 
-  findByEmail(email: string, fields?: UserNumberType): Promise<UserDocument> {
-    return this.userModel.findOne({ email }, fields);
+  findByEmail(
+    email: string,
+    projection?: ProjectionType<User>,
+  ): Promise<UserDocument> {
+    return this.userModel.findOne({ email }, projection);
   }
 
   findByUsername(username: string, projection?: ProjectionType<User>) {

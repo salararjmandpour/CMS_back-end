@@ -3,14 +3,15 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Param, UploadedFile } from '@nestjs/common';
 
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dtos/create-category.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
 import { CreateCategoryDecorator } from './decorators/create-category.decorator';
 import { UpdateCategoryDecorator } from './decorators/update-category.decorator';
 import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
+
 import { UpdateCategoryDto } from './dtos/update-category.dto';
+import { CreateCategoryDto } from './dtos/create-category.dto';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
