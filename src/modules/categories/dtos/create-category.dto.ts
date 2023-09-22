@@ -1,12 +1,6 @@
-import {
-  IsString,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
 export class CreateCategoryDto {
@@ -15,8 +9,6 @@ export class CreateCategoryDto {
     required: true,
     example: 'تجهیرات پزشکی',
   })
-  @IsString()
-  @IsNotEmpty()
   title: string;
 
   @ApiProperty({
@@ -24,16 +16,12 @@ export class CreateCategoryDto {
     required: true,
     example: 'medical-equipment',
   })
-  @IsString()
-  @IsNotEmpty()
   slug: string;
 
   @ApiProperty({
     type: String,
     default: '',
   })
-  @IsString()
-  @IsNotEmpty()
   description: string;
 
   @ApiProperty({
@@ -41,8 +29,6 @@ export class CreateCategoryDto {
     example: '6470a3fbbb82534053e8bb86',
     required: false,
   })
-  @IsMongoId()
-  @IsOptional()
   parent: string;
 
   image: any;

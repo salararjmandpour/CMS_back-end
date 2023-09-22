@@ -35,10 +35,6 @@ export class CategoriesRepository {
     return this.categoryModel.findOne({ title }, projection);
   }
 
-  findByName(name: string, projection?: ProjectionType<CategoryDocument>) {
-    return this.categoryModel.findOne({ name }, projection);
-  }
-
   findAll() {
     return this.categoryModel.find();
   }

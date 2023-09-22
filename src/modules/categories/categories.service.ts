@@ -30,133 +30,146 @@ export class CategoriesService {
     private seoRepository: SeoRepository,
   ) {}
 
-  async create(
-    file: Express.Multer.File,
-    body: CreateCategoryWithSeoDto,
-  ): Promise<ResponseFormat<any>> {
-    try {
-      // prevent duplicate title and slug
-      const [duplicateTitle, duplicateSlug, existParent, duplicatedSeoSlug] =
-        await Promise.all([
-          this.categoriesRepository.findByTitle(body.category.title),
-          this.categoriesRepository.findBySlug(body.category.slug),
-          this.categoriesRepository.findById(body.category.parent),
-          this.seoRepository.findBySlug(body.seo.slug),
-        ]);
-      if (duplicateTitle) {
-        throw new ConflictException(
-          ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
-        );
-      }
-      if (duplicateSlug) {
-        throw new ConflictException(
-          ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST,
-        );
-      }
-      if (body.category.parent && !existParent) {
-        throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
-      }
-      if (body.seo && duplicatedSeoSlug) {
-        throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
-      }
-
-      // save category in database
-      const createdCategory = await this.categoriesRepository.create(
-        body.category,
+  async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
+    // prevent duplicate title and slug
+    const [duplicateTitle, duplicateSlug, existParent, duplicatedSeoSlug] =
+      await Promise.all([
+        this.categoriesRepository.findByTitle(body.category.title),
+        this.categoriesRepository.findBySlug(body.category.slug),
+        this.categoriesRepository.findById(body.category.parent),
+        this.seoRepository.findBySlug(body?.seo?.slug),
+      ]);
+    if (duplicateTitle) {
+      throw new ConflictException(
+        ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
       );
-      if (!createdCategory) {
-        throw new InternalServerErrorException(
-          ResponseMessages.FAILED_CREATE_CATEGORY,
-        );
-      }
+    }
+    if (duplicateSlug) {
+      throw new ConflictException(ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST);
+    }
+    if (body.category.parent && !existParent) {
+      throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
+    }
+    if (body.seo && duplicatedSeoSlug) {
+      throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
+    }
 
-      // save seo in database
-      if (body.seo) {
-        const category = copyObject(createdCategory);
-        const createdSeo = await this.seoService.create({
-          ...body.seo,
-          category: category._id,
-        });
+    // save category in database
+    const createdCategory = await this.categoriesRepository.create(
+      body.category,
+    );
+    if (!createdCategory) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_CREATE_CATEGORY,
+      );
+    }
 
-        return {
-          statusCode: HttpStatus.CREATED,
-          message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
-          data: {
-            category: createdCategory,
-            seo: createdSeo.data.seo,
-          },
-        };
-      }
+    // save seo in database
+    if (body.seo) {
+      const createdSeo = await this.seoService.create({
+        ...body.seo,
+        category: createdCategory._id.toString(),
+      });
 
       return {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
         data: {
           category: createdCategory,
+          seo: createdSeo.data.seo,
         },
       };
-    } catch (error) {
-      const path = file?.path?.replace(/\\/g, '/');
-      this.fileService.deleteFileByPath(path);
-      throw new CustomException(error.message, error.status);
     }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
+      data: {
+        category: createdCategory,
+      },
+    };
   }
 
   async update(
     id: string,
-    update: CreateCategoryDto,
-    file: Express.Multer.File,
+    body: CreateCategoryWithSeoDto,
   ): Promise<ResponseFormat<any>> {
-    try {
-      // prevent duplicate title and name
-      const [existCategory, duplicateTitle, duplicateSlug] = await Promise.all([
-        this.categoriesRepository.findById(id),
-        this.categoriesRepository.findByTitle(update.title),
-        this.categoriesRepository.findByName(update.slug),
-      ]);
-      if (!existCategory) {
-        throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
-      }
-      if (duplicateTitle) {
-        throw new ConflictException(
-          ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
-        );
-      }
-      if (duplicateSlug) {
-        throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
-      }
+    // prevent duplicate title and name
+    const [
+      existCategory,
+      duplicateTitle,
+      duplicateSlug,
+      existParent,
+      duplicatedSeoSlug,
+    ] = await Promise.all([
+      this.categoriesRepository.findById(id),
+      this.categoriesRepository.findByTitle(body?.category?.title),
+      this.categoriesRepository.findBySlug(body?.category?.slug),
+      this.categoriesRepository.findById(body.category.parent),
+      this.seoRepository.findBySlug(body?.seo?.slug),
+    ]);
+    if (!existCategory) {
+      throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
+    }
+    if (duplicateTitle) {
+      throw new ConflictException(
+        ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
+      );
+    }
+    if (duplicateSlug) {
+      throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
+    }
+    if (body.category.parent && !existParent) {
+      throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
+    }
+    if (body?.seo?.slug && duplicatedSeoSlug) {
+      throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
+    }
 
-      if (file) {
-        const image = file?.path?.replace(/\\/g, '/');
-        update.image = image;
-
-        // delete prevent image in file system
-        this.fileService.deleteFileByPath(existCategory.image);
-        console.log({ prevImage: existCategory.image });
-      }
-
-      // update category by id
-      const category = await this.categoriesRepository.updateById(id, update, {
+    // update category by id
+    const [updatedCategory, existSeo] = await Promise.all([
+      this.categoriesRepository.updateById(id, body.category, {
         new: true,
-      });
-      if (!category) {
-        throw new InternalServerErrorException(
-          ResponseMessages.FAILED_UPDATE_CATEGORY,
+      }),
+      this.seoRepository.findByCategory(existCategory._id.toString()),
+    ]);
+    if (!updatedCategory) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_CATEGORY,
+      );
+    }
+
+    // if exist seo, update seo in database
+    if (body?.seo) {
+      let upsertedSeo;
+      if (existSeo) {
+        upsertedSeo = await this.seoRepository.updateById(
+          existSeo?._id,
+          body.seo,
+          { new: true },
         );
+      } else {
+        upsertedSeo = await this.seoRepository.create({
+          ...body.seo,
+          category: existCategory._id.toString(),
+        });
       }
 
       return {
         statusCode: HttpStatus.OK,
         data: {
-          category,
+          category: updatedCategory,
+          seo: upsertedSeo,
         },
       };
-    } catch (error) {
-      const path = file?.path?.replace(/\\/g, '/');
-      console.log({ path });
-      this.fileService.deleteFileByPath(path);
-      throw new CustomException(error.message, error.status);
     }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        category: updatedCategory,
+      },
+    };
   }
 
   async deleteById(id: string): Promise<ResponseFormat<any>> {

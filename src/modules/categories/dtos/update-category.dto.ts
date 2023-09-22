@@ -1,21 +1,14 @@
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ValidateNested } from 'class-validator';
+import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
 
 export class UpdateCategoryDto {
-  @ApiProperty({
-    type: 'string',
-    format: 'binary',
-    required: false,
-  })
-  image: any;
-
   @ApiProperty({
     type: String,
     required: false,
     example: 'تجهیرات پزشکی',
   })
-  @IsString()
-  @IsNotEmpty()
   title: string;
 
   @ApiProperty({
@@ -23,16 +16,12 @@ export class UpdateCategoryDto {
     required: false,
     example: 'medical-equipment',
   })
-  @IsString()
-  @IsNotEmpty()
   slug: string;
 
   @ApiProperty({
     type: String,
     default: '',
   })
-  @IsString()
-  @IsNotEmpty()
   description: string;
 
   @ApiProperty({
@@ -40,9 +29,26 @@ export class UpdateCategoryDto {
     example: '6470a3fbbb82534053e8bb86',
     required: false,
   })
-  @IsMongoId()
-  @IsOptional()
   parent: string;
 
   count: number;
+  image: any;
+}
+
+export class UpdateCategoryWithDto {
+  @ApiProperty({
+    type: UpdateCategoryDto,
+    default: UpdateCategoryDto,
+  })
+  @ValidateNested()
+  @Type(() => UpdateCategoryDto)
+  category: UpdateCategoryDto;
+
+  @ApiProperty({
+    type: UpdateSeoDto,
+    default: UpdateSeoDto,
+  })
+  @ValidateNested()
+  @Type(() => UpdateSeoDto)
+  seo: UpdateSeoDto;
 }

@@ -26,6 +26,11 @@ export class SEO {
     type: Types.ObjectId,
   })
   product: string;
+
+  @Prop({
+    type: Types.ObjectId,
+  })
+  category: string;
 }
 
 export type SeoDocument = SEO & Document;

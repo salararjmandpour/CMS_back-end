@@ -1,8 +1,10 @@
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { SEO } from './schemas/seo.schema';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { SEO, SeoDocument } from './schemas/seo.schema';
 import { CreateSeoDto } from './dto/create-seo.dto';
+import { UpdateSeoDto } from './dto/update-seo.dto';
 
 @Injectable()
 export class SeoRepository {
@@ -12,7 +14,23 @@ export class SeoRepository {
     return this.seoModel.create(date);
   }
 
+  findById(id: string) {
+    return this.seoModel.findById(id);
+  }
+
+  findByProduct(productId: string) {
+    return this.seoModel.findOne({ product: productId });
+  }
+
+  findByCategory(categoryId: string) {
+    return this.seoModel.findOne({ category: categoryId });
+  }
+
   findBySlug(slug: string) {
     return this.seoModel.findOne({ slug });
+  }
+
+  updateById(_id: any, data: UpdateSeoDto, options: QueryOptions<SeoDocument>) {
+    return this.seoModel.findOneAndUpdate({ _id }, { $set: data }, options);
   }
 }
