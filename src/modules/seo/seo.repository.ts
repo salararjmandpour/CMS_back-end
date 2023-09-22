@@ -11,4 +11,8 @@ export class SeoRepository {
   create(date: CreateSeoDto) {
     return this.seoModel.create(date);
   }
+
+  findBySlug(slug: string) {
+    return this.seoModel.findOne({ slug });
+  }
 }

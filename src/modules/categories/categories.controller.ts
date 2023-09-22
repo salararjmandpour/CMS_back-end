@@ -11,7 +11,7 @@ import { DeleteCategoryDecorator } from './decorators/delete-category.decorator'
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
 
 import { UpdateCategoryDto } from './dtos/update-category.dto';
-import { CreateCategoryDto } from './dtos/create-category.dto';
+import { CreateCategoryWithSeoDto } from './dtos/create-category.dto';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -22,7 +22,7 @@ export class CategoriesController {
   // create category
   @CreateCategoryDecorator()
   create(
-    @Body() body: CreateCategoryDto,
+    @Body() body: CreateCategoryWithSeoDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.categoriesService.create(file, body);

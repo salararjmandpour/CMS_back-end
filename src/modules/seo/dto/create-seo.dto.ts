@@ -19,5 +19,6 @@ export class CreateSeoDto {
   })
   description: string;
 
-  product: string;
+  product?: string;
+  category?: string;
 }

@@ -12,6 +12,7 @@ export class SEO {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 

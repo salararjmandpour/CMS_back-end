@@ -8,11 +8,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 
 import { User, UserDocument, UserDocumentOptional } from './schema/user.schema';
-import { UserNumberType } from 'src/core/interfaces/user.interface';
+
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateAddressDto } from './dtos/create-address.dto';
 import { UpdateAddressDto } from './dtos/update-address.dto';
-import { UserModule } from './users.module';
 
 export class UserRepository {
   constructor(

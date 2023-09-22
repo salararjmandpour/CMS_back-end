@@ -76,5 +76,5 @@ export const ProductValidator = Joi.object({
 
 export const createProductValidator = Joi.object({
   product: ProductValidator,
-  seo: createSeoValidator,
+  seo: createSeoValidator.required(),
 });

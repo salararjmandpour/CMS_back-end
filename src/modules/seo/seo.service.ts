@@ -1,6 +1,7 @@
 import {
   HttpStatus,
   Injectable,
+  ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SeoRepository } from './seo.repository';
@@ -23,6 +24,9 @@ export class SeoService {
     return {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.SEO_CREATED_SUCCESS,
+      data: {
+        seo,
+      },
     };
   }
 }

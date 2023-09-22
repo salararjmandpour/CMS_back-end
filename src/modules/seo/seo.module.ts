@@ -10,6 +10,6 @@ import { SEO, SeoSchema } from './schemas/seo.schema';
   imports: [MongooseModule.forFeature([{ name: SEO.name, schema: SeoSchema }])],
   providers: [SeoService, SeoRepository],
   controllers: [SeoController],
-  exports: [SeoService],
+  exports: [SeoService, SeoRepository],
 })
 export class SeoModule {}

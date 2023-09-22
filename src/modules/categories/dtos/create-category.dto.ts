@@ -1,14 +1,15 @@
+import {
+  IsString,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
 export class CreateCategoryDto {
-  @ApiProperty({
-    type: 'string',
-    format: 'binary',
-    required: true,
-  })
-  image: any;
-
   @ApiProperty({
     type: String,
     required: true,
@@ -44,5 +45,24 @@ export class CreateCategoryDto {
   @IsOptional()
   parent: string;
 
+  image: any;
   count: number;
+}
+
+export class CreateCategoryWithSeoDto {
+  @ApiProperty({
+    type: CreateCategoryDto,
+    default: CreateCategoryDto,
+  })
+  @ValidateNested()
+  @Type(() => CreateCategoryDto)
+  category: CreateCategoryDto;
+
+  @ApiProperty({
+    type: CreateSeoDto,
+    default: CreateSeoDto,
+  })
+  @ValidateNested()
+  @Type(() => CreateSeoDto)
+  seo: CreateSeoDto;
 }

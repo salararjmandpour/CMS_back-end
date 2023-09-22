@@ -7,63 +7,92 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
+import { SeoService } from '../seo/seo.service';
 import { FileService } from '../file/file.service';
 import { CategoriesRepository } from './categories.repository';
 
-import { CreateCategoryDto } from './dtos/create-category.dto';
+import {
+  CreateCategoryDto,
+  CreateCategoryWithSeoDto,
+} from './dtos/create-category.dto';
+import { copyObject } from 'src/core/utils/copy-object';
 import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { SeoRepository } from '../seo/seo.repository';
 
 @Injectable()
 export class CategoriesService {
   constructor(
+    private seoService: SeoService,
     private fileService: FileService,
     private categoriesRepository: CategoriesRepository,
+    private seoRepository: SeoRepository,
   ) {}
 
   async create(
     file: Express.Multer.File,
-    body: CreateCategoryDto,
+    body: CreateCategoryWithSeoDto,
   ): Promise<ResponseFormat<any>> {
     try {
-      // check exist file
-      if (!file) {
-        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
-      }
-      const image = file?.path?.replace(/\\/g, '/');
-
       // prevent duplicate title and slug
-      const [duplicateTitle, duplicateSlug, existParent] = await Promise.all([
-        this.categoriesRepository.findByTitle(body.title),
-        this.categoriesRepository.findByName(body.slug),
-        this.categoriesRepository.findById(body.parent),
-      ]);
+      const [duplicateTitle, duplicateSlug, existParent, duplicatedSeoSlug] =
+        await Promise.all([
+          this.categoriesRepository.findByTitle(body.category.title),
+          this.categoriesRepository.findBySlug(body.category.slug),
+          this.categoriesRepository.findById(body.category.parent),
+          this.seoRepository.findBySlug(body.seo.slug),
+        ]);
       if (duplicateTitle) {
-        throw new ConflictException(ResponseMessages.TITLE_ALREADY_EXIST);
+        throw new ConflictException(
+          ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
+        );
       }
       if (duplicateSlug) {
-        throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
+        throw new ConflictException(
+          ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST,
+        );
       }
-      if (body.parent && !existParent) {
+      if (body.category.parent && !existParent) {
         throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
+      }
+      if (body.seo && duplicatedSeoSlug) {
+        throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
       }
 
       // save category in database
-      const category = await this.categoriesRepository.create({
-        ...body,
-        image,
-      });
-      if (!category) {
+      const createdCategory = await this.categoriesRepository.create(
+        body.category,
+      );
+      if (!createdCategory) {
         throw new InternalServerErrorException(
           ResponseMessages.FAILED_CREATE_CATEGORY,
         );
       }
 
+      // save seo in database
+      if (body.seo) {
+        const category = copyObject(createdCategory);
+        const createdSeo = await this.seoService.create({
+          ...body.seo,
+          category: category._id,
+        });
+
+        return {
+          statusCode: HttpStatus.CREATED,
+          message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
+          data: {
+            category: createdCategory,
+            seo: createdSeo.data.seo,
+          },
+        };
+      }
+
       return {
         statusCode: HttpStatus.CREATED,
+        message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
         data: {
-          category,
+          category: createdCategory,
         },
       };
     } catch (error) {
@@ -89,7 +118,9 @@ export class CategoriesService {
         throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
       }
       if (duplicateTitle) {
-        throw new ConflictException(ResponseMessages.TITLE_ALREADY_EXIST);
+        throw new ConflictException(
+          ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
+        );
       }
       if (duplicateSlug) {
         throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);

@@ -27,6 +27,10 @@ export class CategoriesRepository {
     return this.categoryModel.findById(id, projection);
   }
 
+  findBySlug(slug: string, projection?: ProjectionType<CategoryDocument>) {
+    return this.categoryModel.findOne({ slug }, projection);
+  }
+
   findByTitle(title: string, projection?: ProjectionType<CategoryDocument>) {
     return this.categoryModel.findOne({ title }, projection);
   }
