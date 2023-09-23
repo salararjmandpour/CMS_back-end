@@ -25,7 +25,7 @@ export const ApiCreateUser = () => {
               lastName: 'Askarpour',
               email: 'sdfsdfaskarspour@gmail.com',
               authProvider: 'OTP',
-              role: 'USER',
+              role: 'CUSTOMER',
               avatar: null,
               nationality: 'iranian',
               gender: 'male',

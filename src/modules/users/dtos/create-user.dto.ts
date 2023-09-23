@@ -20,7 +20,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     type: String,
-    default: 'USER',
+    default: 'CUSTOMER',
   })
   role: RolesEnum;
 

@@ -12,9 +12,9 @@ import { Product } from 'src/modules/products/schema/product.schema';
 
 export enum RolesEnum {
   SUPERADMIN = 'SUPERADMIN',
-  ADMIN = 'ADMIN',
+  STOREADMIN = 'STOREADMIN',
   SUPPLIER = 'SUPPLIER',
-  USER = 'USER',
+  CUSTOMER = 'CUSTOMER',
 }
 
 export enum NationalityEnum {
@@ -122,8 +122,8 @@ export class User extends Document {
 
   @Prop({
     type: String,
-    default: RolesEnum.USER,
-    enum: [RolesEnum.SUPERADMIN, RolesEnum.USER],
+    default: RolesEnum.CUSTOMER,
+    enum: [RolesEnum.SUPERADMIN, RolesEnum.CUSTOMER],
   })
   role: RolesEnum;
 

@@ -21,7 +21,7 @@ export const ApiGetMe = () => {
           user: {
             _id: '64bfb641c5b91ecf9f5271f5',
             mobile: '09054538720',
-            role: 'USER',
+            role: 'CUSTOMER',
             avatar: '',
             createdAt: '2023-07-25T11:47:13.880Z',
             updatedAt: '2023-07-25T15:38:57.170Z',

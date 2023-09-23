@@ -19,7 +19,7 @@ export class UpdateUserDto {
 
   @ApiProperty({
     type: String,
-    default: 'USER',
+    default: 'CUSTOMER',
   })
   role: RolesEnum;
 
