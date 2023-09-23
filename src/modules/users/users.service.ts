@@ -27,6 +27,8 @@ import { SetNewPasswordDto } from './dtos/set-new-password.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { SearchRoleType } from './users.controller';
+import { ChangeUsersRole } from './dtos/change-users-role';
 
 @ApiBearerAuth()
 @Injectable()
@@ -213,11 +215,11 @@ export class UsersService {
   }
 
   async getAllUsers(
-    role: RolesEnum,
+    role: SearchRoleType,
     search: string,
   ): Promise<ResponseFormat<any>> {
     const query: any = { $and: [{}] };
-    if (role) query.$and.push({ role });
+    if (role && role !== 'ALL') query.$and.push({ role });
     if (search) {
       query.$and.push({
         $or: [
@@ -249,6 +251,34 @@ export class UsersService {
       data: {
         users,
       },
+    };
+  }
+
+  async changeUserRole(body: ChangeUsersRole): Promise<ResponseFormat<any>> {
+    //  check exist users
+    const existUsers = await this.userRepository.findAllUsers({
+      _id: { $in: body.usersIds },
+    });
+    if (!existUsers || existUsers?.length !== body.usersIds.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
+    }
+
+    const updatedResult = await this.userRepository.updateManyUsersByIds(
+      body.usersIds,
+      {
+        $set: { role: body.role },
+      },
+    );
+
+    if (updatedResult.modifiedCount !== existUsers.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_ROLES,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.UPDATED_ROLES_SUCCESS,
     };
   }
 

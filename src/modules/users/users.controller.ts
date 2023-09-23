@@ -40,6 +40,10 @@ import { updateAddressValidator } from './validator/update-address.validator';
 
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { ChangeUsersRoleDecorator } from './decorators/change-users-role.decorator';
+import { ChangeUsersRole } from './dtos/change-users-role';
+
+export type SearchRoleType = RolesEnum | 'ALL';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -71,6 +75,12 @@ export class UsersController {
   @SetNewPasswordDecorator()
   setNewPassword(@Body() body: SetNewPasswordDto) {
     return this.usersService.setNewPassword(body);
+  }
+
+  // change users role by usersIds
+  @ChangeUsersRoleDecorator()
+  async changeUsersRole(@Body() body: ChangeUsersRole) {
+    return this.usersService.changeUserRole(body);
   }
 
   // update user profile by superadmin (admin pannel)
@@ -111,7 +121,10 @@ export class UsersController {
   }
 
   @getUsersListDecorator()
-  getUsers(@Query('role') role: RolesEnum, @Query('search') search: string) {
+  getUsers(
+    @Query('role') role: SearchRoleType,
+    @Query('search') search: string,
+  ) {
     return this.usersService.getAllUsers(role, search);
   }
 

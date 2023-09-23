@@ -4,6 +4,7 @@ import {
   FilterQuery,
   QueryOptions,
   ProjectionType,
+  UpdateQuery,
 } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -171,6 +172,14 @@ export class UserRepository {
       { _id: userId.toString(), 'addresses._id': addressId },
       { addresses: 1 },
     );
+  }
+
+  updateManyUsersByIds(
+    usersIds: string[],
+    update?: UpdateQuery<UserDocument>,
+    options?: QueryOptions<UserDocument>,
+  ) {
+    return this.userModel.updateMany({ _id: usersIds }, update, options);
   }
 
   deleteAddressById(userId: string, addressId: string): Promise<any> {

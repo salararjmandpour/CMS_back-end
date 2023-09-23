@@ -10,8 +10,9 @@ export const getUsersListDecorator = () => {
     UseGuards(AuthGuard),
     ApiQuery({
       name: 'role',
+      required: false,
       description:
-        "required roles: 'CUSTOMER', 'SUPPLIER', 'STOREADMIN', 'SUPERADMIN'",
+        "required values: 'CUSTOMER', 'SUPPLIER', 'STOREADMIN', 'SUPERADMIN', 'ALL'",
     }),
     ApiGetUsersList(),
     ApiQuery({ name: 'role', required: false }),
