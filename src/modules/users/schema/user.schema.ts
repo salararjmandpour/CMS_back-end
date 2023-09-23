@@ -216,11 +216,3 @@ UserSchema.pre('updateOne', function (next) {
   }
   next();
 });
-
-UserSchema.index({
-  firstName: 'text',
-  lastName: 'text',
-  email: 'text',
-  username: 'text',
-  mobile: 'text',
-});

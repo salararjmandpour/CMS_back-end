@@ -216,9 +216,19 @@ export class UsersService {
     role: RolesEnum,
     search: string,
   ): Promise<ResponseFormat<any>> {
-    const query: any = {};
-    if (role) query.role = role;
-    if (search) query['$text'] = { $search: search };
+    const query: any = { $and: [{}] };
+    if (role) query.$and.push({ role });
+    if (search) {
+      query.$and.push({
+        $or: [
+          { firstName: { $regex: search, $options: 'i' } },
+          { lastName: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+          { username: { $regex: search, $options: 'i' } },
+          { mobile: { $regex: search, $options: 'i' } },
+        ],
+      });
+    }
 
     const users = await this.userRepository.findAllUsers(query, {
       otp: 0,
