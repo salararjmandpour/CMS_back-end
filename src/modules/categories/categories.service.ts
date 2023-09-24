@@ -20,6 +20,8 @@ import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { SeoRepository } from '../seo/seo.repository';
+import { CategoryDocument } from './schemas/category.schema';
+import { SeoDocument } from '../seo/schemas/seo.schema';
 
 @Injectable()
 export class CategoriesService {
@@ -196,18 +198,32 @@ export class CategoriesService {
   }
 
   async getCategoryList(): Promise<ResponseFormat<any>> {
-    const categories = await this.categoriesRepository.findAll();
-
+    const [categories, seos] = await Promise.all([
+      this.categoriesRepository.findAll(),
+      this.seoRepository.findWithCategory(),
+    ]);
     if (!categories) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_CATEGORY_LIST,
       );
     }
+    if (!seos) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_SEO_LIST,
+      );
+    }
+
+    const categoryList = categories.map((category: CategoryDocument) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return seo?.category?.toString() === category._id.toString();
+      });
+      return { category, seo };
+    });
 
     return {
       statusCode: HttpStatus.OK,
       data: {
-        categories,
+        categories: categoryList,
       },
     };
   }
