@@ -29,6 +29,11 @@ import { excludeObjectKeys } from 'src/core/utils/exclude-object-keys.util';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { SearchRoleType } from './users.controller';
 import { ChangeUsersRole } from './dtos/change-users-role';
+import {
+  alphabetLowerCaseLetters,
+  alphabetNumber,
+  nanoid,
+} from 'src/core/utils/nanoid.util';
 
 @ApiBearerAuth()
 @Injectable()
@@ -334,8 +339,8 @@ export class UsersService {
   // send new password and send(email/sms) for user
   async setNewPassword(body: SetNewPasswordDto): Promise<ResponseFormat<any>> {
     const [user, updatedResult] = await Promise.all([
-      this.userRepository.findById(body.id),
-      this.userRepository.updateById(body.id, { password: body.password }),
+      this.userRepository.findById(body.usreId),
+      this.userRepository.updateById(body.usreId, { password: body.password }),
     ]);
     if (!user) {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
@@ -346,18 +351,16 @@ export class UsersService {
       );
     }
 
+    const password = body.password
+      ? body.password
+      : nanoid(alphabetNumber + alphabetLowerCaseLetters);
+
     // send password(email/sms) to user
     if (user.email) {
-      await this.mainEmailService.sendًPasswordToUser(
-        user.email,
-        body.password,
-      );
+      await this.mainEmailService.sendًPasswordToUser(user.email, password);
     }
     if (user.mobile) {
-      await this.smsService.sendPasswordToUser_ippanel(
-        user.mobile,
-        body.password,
-      );
+      await this.smsService.sendPasswordToUser_ippanel(user.mobile, password);
     }
 
     return {

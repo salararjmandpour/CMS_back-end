@@ -1,9 +1,10 @@
 import {
+  Matches,
+  IsString,
+  MinLength,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
-  IsString,
-  MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -14,7 +15,7 @@ export class SetNewPasswordDto {
   })
   @IsMongoId()
   @IsNotEmpty()
-  id: string;
+  usreId: string;
 
   @ApiProperty({
     type: String,
@@ -23,5 +24,8 @@ export class SetNewPasswordDto {
   @IsString()
   @IsOptional()
   @MinLength(8)
-  password: string;
+  @Matches(/^[a-zA-Z]+$/, {
+    message: 'password is invalid',
+  })
+  password?: string;
 }
