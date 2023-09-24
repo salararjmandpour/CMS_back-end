@@ -1,8 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
-
-import { AddressDto } from './address.dto';
 import { GenderEnum, NationalityEnum, RolesEnum } from '../schema/user.schema';
 
 export class CreateUserDto {
@@ -59,12 +55,4 @@ export class CreateUserDto {
     default: '1383/02/26',
   })
   birthdate: string;
-
-  @ApiProperty({
-    type: [AddressDto],
-    example: AddressDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => AddressDto)
-  addresses: AddressDto[];
 }
