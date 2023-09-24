@@ -9,9 +9,9 @@ import { UpdateCategoryDecorator } from './decorators/update-category.decorator'
 import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
 
+import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { UpdateCategoryWithDto } from './dtos/update-category.dto';
 import { CreateCategoryWithSeoDto } from './dtos/create-category.dto';
-import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
 
 @ApiBearerAuth()

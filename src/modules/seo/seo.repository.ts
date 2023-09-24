@@ -1,4 +1,4 @@
-import { Model, QueryOptions } from 'mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -32,5 +32,9 @@ export class SeoRepository {
 
   updateById(_id: any, data: UpdateSeoDto, options: QueryOptions<SeoDocument>) {
     return this.seoModel.findOneAndUpdate({ _id }, { $set: data }, options);
+  }
+
+  deleteOne(filter?: FilterQuery<SeoDocument>): Promise<any> {
+    return this.seoModel.deleteOne(filter);
   }
 }
