@@ -24,8 +24,8 @@ export class SetNewPasswordDto {
   @IsString()
   @IsOptional()
   @MinLength(8)
-  @Matches(/^[a-zA-Z]+$/, {
-    message: 'password is invalid',
-  })
+  // @Matches(/^[a-zA-Z]+$/, {
+  //   message: 'password is invalid',
+  // })
   password?: string;
 }

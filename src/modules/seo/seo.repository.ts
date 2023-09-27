@@ -31,7 +31,6 @@ export class SeoRepository {
   }
 
   async findWithCategory(): Promise<SeoDocument[]> {
-    console.log();
     return this.seoModel.find({ category: { $ne: null } });
   }
 

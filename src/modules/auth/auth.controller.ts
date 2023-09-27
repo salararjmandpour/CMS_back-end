@@ -1,20 +1,19 @@
-// modules
-import { Body, Controller, Query } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Query, Req } from '@nestjs/common';
 
-// services
 import { AuthService } from './auth.service';
 
-// dtos
 import { GetOtpDto } from './dtos/get-otp.dto';
 import { CheckOtpDto } from './dtos/check-otp.dto';
 
-// docs
+import { ApiLogout } from './docs/logout.doc';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
+
 import { GetOtpDecorator } from './decorators/get-otp-decorator';
 import { CheckOtpDecorator } from './decorators/check-otp.decorator';
-import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
 import { GoogleLoginDecorator } from './decorators/google-login.decorator';
+import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,6 +33,15 @@ export class AuthController {
   @RefreshTokenDecorator()
   refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
     return this.authService.refreshToken(refreshToken);
+  }
+
+  @ApiLogout()
+  @Get('logout')
+  logout(@Req() req: Request) {
+    const accessToken = req.headers?.accessToken as string;
+    const refreshToken = req.headers?.refreshToken as string;
+
+    return this.authService.logout(accessToken, refreshToken);
   }
 
   // login with google

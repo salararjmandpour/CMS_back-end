@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { configService } from 'src/core/config/app.config';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { StatusEnum } from '../order/schema/order.schema';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class SmsService {
@@ -44,14 +44,14 @@ export class SmsService {
   async sendPasswordToUser_ippanel(mobile: string, password: string) {
     const apiKey = configService.get('IPPANEL_API_KEY');
     const baseUrl = configService.get('IPPANEL_BASE_URL');
-    const pattern_code = configService.get('IPPANEL_PATTERN');
+    const pattern_code = configService.get('IPPANEL_NEW_PASSWORD_PATTERN');
 
     const data = {
       pattern_code,
       originator: '+985000404223',
       recipient: mobile,
       values: {
-        'verification-code': password,
+        password,
       },
     };
     const config = {
@@ -64,6 +64,7 @@ export class SmsService {
     try {
       return await this.httpService.post(baseUrl, data, config).toPromise();
     } catch (err) {
+      console.log(err);
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_PASSWORD_SMS,
       );

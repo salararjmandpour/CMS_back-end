@@ -167,7 +167,6 @@ export class UserRepository {
   }
 
   findAddressById(userId: string, addressId: string) {
-    console.log({ _id: userId, 'addresses._id': addressId });
     return this.userModel.findOne(
       { _id: userId.toString(), 'addresses._id': addressId },
       { addresses: 1 },

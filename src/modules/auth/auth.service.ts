@@ -20,6 +20,7 @@ import { CheckOtpDto } from './dtos/check-otp.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { emailPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { BlacklistRepository } from './blacklist.repository';
 
 interface GoogleUserResult {
   sub: string;
@@ -35,6 +36,7 @@ interface GoogleUserResult {
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly blacklistRepository: BlacklistRepository,
     private readonly userRepository: UserRepository,
     private readonly googleClient: OAuth2Client,
     private readonly emailService: EmailService,
@@ -158,6 +160,26 @@ export class AuthService {
     } catch (err) {
       throw new UnauthorizedException(err.message);
     }
+  }
+
+  async logout(
+    accessToken?: string,
+    refreshToken?: string,
+  ): Promise<ResponseFormat<any>> {
+    await Promise.all([
+      this.blacklistRepository.add(accessToken, refreshToken),
+      this.userRepository.findOne({
+        $or: [
+          { accessToken, refreshToken },
+          { accessToken: null, refreshToken: null },
+        ],
+      }),
+    ]);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.LOGOUTED_SUCCESS,
+    };
   }
 
   // check exist user and update user or create user
