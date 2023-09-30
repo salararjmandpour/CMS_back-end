@@ -123,7 +123,12 @@ export class User extends Document {
   @Prop({
     type: String,
     default: RolesEnum.CUSTOMER,
-    enum: [RolesEnum.SUPERADMIN, RolesEnum.CUSTOMER],
+    enum: [
+      RolesEnum.SUPERADMIN,
+      RolesEnum.CUSTOMER,
+      RolesEnum.STOREADMIN,
+      RolesEnum.SUPPLIER,
+    ],
   })
   role: RolesEnum;
 

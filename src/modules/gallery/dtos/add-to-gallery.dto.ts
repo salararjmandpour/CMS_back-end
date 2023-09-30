@@ -15,7 +15,7 @@ export class AddToGalleryDto {
   })
   @IsString()
   @IsOptional()
-  alt: string;
+  alt?: string;
 
   @ApiProperty({
     type: String,
@@ -23,7 +23,7 @@ export class AddToGalleryDto {
   })
   @IsString()
   @IsOptional()
-  title: string;
+  title?: string;
 
   @ApiProperty({
     type: String,
@@ -31,7 +31,7 @@ export class AddToGalleryDto {
   })
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   path: string;
   type: 'image' | 'video' | 'audio';

@@ -6,6 +6,7 @@ import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { CategoriesRepository } from './categories.repository';
 import { Category, CategorySchema } from './schemas/category.schema';
+import { GalleryModule } from '../gallery/gallery.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { Category, CategorySchema } from './schemas/category.schema';
       { name: Category.name, schema: CategorySchema },
     ]),
     SeoModule,
+    GalleryModule,
   ],
   providers: [CategoriesService, CategoriesRepository],
   controllers: [CategoriesController],

@@ -10,7 +10,6 @@ import {
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { RolesEnum } from './schema/user.schema';
 import { SmsService } from '../sms/sms.service';
 import { FileService } from 'src/modules/file/file.service';
 import { MainEmailService } from '../main-email/main-email.service';

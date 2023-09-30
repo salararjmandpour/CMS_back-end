@@ -10,7 +10,10 @@ import {
 export const createUserValidator = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  role: Joi.string().pattern(rolesPattern).required(),
+  role: Joi.string()
+    .pattern(rolesPattern)
+    .required()
+    .error(new Error('role is invalid')),
   username: Joi.string(),
   email: Joi.string().email().required(),
   gender: Joi.string().pattern(genderPattern),

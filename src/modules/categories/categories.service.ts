@@ -22,6 +22,10 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { SeoRepository } from '../seo/seo.repository';
 import { CategoryDocument } from './schemas/category.schema';
 import { SeoDocument } from '../seo/schemas/seo.schema';
+import { getTypeFile } from 'src/core/utils/gallery-type-file';
+import imageSize from 'image-size';
+import { GalleryRepository } from '../gallery/gallery.repository';
+import { AddToGalleryDto } from '../gallery/dtos/add-to-gallery.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -30,6 +34,7 @@ export class CategoriesService {
     private fileService: FileService,
     private categoriesRepository: CategoriesRepository,
     private seoRepository: SeoRepository,
+    private galleryRepositoy: GalleryRepository,
   ) {}
 
   async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
@@ -226,5 +231,59 @@ export class CategoriesService {
         categories: categoryList,
       },
     };
+  }
+
+  async uploadImage(
+    userId: string,
+    categoryId: string,
+    file: Express.Multer.File,
+  ): Promise<ResponseFormat<any>> {
+    try {
+      if (!file) {
+        throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
+      }
+
+      const path = file?.path?.replace(/\\/g, '/');
+      const type = getTypeFile(file.mimetype) as 'image';
+      const dimensions = type === 'image' ? imageSize(path) : undefined;
+      const size = file.size;
+
+      const [existCategory, updatedResult] = await Promise.all([
+        this.categoriesRepository.findById(categoryId),
+        this.categoriesRepository.updateById(categoryId, {
+          image: path,
+        } as CreateCategoryDto),
+      ]);
+      if (!existCategory) {
+        throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
+      }
+      if (!updatedResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_UPLOAD_IMAGE,
+        );
+      }
+
+      await this.galleryRepositoy.create({
+        path,
+        type,
+        size,
+        dimensions,
+        filename: file.filename,
+        mimetype: file.mimetype,
+        uploadedBy: userId,
+        uploadedIn: userId,
+      } as AddToGalleryDto);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: ResponseMessages.IMAGE_UPLOADED_SUCCESS,
+      };
+    } catch (error) {
+      if (file) {
+        const path = file?.path?.replace(/\\/g, '/');
+        this.fileService.deleteFileByPath(path);
+      }
+      throw new CustomException(error.message, error.status);
+    }
   }
 }

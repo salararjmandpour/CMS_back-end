@@ -12,5 +12,6 @@ import { Gallery, GallerySchema } from './schemas/gallery.schema';
   ],
   providers: [GalleryService, GalleryRepository],
   controllers: [GalleryController],
+  exports: [GalleryRepository],
 })
 export class GalleryModule {}

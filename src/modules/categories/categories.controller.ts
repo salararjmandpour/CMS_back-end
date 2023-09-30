@@ -1,17 +1,27 @@
+import {
+  Req,
+  Body,
+  Param,
+  Query,
+  Controller,
+  UploadedFile,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Param } from '@nestjs/common';
 
 import { CategoriesService } from './categories.service';
-import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
+import { UpdateCategoryWithDto } from './dtos/update-category.dto';
+import { CreateCategoryWithSeoDto } from './dtos/create-category.dto';
+
+import { UploadImageDecorator } from './decorators/upload-image.decorator';
 import { CreateCategoryDecorator } from './decorators/create-category.decorator';
 import { UpdateCategoryDecorator } from './decorators/update-category.decorator';
 import { DeleteCategoryDecorator } from './decorators/delete-category.decorator';
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
 
 import { joiValidation } from 'src/core/utils/joi-validator.util';
-import { UpdateCategoryWithDto } from './dtos/update-category.dto';
-import { CreateCategoryWithSeoDto } from './dtos/create-category.dto';
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
 
 @ApiBearerAuth()
@@ -24,6 +34,16 @@ export class CategoriesController {
   @CreateCategoryDecorator()
   create(@Body() body: CreateCategoryWithSeoDto) {
     return this.categoriesService.create(body);
+  }
+
+  @UploadImageDecorator()
+  uploadImage(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+    @Query('category', ParseObjectIdPipe) category: string,
+  ) {
+    const userId = req.user?._id;
+    return this.categoriesService.uploadImage(userId, category, file);
   }
 
   // update category by id
