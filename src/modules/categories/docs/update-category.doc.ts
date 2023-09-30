@@ -1,6 +1,7 @@
 import {
   ApiOperation,
   ApiOkResponse,
+  ApiNotFoundResponse,
   ApiConflictResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
@@ -20,15 +21,23 @@ export const ApiUpdateCategory = () => {
         example: {
           statusCode: HttpStatus.OK,
           data: {
-            product: {
-              _id: '64e1338d1b15ee6ac6897ba3',
+            category: {
+              _id: '650df968ec94570f8ec35d55',
               title: 'تجهیرات پزشکی',
-              slug: 'medical-equipment',
-              image: 'uploads/category/2023/8/19/n9n41mx8mxgbkv4p.png',
-              description: 'This is test message',
-              parent: '6470a3fbbb82534053e8bb86',
-              createdAt: '2023-08-19T21:26:37.181Z',
-              updatedAt: '2023-08-19T21:26:37.181Z',
+              slug: 'medical-equipment-test',
+              description: 'متن توضیحات تست',
+              createdAt: '2023-09-22T20:30:32.689Z',
+              updatedAt: '2023-09-30T09:12:41.695Z',
+              parent: '650dfa8625ebf8e25d178892',
+            },
+            seo: {
+              title: ['test'],
+              slug: 'test-category-seo-slug',
+              description: 'متن توضیحات تست',
+              category: '650df968ec94570f8ec35d55',
+              _id: '6517e689b79cdd3e9f106cda',
+              createdAt: '2023-09-30T09:12:41.719Z',
+              updatedAt: '2023-09-30T09:12:41.719Z',
             },
           },
         },
@@ -52,14 +61,25 @@ export const ApiUpdateCategory = () => {
         },
       },
     }),
+    ApiNotFoundResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: [
+            ResponseMessages.CATEGORY_NOT_FOUND,
+            ResponseMessages.PARENT_CATEGORY_NOT_FOUND,
+          ],
+        },
+      },
+    }),
     ApiConflictResponse({
       schema: {
         example: {
           statusCode: HttpStatus.CONFLICT,
           message: [
-            ResponseMessages.CATEGORY_NOT_FOUND,
-            ResponseMessages.TITLE_ALREADY_EXIST,
+            ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
             ResponseMessages.SLUG_ALREADY_EXIST,
+            ResponseMessages.SEO_SLUG_ALREADY_EXIST,
           ],
         },
       },

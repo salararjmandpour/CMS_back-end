@@ -17,15 +17,35 @@ export const ApiGetCategoryList = () => {
         example: {
           statusCode: HttpStatus.OK,
           data: {
-            product: [
+            categories: [
               {
-                _id: '64e1338d1b15ee6ac6897ba3',
-                title: 'تجهیرات پزشکی',
-                name: 'medical-equipment',
-                disabled: false,
-                parent: '6470a3fbbb82534053e8bb86',
-                createdAt: '2023-08-19T21:26:37.181Z',
-                updatedAt: '2023-08-19T21:26:37.181Z',
+                category: {
+                  _id: '650e1b635cb4104ddafb57e9',
+                  title: 'تجهیزات پزشکی',
+                  slug: 'tajhizat-pezeshki',
+                  description: 'متن تستی برای تجهیزات پزشکی',
+                  createdAt: '2023-09-22T22:55:31.188Z',
+                  updatedAt: '2023-09-22T23:23:38.981Z',
+                },
+                seo: {
+                  _id: '650e1b635cb4104ddafb57eb',
+                  title: ['title'],
+                  slug: 'tajhizat-pezeshki',
+                  description: 'متن تستی برای تجهیزات پزشکی',
+                  category: '650e1b635cb4104ddafb57e9',
+                  createdAt: '2023-09-22T22:55:31.205Z',
+                  updatedAt: '2023-09-22T23:23:39.018Z',
+                },
+              },
+              {
+                category: {
+                  _id: '650dfa8625ebf8e25d178892',
+                  title: 'تجهیرات تست',
+                  slug: 'test-equipment',
+                  description: 'متن تستی برای تجهیزات پزشکی',
+                  createdAt: '2023-09-22T20:35:18.513Z',
+                  updatedAt: '2023-09-22T20:35:18.513Z',
+                },
               },
             ],
           },
@@ -36,7 +56,10 @@ export const ApiGetCategoryList = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.INTERNAL_SERVER_ERROR,
+          message: [
+            ResponseMessages.FAILED_GET_CATEGORY_LIST,
+            ResponseMessages.FAILED_GET_SEO_LIST,
+          ],
           error: 'Internal Server Error',
         },
       },

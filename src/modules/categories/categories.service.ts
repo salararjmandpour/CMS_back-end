@@ -6,35 +6,37 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import imageSize from 'image-size';
 
 import { SeoService } from '../seo/seo.service';
 import { FileService } from '../file/file.service';
+import { SeoRepository } from '../seo/seo.repository';
 import { CategoriesRepository } from './categories.repository';
+import { GalleryRepository } from '../gallery/gallery.repository';
+
+import { SeoDocument } from '../seo/schemas/seo.schema';
+import { CategoryDocument } from './schemas/category.schema';
+
+import { getTypeFile } from 'src/core/utils/gallery-type-file';
+import { CustomException } from 'src/core/utils/custom-exception.util';
 
 import {
   CreateCategoryDto,
   CreateCategoryWithSeoDto,
 } from './dtos/create-category.dto';
-import { copyObject } from 'src/core/utils/copy-object';
-import { CustomException } from 'src/core/utils/custom-exception.util';
+import { AddToGalleryDto } from '../gallery/dtos/add-to-gallery.dto';
+
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { SeoRepository } from '../seo/seo.repository';
-import { CategoryDocument } from './schemas/category.schema';
-import { SeoDocument } from '../seo/schemas/seo.schema';
-import { getTypeFile } from 'src/core/utils/gallery-type-file';
-import imageSize from 'image-size';
-import { GalleryRepository } from '../gallery/gallery.repository';
-import { AddToGalleryDto } from '../gallery/dtos/add-to-gallery.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     private seoService: SeoService,
     private fileService: FileService,
-    private categoriesRepository: CategoriesRepository,
     private seoRepository: SeoRepository,
     private galleryRepositoy: GalleryRepository,
+    private categoriesRepository: CategoriesRepository,
   ) {}
 
   async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
@@ -148,7 +150,7 @@ export class CategoriesService {
 
     // if exist seo, update seo in database
     if (body?.seo) {
-      let upsertedSeo;
+      let upsertedSeo: any;
       if (existSeo) {
         upsertedSeo = await this.seoRepository.updateById(
           existSeo?._id,

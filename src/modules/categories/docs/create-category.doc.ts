@@ -1,10 +1,11 @@
 import {
   ApiOperation,
+  ApiCreatedResponse,
+  ApiConflictResponse,
+  ApiNotFoundResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiCreatedResponse,
-  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -19,16 +20,24 @@ export const ApiCreateCategory = () => {
       schema: {
         example: {
           statusCode: HttpStatus.CREATED,
+          message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
           data: {
-            product: {
-              _id: '64e1338d1b15ee6ac6897ba3',
+            category: {
               title: 'تجهیرات پزشکی',
-              name: 'medical-equipment',
-              image: 'uploads/category/2023/8/19/n9n41mx8mxgbkv4p.png',
-              description: 'this is test message',
-              parent: '6470a3fbbb82534053e8bb86',
-              createdAt: '2023-08-19T21:26:37.181Z',
-              updatedAt: '2023-08-19T21:26:37.181Z',
+              slug: 'medical-equipment',
+              description: 'category',
+              _id: '6517df1c9f752bd69fcfe15f',
+              createdAt: '2023-09-30T08:41:00.983Z',
+              updatedAt: '2023-09-30T08:41:00.983Z',
+            },
+            seo: {
+              title: ['test'],
+              slug: 'this-is-test-message',
+              description: 'this is test message for description',
+              category: '6517df1c9f752bd69fcfe15f',
+              _id: '6517df1c9f752bd69fcfe161',
+              createdAt: '2023-09-30T08:41:00.993Z',
+              updatedAt: '2023-09-30T08:41:00.993Z',
             },
           },
         },
@@ -38,10 +47,7 @@ export const ApiCreateCategory = () => {
       schema: {
         example: {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: [
-            ResponseMessages.BAD_REQUEST,
-            ResponseMessages.FILE_IS_REQUIRED,
-          ],
+          message: ResponseMessages.BAD_REQUEST,
           error: 'Bad Request',
         },
       },
@@ -55,15 +61,25 @@ export const ApiCreateCategory = () => {
         },
       },
     }),
+    ApiNotFoundResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: ResponseMessages.PARENT_CATEGORY_NOT_FOUND,
+          error: 'Not Found',
+        },
+      },
+    }),
     ApiConflictResponse({
       schema: {
         example: {
           statusCode: HttpStatus.CONFLICT,
           message: [
-            ResponseMessages.TITLE_ALREADY_EXIST,
-            ResponseMessages.SLUG_ALREADY_EXIST,
-            ResponseMessages.PARENT_CATEGORY_NOT_FOUND,
+            ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
+            ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST,
+            ResponseMessages.SEO_SLUG_ALREADY_EXIST,
           ],
+          error: 'Conflict',
         },
       },
     }),
