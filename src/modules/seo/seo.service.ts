@@ -1,7 +1,6 @@
 import {
   HttpStatus,
   Injectable,
-  ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SeoRepository } from './seo.repository';

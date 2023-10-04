@@ -12,8 +12,8 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 export const ApiDeleteCategory = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'delete category',
-      description: 'delete category by id',
+      summary: 'delete many categories',
+      description: 'delete many categories by IDs',
     }),
     ApiOkResponse({
       schema: {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ProjectionType, QueryOptions } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
-import { Category, CategoryDocument } from './schemas/category.schema';
 import { CreateCategoryDto } from './dtos/create-category.dto';
+import { Category, CategoryDocument } from './schemas/category.schema';
 
 @Injectable()
 export class CategoriesRepository {
@@ -39,8 +39,8 @@ export class CategoriesRepository {
     return this.categoryModel.findOne({ title }, projection);
   }
 
-  findAll() {
-    return this.categoryModel.find();
+  findAll(filter?: FilterQuery<CategoryDocument>) {
+    return this.categoryModel.find(filter);
   }
 
   deleteManyByIds(Ids: string[]): Promise<any> {

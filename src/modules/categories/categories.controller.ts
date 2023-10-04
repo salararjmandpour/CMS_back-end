@@ -66,7 +66,7 @@ export class CategoriesController {
 
   // get category list
   @GetCategoryListDecorator()
-  getCategoryList() {
-    return this.categoriesService.getCategoryList();
+  getCategoryList(@Query('search',) serach: string) {
+    return this.categoriesService.getCategoryList(serach);
   }
 }

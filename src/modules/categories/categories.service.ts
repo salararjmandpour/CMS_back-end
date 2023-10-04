@@ -41,13 +41,19 @@ export class CategoriesService {
 
   async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
     // prevent duplicate title and slug
-    const [duplicateTitle, duplicateSlug, existParent, duplicatedSeoSlug] =
-      await Promise.all([
-        this.categoriesRepository.findByTitle(body.category.title),
-        this.categoriesRepository.findBySlug(body.category.slug),
-        this.categoriesRepository.findById(body.category.parent),
-        this.seoRepository.findBySlug(body?.seo?.slug),
-      ]);
+    const [
+      duplicateTitle,
+      duplicateSlug,
+      existParent,
+      duplicatedSeoSlug,
+      seoCountDocuments,
+    ] = await Promise.all([
+      this.categoriesRepository.findByTitle(body.category.title),
+      this.categoriesRepository.findBySlug(body.category.slug),
+      this.categoriesRepository.findById(body.category.parent),
+      this.seoRepository.findBySlug(body?.seo?.slug),
+      this.seoRepository.countDocumentsBySlug(body?.seo?.slug),
+    ]);
     if (duplicateTitle) {
       throw new ConflictException(
         ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
@@ -60,7 +66,9 @@ export class CategoriesService {
       throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
     }
     if (body.seo && duplicatedSeoSlug) {
-      throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
+      if (seoCountDocuments !== 0) {
+        body.seo.slug = `${body.seo.slug}-${seoCountDocuments}`;
+      }
     }
 
     // save category in database
@@ -110,12 +118,14 @@ export class CategoriesService {
       duplicateSlug,
       existParent,
       duplicatedSeoSlug,
+      seoCountDocuments,
     ] = await Promise.all([
       this.categoriesRepository.findById(id),
       this.categoriesRepository.findByTitle(body?.category?.title),
       this.categoriesRepository.findBySlug(body?.category?.slug),
       this.categoriesRepository.findById(body.category.parent),
       this.seoRepository.findBySlug(body?.seo?.slug),
+      this.seoRepository.countDocumentsBySlug(body?.seo?.slug),
     ]);
     if (!existCategory) {
       throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
@@ -126,13 +136,15 @@ export class CategoriesService {
       );
     }
     if (duplicateSlug) {
-      throw new ConflictException(ResponseMessages.SLUG_ALREADY_EXIST);
+      throw new ConflictException(ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST);
     }
     if (body.category.parent && !existParent) {
       throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
     }
     if (body?.seo?.slug && duplicatedSeoSlug) {
-      throw new ConflictException(ResponseMessages.SEO_SLUG_ALREADY_EXIST);
+      if (seoCountDocuments !== 0) {
+        body.seo.slug = `${body.seo.slug}-${seoCountDocuments}`;
+      }
     }
 
     // update category by id
@@ -190,31 +202,38 @@ export class CategoriesService {
       throw new BadRequestException(ResponseMessages.CATEGORIES_NOT_FOUND);
     }
 
-    // const deletedResult = await this.categoriesRepository.deleteManyByIds(
-    //   categoriesIds,
-    // );
     // delete many categories by ids
-    // if (deletedResult.deletedCount !== categoriesIds.length) {
-    //   throw new InternalServerErrorException(
-    //     ResponseMessages.FAILED_DELETE_CATEGORIES,
-    //   );
-    // }
+    const deletedResult = await this.categoriesRepository.deleteManyByIds(
+      categoriesIds,
+    );
+    if (deletedResult.deletedCount !== categoriesIds.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_CATEGORIES,
+      );
+    }
 
-    console.log(categoriesIds[0])
-     console.log(await this.seoRepository.findById(categoriesIds[0]))
-    const deletedSeoResult = await this.seoRepository.deleteManyByIds(categoriesIds);
-console.log({deletedSeoResult})
+    console.log(categoriesIds[0]);
+    console.log(await this.seoRepository.findById(categoriesIds[0]));
+    const deletedSeoResult = await this.seoRepository.deleteManyByIds(
+      categoriesIds,
+    );
+    console.log({ deletedSeoResult });
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.CATEGORIES_DELETED,
     };
   }
 
-  async getCategoryList(): Promise<ResponseFormat<any>> {
+  async getCategoryList(
+    search: string | undefined,
+  ): Promise<ResponseFormat<any>> {
     const [categories, seos] = await Promise.all([
-      this.categoriesRepository.findAll(),
+      this.categoriesRepository.findAll(
+        search ? { title: { $regex: search, $options: 'i' } } : {},
+      ),
       this.seoRepository.findWithCategory(),
     ]);
+
     if (!categories) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_CATEGORY_LIST,

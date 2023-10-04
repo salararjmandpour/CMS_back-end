@@ -45,6 +45,11 @@ export class SeoRepository {
   deleteManyByIds(IDs: any): Promise<any> {
     console.log(IDs);
     return this.seoModel.deleteMany({ _id: { $in: IDs } });
-    return this.seoModel.deleteMany({ _id: { $in: IDs } });
+  }
+
+  countDocumentsBySlug(slug: string) {
+    return this.seoModel.countDocuments({
+      slug: new RegExp(`^${slug}(-\\d+)?$`),
+    });
   }
 }
