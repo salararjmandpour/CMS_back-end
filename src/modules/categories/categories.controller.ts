@@ -23,6 +23,8 @@ import { GetCategoryListDecorator } from './decorators/get-categories-list.decor
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
+import { DeleteManyUsersDto } from '../users/dtos/delete-many-users.dto';
+import { CategoryDeleteManysDto } from './dtos/delete-many-category.dto';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -56,10 +58,10 @@ export class CategoriesController {
     return this.categoriesService.update(id, body);
   }
 
-  // delete category by id
+  // delete many category by IDs
   @DeleteCategoryDecorator()
-  deleteById(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.categoriesService.deleteById(id);
+  deleteMany(@Body() body: CategoryDeleteManysDto) {
+    return this.categoriesService.deleteManyByIds(body.categoriesIds);
   }
 
   // get category list

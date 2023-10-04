@@ -18,7 +18,10 @@ export class MainEmailService {
         },
         template: 'send-password.ejs',
       });
+
+      return true;
     } catch (err) {
+      console.log(err);
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_SEND_PASSWORD_EMAIL,
       );

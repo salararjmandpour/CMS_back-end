@@ -19,7 +19,7 @@ export const ApiDeleteCategory = () => {
       schema: {
         example: {
           statusCode: HttpStatus.OK,
-          message: ResponseMessages.CATEGORY_DELETED,
+          message: ResponseMessages.CATEGORIES_DELETED,
         },
       },
     }),
@@ -45,7 +45,7 @@ export const ApiDeleteCategory = () => {
       schema: {
         example: {
           statusCode: HttpStatus.NOT_FOUND,
-          message: ResponseMessages.CATEGORY_NOT_FOUND,
+          message: ResponseMessages.CATEGORIES_NOT_FOUND,
           error: 'Not Found',
         },
       },
@@ -54,7 +54,7 @@ export const ApiDeleteCategory = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_DELETE_CATEGORY,
+          message: ResponseMessages.FAILED_DELETE_CATEGORIES,
           error: 'Internal Server Error',
         },
       },

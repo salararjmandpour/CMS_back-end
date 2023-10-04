@@ -40,6 +40,7 @@ export class Category {
 
   @Prop({
     type: Number,
+    default: 0,
   })
   count: number;
 }

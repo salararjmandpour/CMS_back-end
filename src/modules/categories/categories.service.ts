@@ -181,26 +181,32 @@ export class CategoriesService {
     };
   }
 
-  async deleteById(id: string): Promise<ResponseFormat<any>> {
-    const [existCategory, deletedResult] = await Promise.all([
-      this.categoriesRepository.findById(id),
-      this.categoriesRepository.deleteById(id),
-      this.seoRepository.deleteOne({ category: id }),
-    ]);
-    // check exist category
-    if (!existCategory) {
-      throw new BadRequestException(ResponseMessages.CATEGORY_NOT_FOUND);
-    }
-    // delete category by id
-    if (deletedResult.deletedCount !== 1) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_DELETE_CATEGORY,
-      );
+  async deleteManyByIds(categoriesIds: string[]): Promise<ResponseFormat<any>> {
+    const existCategories = await this.categoriesRepository.findManyByIds(
+      categoriesIds,
+    );
+    // check exist categories by IDs
+    if (existCategories.length !== categoriesIds.length) {
+      throw new BadRequestException(ResponseMessages.CATEGORIES_NOT_FOUND);
     }
 
+    // const deletedResult = await this.categoriesRepository.deleteManyByIds(
+    //   categoriesIds,
+    // );
+    // delete many categories by ids
+    // if (deletedResult.deletedCount !== categoriesIds.length) {
+    //   throw new InternalServerErrorException(
+    //     ResponseMessages.FAILED_DELETE_CATEGORIES,
+    //   );
+    // }
+
+    console.log(categoriesIds[0])
+     console.log(await this.seoRepository.findById(categoriesIds[0]))
+    const deletedSeoResult = await this.seoRepository.deleteManyByIds(categoriesIds);
+console.log({deletedSeoResult})
     return {
       statusCode: HttpStatus.OK,
-      message: ResponseMessages.CATEGORY_DELETED,
+      message: ResponseMessages.CATEGORIES_DELETED,
     };
   }
 

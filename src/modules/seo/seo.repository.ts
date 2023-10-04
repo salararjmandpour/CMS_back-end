@@ -41,4 +41,10 @@ export class SeoRepository {
   deleteOne(filter?: FilterQuery<SeoDocument>): Promise<any> {
     return this.seoModel.deleteOne(filter);
   }
+
+  deleteManyByIds(IDs: any): Promise<any> {
+    console.log(IDs);
+    return this.seoModel.deleteMany({ _id: { $in: IDs } });
+    return this.seoModel.deleteMany({ _id: { $in: IDs } });
+  }
 }

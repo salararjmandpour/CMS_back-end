@@ -27,6 +27,10 @@ export class CategoriesRepository {
     return this.categoryModel.findById(id, projection);
   }
 
+  findManyByIds(IDs: string[]) {
+    return this.categoryModel.find({ _id: { $in: IDs } });
+  }
+
   findBySlug(slug: string, projection?: ProjectionType<CategoryDocument>) {
     return this.categoryModel.findOne({ slug }, projection);
   }
@@ -39,7 +43,7 @@ export class CategoriesRepository {
     return this.categoryModel.find();
   }
 
-  deleteById(_id: string): Promise<any> {
-    return this.categoryModel.deleteOne({ _id });
+  deleteManyByIds(Ids: string[]): Promise<any> {
+    return this.categoryModel.deleteMany({ _id: { $in: Ids } });
   }
 }

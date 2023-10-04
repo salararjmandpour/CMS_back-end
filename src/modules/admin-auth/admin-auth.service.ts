@@ -130,7 +130,7 @@ export class AdminAuthService {
         createdResult.email,
         password,
       );
-
+      console.log({ password });
       return {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.PASSWORD_EMAILED_FOR_YOU,
