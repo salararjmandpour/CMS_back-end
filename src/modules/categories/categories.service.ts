@@ -41,18 +41,10 @@ export class CategoriesService {
 
   async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
     // prevent duplicate title and slug
-    const [
-      duplicateTitle,
-      duplicateSlug,
-      existParent,
-      duplicatedSeoSlug,
-      seoCountDocuments,
-    ] = await Promise.all([
+    const [duplicateTitle, duplicateSlug, existParent] = await Promise.all([
       this.categoriesRepository.findByTitle(body.category.title),
       this.categoriesRepository.findBySlug(body.category.slug),
-      this.categoriesRepository.findById(body.category.parent),
-      this.seoRepository.findBySlug(body?.seo?.slug),
-      this.seoRepository.countDocumentsBySlug(body?.seo?.slug),
+      this.categoriesRepository.findById(body.category?.parent),
     ]);
     if (duplicateTitle) {
       throw new ConflictException(
@@ -64,11 +56,6 @@ export class CategoriesService {
     }
     if (body.category.parent && !existParent) {
       throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
-    }
-    if (body.seo && duplicatedSeoSlug) {
-      if (seoCountDocuments !== 0) {
-        body.seo.slug = `${body.seo.slug}-${seoCountDocuments}`;
-      }
     }
 
     // save category in database
@@ -112,21 +99,13 @@ export class CategoriesService {
     body: CreateCategoryWithSeoDto,
   ): Promise<ResponseFormat<any>> {
     // prevent duplicate title and name
-    const [
-      existCategory,
-      duplicateTitle,
-      duplicateSlug,
-      existParent,
-      duplicatedSeoSlug,
-      seoCountDocuments,
-    ] = await Promise.all([
-      this.categoriesRepository.findById(id),
-      this.categoriesRepository.findByTitle(body?.category?.title),
-      this.categoriesRepository.findBySlug(body?.category?.slug),
-      this.categoriesRepository.findById(body.category.parent),
-      this.seoRepository.findBySlug(body?.seo?.slug),
-      this.seoRepository.countDocumentsBySlug(body?.seo?.slug),
-    ]);
+    const [existCategory, duplicateTitle, duplicateSlug, existParent] =
+      await Promise.all([
+        this.categoriesRepository.findById(id),
+        this.categoriesRepository.findByTitle(body?.category?.title),
+        this.categoriesRepository.findBySlug(body?.category?.slug),
+        this.categoriesRepository.findById(body?.category?.parent),
+      ]);
     if (!existCategory) {
       throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
     }
@@ -138,13 +117,8 @@ export class CategoriesService {
     if (duplicateSlug) {
       throw new ConflictException(ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST);
     }
-    if (body.category.parent && !existParent) {
+    if (body.category?.parent && !existParent) {
       throw new NotFoundException(ResponseMessages.PARENT_CATEGORY_NOT_FOUND);
-    }
-    if (body?.seo?.slug && duplicatedSeoSlug) {
-      if (seoCountDocuments !== 0) {
-        body.seo.slug = `${body.seo.slug}-${seoCountDocuments}`;
-      }
     }
 
     // update category by id
