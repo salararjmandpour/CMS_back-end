@@ -7,6 +7,7 @@ export const updateCategoryValidator = Joi.object({
   title: Joi.string(),
   description: Joi.string(),
   slug: Joi.string(),
+  image: Joi.string(),
   parent: Joi.string()
     .pattern(objectIdPattern)
     .error(new Error(ResponseMessages.INVALID_OBJECT_ID)),
