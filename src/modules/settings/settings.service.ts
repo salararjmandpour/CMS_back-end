@@ -1,0 +1,233 @@
+import {
+  Injectable,
+  HttpStatus,
+  NotFoundException,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
+
+import { SmsSettingsRepository } from './repositories/sms-settings.repository';
+import { EmailSettingsRepository } from './repositories/email-settings.repository';
+import { PublicSettingsRepository } from './repositories/public-settings.repository';
+
+import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
+import { SetEmailConfigDto } from './dtos/set-email-config.dto';
+import { SetPublicConfigDto } from './dtos/set-public-config.dto';
+
+import { ResponseFormat } from 'src/core/interfaces/response.interface';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
+
+@Injectable()
+export class SettingsService {
+  constructor(
+    private publicSettingsRepository: PublicSettingsRepository,
+    private emailSettingsRepository: EmailSettingsRepository,
+    private smsSettingsRepository: SmsSettingsRepository,
+  ) {}
+
+  // get public config
+  async getPublicConfig(): Promise<ResponseFormat<any>> {
+    let publicSettings = await this.publicSettingsRepository.findAll();
+    if (!publicSettings || publicSettings.length === 0) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_PUBLIC_CONFIG);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        publicConfig: publicSettings[0],
+      },
+    };
+  }
+
+  // set public config
+  async setPublicConfig(
+    data: SetPublicConfigDto,
+  ): Promise<ResponseFormat<any>> {
+    // check validate timezone
+    if (data.timezone) {
+      const timezone = getTimezone(data.timezone);
+      if (!timezone) {
+        throw new BadRequestException(ResponseMessages.INVALID_TIMEZONE);
+      }
+    }
+
+    // check if it is not config, create config
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    if (!publicSettings || publicSettings.length === 0) {
+      const createdResult = await this.publicSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_PUBLIC_CONFIG,
+        );
+      }
+
+      // set timezone
+      if (data.timezone) setDefaultTimezone(data.timezone);
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
+      };
+    }
+
+    // update config
+    const updateResult: any = await this.publicSettingsRepository.findAndUpdate(
+      data?._id,
+      {
+        siteTitle: data.siteTitle,
+        email: data.email,
+        role: data.role,
+        timezone: data.timezone,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_PUBLIC_CONFIG,
+      );
+    }
+
+    // set timezone
+    if (data.timezone) setDefaultTimezone(data.timezone);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        emailConfig: updateResult,
+      },
+    };
+  }
+
+  // get email config
+  async getEmailConfig(): Promise<ResponseFormat<any>> {
+    let emailSettings = await this.emailSettingsRepository.findAll();
+    if (!emailSettings || emailSettings.length === 0) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_EMAIL_CONFIG);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        emailConfig: emailSettings[0],
+      },
+    };
+  }
+
+  // set email config
+  async setEmailConfig(data: SetEmailConfigDto): Promise<ResponseFormat<any>> {
+    let emailSettings = await this.emailSettingsRepository.findAll();
+
+    if (!emailSettings || emailSettings.length === 0) {
+      const createdResult = await this.emailSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_EMAIL_CONFIG,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          emailConfig: createdResult,
+        },
+      };
+    }
+
+    const updateResult: any = await this.emailSettingsRepository.findAndUpdate(
+      data?._id,
+      {
+        host: data.host,
+        port: data.port,
+        user: data.user,
+        pass: data.pass,
+        senderEmail: data.senderEmail,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_CONFIG_EMAIL,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        emailConfig: updateResult,
+      },
+    };
+  }
+
+  // get sms config
+  async getSmsConfig(): Promise<ResponseFormat<any>> {
+    let smsSettings = await this.smsSettingsRepository.findAll();
+    if (!smsSettings || smsSettings.length === 0) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_SMS_CONFIG);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        smsConfig: smsSettings[0],
+      },
+    };
+  }
+
+  // set sms config
+  async setSmsConfig(data: SetSmsConfigDto): Promise<ResponseFormat<any>> {
+    let smsSettings = await this.smsSettingsRepository.findAll();
+
+    if (!smsSettings || smsSettings.length === 0) {
+      const createdResult = await this.smsSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_SMS_CONFIG,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          smsConfig: createdResult,
+        },
+      };
+    }
+
+    const updateResult = await this.smsSettingsRepository.findAndUpdate(
+      data?._id,
+      {
+        panel: data.panel,
+        username: data.username,
+        password: data.password,
+        senderNumber: data.senderNumber,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_CONFIG_SMS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        smsConfig: updateResult,
+      },
+    };
+  }
+}
