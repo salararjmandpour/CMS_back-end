@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import imageSize from 'image-size';
 
-import { SeoService } from '../seo/seo.service';
 import { FileService } from '../file/file.service';
 import { SeoRepository } from '../seo/seo.repository';
 import { CategoriesRepository } from './categories.repository';
@@ -32,7 +31,6 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 @Injectable()
 export class CategoriesService {
   constructor(
-    private seoService: SeoService,
     private fileService: FileService,
     private seoRepository: SeoRepository,
     private galleryRepositoy: GalleryRepository,
@@ -70,7 +68,7 @@ export class CategoriesService {
 
     // save seo in database
     if (body.seo) {
-      const createdSeo = await this.seoService.create({
+      const createdSeo = await this.seoRepository.create({
         ...body.seo,
         category: createdCategory._id.toString(),
       });
@@ -80,7 +78,7 @@ export class CategoriesService {
         message: ResponseMessages.CATEGORY_CREATED_SUCCESS,
         data: {
           category: createdCategory,
-          seo: createdSeo.data.seo,
+          seo: createdSeo,
         },
       };
     }
