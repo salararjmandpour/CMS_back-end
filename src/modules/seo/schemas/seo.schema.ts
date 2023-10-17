@@ -5,19 +5,19 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 export class SEO {
   @Prop({
     type: Array<String>,
-    required: true,
+    default: [],
   })
   title: string[];
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   slug: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   description: string;
 

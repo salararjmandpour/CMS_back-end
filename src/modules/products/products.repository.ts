@@ -1,15 +1,15 @@
+import {
+  Model,
+  FilterQuery,
+  UpdateQuery,
+  QueryOptions,
+  ProjectionFields,
+} from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  FilterQuery,
-  Model,
-  ProjectionFields,
-  QueryOptions,
-  UpdateQuery,
-} from 'mongoose';
-
 import { Product, ProductDocument } from './schema/product.schema';
 import { CreateProductDto } from './dtos/create-product.dto';
+import { alphabetNumber, nanoid } from 'src/core/utils/nanoid.util';
 
 @Injectable()
 export class ProductsRepository {
@@ -18,7 +18,10 @@ export class ProductsRepository {
   ) {}
 
   create(data: CreateProductDto) {
-    return this.productModel.create(data);
+    return this.productModel.create({
+      ...data,
+      productId: nanoid(alphabetNumber, 16),
+    });
   }
 
   findOne(

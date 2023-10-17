@@ -28,7 +28,7 @@ const SpecificationsValidator = Joi.object({
   value: Joi.string().required(),
 });
 
-export const ProductValidator = Joi.object({
+export const createProductValidator = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   shortDescription: Joi.string().required(),
@@ -46,7 +46,6 @@ export const ProductValidator = Joi.object({
     .error(new Error('Invalid discountDate')),
 
   // warehouse info
-  productId: Joi.string().required(),
   inStock: Joi.boolean().required(),
   shortageInStock: Joi.number().min(0).required(),
   count: Joi.number().min(0).required(),
@@ -72,9 +71,9 @@ export const ProductValidator = Joi.object({
 
   //transportation
   size: SizeValidator,
-}).required();
+});
 
-export const createProductValidator = Joi.object({
-  product: ProductValidator,
-  seo: createSeoValidator.required(),
+export const createProductWithDeoValidator = Joi.object({
+  product: createProductValidator,
+  seo: createSeoValidator,
 });

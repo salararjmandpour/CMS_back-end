@@ -22,7 +22,6 @@ export interface Configs {
   EMAIL_PORT: string;
   EMAIL_USER: string;
   EMAIL_PASS: string;
-  SENDER_EMAIL: string;
 
   GOOGLE_OAUTH_CLIENT_ID: string;
   GOOGLE_OAUTH_CLIENT_SECRET: string;
@@ -53,7 +52,6 @@ export default (): Configs => ({
   EMAIL_PORT: process.env.EMAIL_PORT,
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
-  SENDER_EMAIL: process.env.SENDER_EMAIL,
 
   GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,

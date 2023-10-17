@@ -1,26 +1,19 @@
-import {
-  Req,
-  Body,
-  Param,
-  Query,
-  Controller,
-  UploadedFiles,
-} from '@nestjs/common';
-import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Param, Query, Controller, UploadedFiles } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
 
-import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
+import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
+import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 import { GetProductDecoratpr } from './decorators/get-product.decorator';
 import { GetProductsDecorator } from './decorators/get-products.decorator';
-import { CreateProductDecorator } from './decorators/create-product.decorator';
 import { UploadImagesDecorator } from './decorators/upload-images.decorator';
 import { UpdateProductDecorator } from './decorators/update-product.decorator';
+import { CreateProductDecorator } from './decorators/create-product.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -30,9 +23,11 @@ export class ProductsController {
 
   // create product
   @CreateProductDecorator()
-  createProduct(@Body() body: CreateProductWithCeoDto, @Req() req: Request) {
-    body.product.supplier = req?.user?._id;
-    return this.productService.create(body);
+  createProduct(
+    @Body() body: CreateProductWithCeoDto,
+    @GetUser('_id') _id: string,
+  ) {
+    return this.productService.create(_id, body);
   }
 
   // get one product by ID

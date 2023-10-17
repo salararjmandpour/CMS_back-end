@@ -66,14 +66,6 @@ export class CreateProductDto {
   discountDate: string;
 
   @ApiProperty({
-    type: String,
-    description: 'The productId for product',
-    required: true,
-    default: 'MT015',
-  })
-  productId: string;
-
-  @ApiProperty({
     type: Boolean,
     description: 'The inStock for product',
   })
@@ -173,6 +165,7 @@ export class CreateProductDto {
 
   supplier: string;
   images: string[];
+  productId: string;
 }
 
 export class CreateProductWithCeoDto {
@@ -186,7 +179,7 @@ export class CreateProductWithCeoDto {
 
   @ApiProperty({
     type: CreateSeoDto,
-    default: [],
+    default: CreateSeoDto,
   })
   @ValidateNested()
   @Type(() => CreateSeoDto)

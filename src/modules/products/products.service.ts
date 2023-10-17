@@ -7,16 +7,19 @@ import {
 } from '@nestjs/common';
 
 import { FileService } from '../file/file.service';
+import { SeoService } from '../seo/seo.service';
 import { ProductsRepository } from './products.repository';
+import { ProductDocument } from './schema/product.schema';
+
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductWithCeoDto } from './dtos/create-product.dto';
+
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+
+import { copyObject } from 'src/core/utils/copy-object';
 import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
 import { calculateDiscountPercentage } from 'src/core/utils/discount-percentage.util';
-import { SeoService } from '../seo/seo.service';
-import { copyObject } from 'src/core/utils/copy-object';
-import { ProductDocument } from './schema/product.schema';
 
 @Injectable()
 export class ProductsService {
@@ -26,27 +29,17 @@ export class ProductsService {
     private productRepository: ProductsRepository,
   ) {}
 
-  async create(body: CreateProductWithCeoDto): Promise<ResponseFormat<any>> {
-    // prevent duplicate productId and slug
-    const [duplicateProductId] = await Promise.all([
-      this.productRepository.findOne({
-        productId: body.product.productId,
-      }),
-      // this.productRepository.findOne({
-      //   slug: body.slug,
-      // }),
-    ]);
-
-    if (duplicateProductId) {
-      throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
+  async create(
+    userId: string,
+    body: CreateProductWithCeoDto,
+  ): Promise<ResponseFormat<any>> {
+    // check exust product property in request body
+    if (!body?.product) {
+      throw new BadRequestException('product is required');
     }
 
-    // if (duplicateSlug) {
-    //   throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
-    // }
-
     // *** calculate discount percentage ***
-    const { regularPrice, discountedPrice, discountDate } = body.product;
+    const { regularPrice, discountedPrice } = body.product;
 
     if (!!discountedPrice) {
       if (regularPrice < discountedPrice) {
@@ -63,7 +56,10 @@ export class ProductsService {
     }
 
     // save product in database
-    const createdResult = await this.productRepository.create(body.product);
+    const createdResult = await this.productRepository.create({
+      ...body.product,
+      supplier: userId,
+    });
     if (!createdResult) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_CREATE_PRODUCT,

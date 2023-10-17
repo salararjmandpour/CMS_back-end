@@ -1,29 +1,8 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
-interface ISpecifications {
-  key: string;
-  value: string;
-}
-
-interface ISize {
-  length: number;
-  height: number;
-  width: number;
-  weight: number;
-  weightUnit: WeightUnitEnum.GRAM | WeightUnitEnum.KILOGRAM;
-  dimensionsUnit: DimensionsUnitEnum.CENTIMETER | DimensionsUnitEnum.METER;
-}
-
-enum WeightUnitEnum {
-  GRAM = 'gram',
-  KILOGRAM = 'kilogram',
-}
-
-enum DimensionsUnitEnum {
-  CENTIMETER = 'centimeter',
-  METER = 'meter',
-}
+import { nanoid, alphabetNumber } from 'src/core/utils/nanoid.util';
+import { ISize, SizeSchema } from './size.schema';
+import { ISpecifications, SpecificationsSchema } from './specification.schema';
 
 export enum ProductUnitEnum {
   NUMBER = 'number',
@@ -34,75 +13,6 @@ export enum ProductUnitEnum {
   KILOGRAM = 'kilogram',
   GRAM = 'gram',
 }
-
-// Specifications Schema
-@Schema({
-  versionKey: false,
-})
-class Specifications {
-  @Prop({
-    type: String,
-    required: true,
-  })
-  key: string;
-
-  @Prop({
-    type: String,
-    required: true,
-  })
-  value: string;
-}
-
-// Size Schema
-@Schema({
-  versionKey: false,
-})
-class Size {
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  length: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  height: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  width: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  weight: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: [WeightUnitEnum.GRAM, WeightUnitEnum.KILOGRAM],
-  })
-  weightUnit: WeightUnitEnum;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: [DimensionsUnitEnum.CENTIMETER, DimensionsUnitEnum.METER],
-  })
-  dimensionsUnit: DimensionsUnitEnum;
-}
-
-const SizeSchema = SchemaFactory.createForClass(Size);
-const SpecificationsSchema = SchemaFactory.createForClass(Specifications);
 
 // Product schema
 @Schema({
@@ -186,11 +96,11 @@ export class Product {
 
   // *** Warehouse info ***
   @Prop({
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   })
-  productId: string;
+  productId: number;
 
   @Prop({
     type: Boolean,
