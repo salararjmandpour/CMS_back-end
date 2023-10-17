@@ -3,7 +3,7 @@ import { Body, Param, Query, Controller, UploadedFiles } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
 
-import { UpdateProductDto } from './dtos/update-product.dto';
+import { UpdateProductWithSeoDto } from './dtos/update-product.dto';
 import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
@@ -14,6 +14,8 @@ import { GetProductsDecorator } from './decorators/get-products.decorator';
 import { UploadImagesDecorator } from './decorators/upload-images.decorator';
 import { UpdateProductDecorator } from './decorators/update-product.decorator';
 import { CreateProductDecorator } from './decorators/create-product.decorator';
+import { joiValidation } from 'src/core/utils/joi-validator.util';
+import { updateProductWithDeoValidator } from './validators/update-product.validator';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -50,8 +52,9 @@ export class ProductsController {
   @UpdateProductDecorator()
   updateProduct(
     @Param('id', ParseObjectIdPipe) id: string,
-    @Body() body: UpdateProductDto,
+    @Body() body: UpdateProductWithSeoDto,
   ) {
+    joiValidation(updateProductWithDeoValidator, body);
     return this.productService.update(id, body);
   }
 

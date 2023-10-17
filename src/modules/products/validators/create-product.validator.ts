@@ -1,32 +1,12 @@
 import * as Joi from 'joi';
 import {
   objectIdPattern,
-  discountDatePattern,
   productUnitPattern,
-  productWeightUnit,
-  productDimensionsUnit,
+  discountDatePattern,
 } from 'src/core/constants/pattern.constant';
+import { SizeValidator } from './size.validator';
+import { SpecificationsValidator } from './specifications.validator';
 import { createSeoValidator } from 'src/modules/seo/validators/create-seo-validator';
-
-const SizeValidator = Joi.object({
-  length: Joi.number().min(0).required(),
-  height: Joi.number().min(0).required(),
-  width: Joi.number().min(0).required(),
-  weight: Joi.number().min(0).required(),
-  weightUnit: Joi.string()
-    .pattern(productWeightUnit)
-    .required()
-    .error(new Error('Invalid weightUnit')),
-  dimensionsUnit: Joi.string()
-    .pattern(productDimensionsUnit)
-    .required()
-    .error(new Error('Invalid dimensionsUnit')),
-});
-
-const SpecificationsValidator = Joi.object({
-  key: Joi.string().required(),
-  value: Joi.string().required(),
-});
 
 export const createProductValidator = Joi.object({
   title: Joi.string().required(),

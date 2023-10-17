@@ -1,32 +1,59 @@
 import * as Joi from 'joi';
-import { objectIdPattern } from 'src/core/constants/pattern.constant';
-
-const SizeValidator = Joi.object({
-  length: Joi.number(),
-  height: Joi.number(),
-  width: Joi.number(),
-  weight: Joi.number(),
-  weightUnit: Joi.string().pattern(/(g|kg)/i),
-  dimensionsUnit: Joi.string().pattern(/(cm|m)/i),
-});
-
-const SpecificationsValidator = Joi.object({
-  key: Joi.string(),
-  value: Joi.string(),
-});
+import { SizeValidator } from './size.validator';
+import { SpecificationsValidator } from './specifications.validator';
+import { updateSeoValidator } from 'src/modules/seo/validators/update-seo-validator';
+import {
+  objectIdPattern,
+  productUnitPattern,
+  discountDatePattern,
+} from 'src/core/constants/pattern.constant';
 
 export const updateProductValidator = Joi.object({
-  productId: Joi.string(),
   title: Joi.string(),
   description: Joi.string(),
   shortDescription: Joi.string(),
-  price: Joi.number(),
-  discount: Joi.number(),
-  count: Joi.number(),
-  size: SizeValidator,
+  draft: Joi.boolean(),
+  category: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
+
+    .error(new Error('category should be array from objectId')),
+
+  // price and discount
+  regularPrice: Joi.number(),
+  discountedPrice: Joi.number(),
+  discountDate: Joi.string()
+    .pattern(discountDatePattern)
+    .error(new Error('Invalid discountDate')),
+
+  // warehouse info
   inStock: Joi.boolean(),
-  category: Joi.string()
-    .pattern(objectIdPattern)
-    .error(new Error('category should be objectId')),
+  shortageInStock: Joi.number().min(0),
+  count: Joi.number().min(0),
+  warehouseName: Joi.string(),
+  productUnit: Joi.string()
+    .pattern(productUnitPattern)
+
+    .error(new Error('Invalid productUnit')),
+  warehouseShelfId: Joi.string(),
+
+  // linked products
+  encourageMorePurchases: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
+
+    .error(new Error('encourageMorePurchases should be array from objectId')),
+  similarProducts: Joi.array()
+    .items(Joi.string().pattern(objectIdPattern))
+
+    .error(new Error('similarProducts should be array from objectId')),
+
+  // specifications product
   specifications: Joi.array().items(SpecificationsValidator),
+
+  //transportation
+  size: SizeValidator,
+});
+
+export const updateProductWithDeoValidator = Joi.object({
+  product: updateProductValidator,
+  seo: updateSeoValidator,
 });

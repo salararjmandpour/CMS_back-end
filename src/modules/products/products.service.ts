@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 
 import { FileService } from '../file/file.service';
-import { SeoService } from '../seo/seo.service';
+import { SeoRepository } from '../seo/seo.repository';
 import { ProductsRepository } from './products.repository';
 import { ProductDocument } from './schema/product.schema';
 
-import { UpdateProductDto } from './dtos/update-product.dto';
+import { UpdateProductWithSeoDto } from './dtos/update-product.dto';
 import { CreateProductWithCeoDto } from './dtos/create-product.dto';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
@@ -24,8 +24,8 @@ import { calculateDiscountPercentage } from 'src/core/utils/discount-percentage.
 @Injectable()
 export class ProductsService {
   constructor(
-    private seoService: SeoService,
     private fileService: FileService,
+    private seoRepository: SeoRepository,
     private productRepository: ProductsRepository,
   ) {}
 
@@ -68,7 +68,7 @@ export class ProductsService {
 
     // save seo in database
     const product: ProductDocument = copyObject(createdResult);
-    await this.seoService.create({ ...body.seo, product: product._id });
+    await this.seoRepository.create({ ...body.seo, product: product._id });
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -117,30 +117,56 @@ export class ProductsService {
   }
 
   async update(
-    id: string,
-    body: UpdateProductDto,
+    productId: string,
+    body: UpdateProductWithSeoDto,
   ): Promise<ResponseFormat<any>> {
-    // prevent duplicate productId and slug
-    const [duplicateProductId, duplicateSlug] = await Promise.all([
-      this.productRepository.findOne({
-        productId: body.productId,
-      }),
-      this.productRepository.findOne({
-        slug: body.slug,
-      }),
-    ]);
-
-    if (duplicateProductId) {
-      throw new BadRequestException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
+    // check exist product
+    const existProduct = await this.productRepository.findById(productId);
+    if (!existProduct) {
+      throw new BadRequestException(ResponseMessages.PRODUCT_NOT_FOUND);
     }
 
-    if (duplicateSlug) {
-      throw new BadRequestException(ResponseMessages.SLUG_ALREADY_EXIST);
+    // *** calculate discount percentage ***
+    if (!!body?.product?.discountedPrice) {
+      const { regularPrice, discountedPrice } = body.product;
+      const _discountedPrice = discountedPrice || existProduct.discountedPrice;
+
+      if (regularPrice < _discountedPrice) {
+        throw new BadRequestException(
+          ResponseMessages.REGULAR_PRICE_SHOULD_BE_GREATER_THAN_DISCOUNTED_PRICE,
+        );
+      }
+      const discount = calculateDiscountPercentage(
+        regularPrice,
+        _discountedPrice,
+      );
+
+      body.product.discount = discount;
+    }
+
+    const response: { statusCode: number; data: { product: any; seo?: any } } =
+      {
+        statusCode: HttpStatus.OK,
+        data: {
+          product: null,
+        },
+      };
+
+    if (body.seo) {
+      // update seo in database
+      const updatedSeo = await this.seoRepository.updateByProductId(
+        productId,
+        {
+          ...body.seo,
+        },
+        { new: true },
+      );
+      response.data.seo = updatedSeo;
     }
 
     // update product in database
     const updatedResult = await this.productRepository.findByIdAndUpdate(
-      id,
+      productId,
       body,
     );
     if (!updatedResult) {
@@ -148,13 +174,9 @@ export class ProductsService {
         ResponseMessages.FAILED_UPDATE_PRODUCT,
       );
     }
+    response.data.product = updatedResult;
 
-    return {
-      statusCode: HttpStatus.OK,
-      data: {
-        product: updatedResult,
-      },
-    };
+    return response;
   }
 
   async uploadImages(
