@@ -60,10 +60,17 @@ export class CreateProductDto {
 
   @ApiProperty({
     type: String,
-    description: 'The discountDate for product',
+    description: 'The discountStartDate for product',
     default: '1403/03/26',
   })
-  discountDate: string;
+  discountStartDate: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The discountEndDate for product',
+    default: '1403/03/26',
+  })
+  discountEndDate: string;
 
   @ApiProperty({
     type: Boolean,

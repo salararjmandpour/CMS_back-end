@@ -4,7 +4,7 @@ import {
   productUnitPattern,
   discountDatePattern,
 } from 'src/core/constants/pattern.constant';
-import { SizeValidator } from './size.validator';
+import { createSizeValidator } from './size.validator';
 import { SpecificationsValidator } from './specifications.validator';
 import { createSeoValidator } from 'src/modules/seo/validators/create-seo-validator';
 
@@ -21,9 +21,12 @@ export const createProductValidator = Joi.object({
   // price and discount
   regularPrice: Joi.number().required(),
   discountedPrice: Joi.number(),
-  discountDate: Joi.string()
+  discountStartDate: Joi.string()
     .pattern(discountDatePattern)
-    .error(new Error('Invalid discountDate')),
+    .error(new Error('Invalid discountStartDate')),
+  discountEndDate: Joi.string()
+    .pattern(discountDatePattern)
+    .error(new Error('Invalid discountEndDate')),
 
   // warehouse info
   inStock: Joi.boolean().required(),
@@ -50,7 +53,7 @@ export const createProductValidator = Joi.object({
   specifications: Joi.array().items(SpecificationsValidator),
 
   //transportation
-  size: SizeValidator,
+  size: createSizeValidator,
 });
 
 export const createProductWithDeoValidator = Joi.object({

@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { SizeValidator } from './size.validator';
+import { updateSizeValidator } from './size.validator';
 import { SpecificationsValidator } from './specifications.validator';
 import { updateSeoValidator } from 'src/modules/seo/validators/update-seo-validator';
 import {
@@ -50,7 +50,7 @@ export const updateProductValidator = Joi.object({
   specifications: Joi.array().items(SpecificationsValidator),
 
   //transportation
-  size: SizeValidator,
+  size: updateSizeValidator,
 });
 
 export const updateProductWithDeoValidator = Joi.object({

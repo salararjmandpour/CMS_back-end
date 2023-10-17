@@ -1,6 +1,5 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { nanoid, alphabetNumber } from 'src/core/utils/nanoid.util';
 import { ISize, SizeSchema } from './size.schema';
 import { ISpecifications, SpecificationsSchema } from './specification.schema';
 
@@ -92,7 +91,13 @@ export class Product {
     type: String,
     default: null,
   })
-  discountDate: string;
+  discountStartDate: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  discountEndDate: string;
 
   // *** Warehouse info ***
   @Prop({
