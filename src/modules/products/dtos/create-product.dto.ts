@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+import { SMS, productSMS } from '../schema/product.schema';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -179,6 +180,12 @@ export class CreateProductDto {
     type: Array<String>,
   })
   images: string[];
+
+  @ApiProperty({
+    type: Array<Object>,
+    default: productSMS,
+  })
+  sms: SMS;
 
   supplier: string;
   productId: string;

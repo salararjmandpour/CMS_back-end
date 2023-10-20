@@ -13,4 +13,5 @@ export const discountDatePattern = /^(14\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|
 export const productUnitPattern = /(number|package|carton|meter|centimeter|kilogram|gram)/i;
 export const productWeightUnit =  /(gram|kilogram)/i;
 export const productDimensionsUnit =  /(centimeter|meter)/i;
+export const productSmsStatusPattern = /(AUCTIONED_TIME|AVAILABLE_TIEM|ENDING_TIME)/i;
 // export const datePattern = /^(13\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;

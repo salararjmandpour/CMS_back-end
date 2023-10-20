@@ -3,6 +3,7 @@ import {
   objectIdPattern,
   productUnitPattern,
   discountDatePattern,
+  productSmsStatusPattern,
 } from 'src/core/constants/pattern.constant';
 import { createSizeValidator } from './size.validator';
 import { SpecificationsValidator } from './specifications.validator';
@@ -56,6 +57,16 @@ export const createProductValidator = Joi.object({
 
   //transportation
   size: createSizeValidator,
+
+  // sms
+  sms: Joi.array().items(
+    Joi.object({
+      status: Joi.string().pattern(productSmsStatusPattern).allow(''),
+      title: Joi.string().allow(''),
+      message: Joi.string().allow(''),
+      isActive: Joi.boolean().allow(''),
+    }),
+  ),
 });
 
 export const createProductWithDeoValidator = Joi.object({

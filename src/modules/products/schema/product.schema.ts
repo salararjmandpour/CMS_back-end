@@ -13,6 +13,54 @@ export enum ProductUnitEnum {
   GRAM = 'gram',
 }
 
+enum SMSStatusEnum {
+  AUCTIONED_TIME = 'AUCTIONED_TIME',
+  AVAILABLE_TIEM = 'AVAILABLE_TIEM',
+  ENDING_TIME = 'ENDING_TIME',
+}
+
+export type SMS = [
+  {
+    status: SMSStatusEnum.AUCTIONED_TIME;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+  {
+    status: SMSStatusEnum.AVAILABLE_TIEM;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+  {
+    status: SMSStatusEnum.ENDING_TIME;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+];
+
+export const productSMS = [
+  {
+    status: SMSStatusEnum.AUCTIONED_TIME,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+  {
+    status: SMSStatusEnum.AVAILABLE_TIEM,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+  {
+    status: SMSStatusEnum.ENDING_TIME,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+];
+
 // Product schema
 @Schema({
   timestamps: true,
@@ -186,6 +234,11 @@ export class Product {
   size: ISize;
 
   // *** SMS ***
+  @Prop({
+    type: Array,
+    default: productSMS,
+  })
+  sms: SMS;
 }
 
 export type ProductDocument = Product & Document;
