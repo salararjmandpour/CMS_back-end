@@ -55,6 +55,12 @@ export class Product {
   comments: string[];
 
   @Prop({
+    type: String,
+    default: '',
+  })
+  image: String;
+
+  @Prop({
     type: Array<String>,
     default: [],
   })

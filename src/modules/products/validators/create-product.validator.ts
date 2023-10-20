@@ -17,6 +17,8 @@ export const createProductValidator = Joi.object({
     .items(Joi.string().pattern(objectIdPattern))
     .required()
     .error(new Error('category should be array from objectId')),
+  image: Joi.string(),
+  images: Joi.array().items(Joi.string()),
 
   // price and discount
   regularPrice: Joi.number().required(),

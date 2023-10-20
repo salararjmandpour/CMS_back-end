@@ -170,8 +170,17 @@ export class CreateProductDto {
     dimensionsUnit: 'cm' | 'm';
   };
 
-  supplier: string;
+  @ApiProperty({
+    type: String,
+  })
+  image: string;
+
+  @ApiProperty({
+    type: Array<String>,
+  })
   images: string[];
+
+  supplier: string;
   productId: string;
 }
 
