@@ -6,6 +6,7 @@ import {
   objectIdPattern,
   productUnitPattern,
   discountDatePattern,
+  productSmsStatusPattern,
 } from 'src/core/constants/pattern.constant';
 
 export const updateProductValidator = Joi.object({
@@ -17,13 +18,18 @@ export const updateProductValidator = Joi.object({
     .items(Joi.string().pattern(objectIdPattern))
 
     .error(new Error('category should be array from objectId')),
+  image: Joi.string(),
+  images: Joi.array().items(Joi.string()),
 
   // price and discount
   regularPrice: Joi.number(),
   discountedPrice: Joi.number(),
-  discountDate: Joi.string()
+  discountStartDate: Joi.string()
     .pattern(discountDatePattern)
-    .error(new Error('Invalid discountDate')),
+    .error(new Error('Invalid discountStartDate')),
+  discountEndDate: Joi.string()
+    .pattern(discountDatePattern)
+    .error(new Error('Invalid discountEndDate')),
 
   // warehouse info
   inStock: Joi.boolean(),
@@ -51,6 +57,16 @@ export const updateProductValidator = Joi.object({
 
   //transportation
   size: updateSizeValidator,
+
+  // sms
+  sms: Joi.array().items(
+    Joi.object({
+      status: Joi.string().pattern(productSmsStatusPattern).allow(''),
+      title: Joi.string().allow(''),
+      message: Joi.string().allow(''),
+      isActive: Joi.boolean().allow(''),
+    }),
+  ),
 });
 
 export const updateProductWithDeoValidator = Joi.object({
