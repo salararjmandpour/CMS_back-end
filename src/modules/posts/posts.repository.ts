@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './schema/post.schema';
@@ -18,5 +18,13 @@ export class PostsRepository {
 
   updateOne(_id: string, data: UpdatePostInput) {
     return this.postModel.updateOne({ _id }, { $set: data });
+  }
+
+  findAll(
+    filter?: FilterQuery<Post>,
+    projection?: ProjectionType<Post>,
+    options?: QueryOptions<Post>,
+  ) {
+    return this.postModel.find(filter, projection, options);
   }
 }

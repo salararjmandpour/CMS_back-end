@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   Param,
+  Query,
   Patch,
   UseGuards,
   Controller,
@@ -17,6 +18,7 @@ import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 import { ApiCraetePost } from './docs/craete-post.dto';
 import { ApiUpdatePost } from './docs/updaet-post.dto';
 import { ApiGetOnePost } from './docs/get-one-sheet.doc';
+import { ApiGetPostList } from './docs/get-post-list.doc';
 import { CreatePostWithSeoDto } from './dtos/create-post.dto';
 import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
 
@@ -24,13 +26,13 @@ import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private postsSerice: PostsService) {}
+  constructor(private postsService: PostsService) {}
 
   @ApiCraetePost()
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() body: CreatePostWithSeoDto, @GetUser('_id') _id: string) {
-    return this.postsSerice.create(_id, body);
+    return this.postsService.create(_id, body);
   }
 
   @ApiUpdatePost()
@@ -40,13 +42,24 @@ export class PostsController {
     @Body() body: UpdatePostWithSeoDto,
     @Param('id', ParseObjectIdPipe) id: string,
   ) {
-    return this.postsSerice.update(id, body);
+    return this.postsService.update(id, body);
+  }
+
+  @ApiGetPostList()
+  @Get()
+  getPostsList(
+    @Query('status') status: string,
+    @Query('search') search: string,
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
+  ) {
+    return this.postsService.findAll(status, search, startDate, endDate);
   }
 
   @ApiGetOnePost()
   @UseGuards(AuthGuard)
   @Get(':id')
   getPostById(@Param('id') id: string) {
-    return this.postsSerice.findOneById(id);
+    return this.postsService.findOneById(id);
   }
 }

@@ -13,6 +13,7 @@ import { CreatePostWithSeoDto } from './dtos/create-post.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
+import { SeoDocument } from '../seo/schemas/seo.schema';
 
 @Injectable()
 export class PostsService {
@@ -94,6 +95,42 @@ export class PostsService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.POST_UPDATED_SUCCESS,
+    };
+  }
+
+  async findAll(
+    status: string,
+    search: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<ResponseFormat<any>> {
+    const query: any = {};
+    if (status) query.status = status;
+    if (search) query.title = { $regex: search, $options: 'i' };
+    if (startDate && endDate) {
+      query.createdAt = { $gte: startDate, $lt: endDate };
+    }
+
+    const [posts, seos] = await Promise.all([
+      this.postsRepository.findAll(query),
+      this.seoRepository.findAll({ post: { $ne: null } }),
+    ]);
+    if (!posts || !seos) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAIELD_GET_POST_LIST,
+      );
+    }
+
+    const postsListWithSeo = posts.map((category: any) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return category._id.toString() === seo.post;
+      });
+      return { category, seo };
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: { posts: postsListWithSeo },
     };
   }
 
