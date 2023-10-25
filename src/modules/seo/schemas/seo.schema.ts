@@ -35,6 +35,11 @@ export class SEO {
     type: Types.ObjectId,
   })
   sheet: string;
+
+  @Prop({
+    type: Types.ObjectId,
+  })
+  post: string;
 }
 
 export type SeoDocument = SEO & Document;

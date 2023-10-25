@@ -22,4 +22,5 @@ export class CreateSeoDto {
   product?: string;
   category?: string;
   sheet?: string;
+  post?: string;
 }

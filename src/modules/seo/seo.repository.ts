@@ -30,6 +30,10 @@ export class SeoRepository {
     return this.seoModel.findOne({ sheet: sheetId });
   }
 
+  findByPost(postId: string) {
+    return this.seoModel.findOne({ post: postId });
+  }
+
   findBySlug(slug: string) {
     return this.seoModel.findOne({ slug });
   }

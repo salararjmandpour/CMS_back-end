@@ -18,6 +18,7 @@ import { GalleryModule } from './modules/gallery/gallery.module';
 import { SeoModule } from './modules/seo/seo.module';
 import { MainEmailModule } from './modules/main-email/main-email.module';
 import { SheetsModule } from './modules/sheets/sheets.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SheetsModule } from './modules/sheets/sheets.module';
     SeoModule,
     MainEmailModule,
     SheetsModule,
+    PostsModule,
   ],
   controllers: [],
   providers: [],
