@@ -1,6 +1,6 @@
 import {
   ApiOperation,
-  ApiCreatedResponse,
+  ApiOkResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
@@ -8,16 +8,16 @@ import {
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiCreateSheet = () => {
+export const ApiUpdateSheet = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'create sheet',
+      summary: 'update sheet by ID',
     }),
-    ApiCreatedResponse({
+    ApiOkResponse({
       schema: {
         example: {
-          statusCode: HttpStatus.CREATED,
-          message: ResponseMessages.SHEET_CREATED_SUCCESS,
+          statusCode: HttpStatus.OK,
+          message: ResponseMessages.SHEET_UPDATED_SUCCESS,
         },
       },
     }),
@@ -43,7 +43,7 @@ export const ApiCreateSheet = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_CREATE_SHEET,
+          message: ResponseMessages.FAILED_UPDATE_SHEET,
           error: 'Internal Server Error',
         },
       },

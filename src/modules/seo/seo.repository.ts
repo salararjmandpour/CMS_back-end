@@ -36,7 +36,7 @@ export class SeoRepository {
 
   updateById(
     _id: any,
-    data: UpdateSeoDto,
+    data: UpdateSeoDto | {},
     options?: QueryOptions<SeoDocument>,
   ) {
     return this.seoModel.findOneAndUpdate({ _id }, { $set: data }, options);
@@ -49,6 +49,18 @@ export class SeoRepository {
   ) {
     return this.seoModel.findOneAndUpdate(
       { product: productId },
+      { $set: data },
+      options,
+    );
+  }
+
+  updateBySheetId(
+    sheetId: any,
+    data: UpdateSeoDto | {},
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.findOneAndUpdate(
+      { sheet: sheetId },
       { $set: data },
       options,
     );

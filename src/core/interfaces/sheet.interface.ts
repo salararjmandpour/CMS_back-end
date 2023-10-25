@@ -7,3 +7,5 @@ export interface CreateSheetInput {
   status: StatusEnum;
   image: string;
 }
+
+export interface UpdateSheetInput extends Omit<CreateSheetInput, 'writer'> {}
