@@ -1,4 +1,5 @@
 import {
+  Get,
   Post,
   Body,
   Param,
@@ -15,6 +16,7 @@ import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 
 import { ApiCraetePost } from './docs/craete-post.dto';
 import { ApiUpdatePost } from './docs/updaet-post.dto';
+import { ApiGetOnePost } from './docs/get-one-sheet.doc';
 import { CreatePostWithSeoDto } from './dtos/create-post.dto';
 import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
 
@@ -39,5 +41,12 @@ export class PostsController {
     @Param('id', ParseObjectIdPipe) id: string,
   ) {
     return this.postsSerice.update(id, body);
+  }
+
+  @ApiGetOnePost()
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  getPostById(@Param('id') id: string) {
+    return this.postsSerice.findOneById(id);
   }
 }

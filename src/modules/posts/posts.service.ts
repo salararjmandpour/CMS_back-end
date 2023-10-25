@@ -96,4 +96,19 @@ export class PostsService {
       message: ResponseMessages.POST_UPDATED_SUCCESS,
     };
   }
+
+  async findOneById(id: string): Promise<ResponseFormat<any>> {
+    const [post, seo] = await Promise.all([
+      this.postsRepository.findOneById(id),
+      this.seoRepository.findByPost(id),
+    ]);
+    if (!post) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_POST);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: seo ? { post, seo } : { post },
+    };
+  }
 }
