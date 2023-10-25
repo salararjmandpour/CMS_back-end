@@ -1,4 +1,4 @@
-import { FilterQuery, Model, QueryOptions } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -32,6 +32,14 @@ export class SeoRepository {
 
   async findWithCategory(): Promise<SeoDocument[]> {
     return this.seoModel.find({ category: { $ne: null } });
+  }
+
+  async findAll(
+    filter?: FilterQuery<SeoDocument>,
+    projection?: ProjectionType<SeoDocument>,
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.find(filter, projection, options);
   }
 
   updateById(
@@ -73,11 +81,5 @@ export class SeoRepository {
   deleteManyByIds(IDs: any): Promise<any> {
     console.log(IDs);
     return this.seoModel.deleteMany({ _id: { $in: IDs } });
-  }
-
-  countDocumentsBySlug(slug: string) {
-    return this.seoModel.countDocuments({
-      slug: new RegExp(`^${slug}(-\\d+)?$`),
-    });
   }
 }

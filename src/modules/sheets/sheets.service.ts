@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { SeoRepository } from '../seo/seo.repository';
 import { SheetsRepository } from './sheets.repository';
+import { SeoDocument } from '../seo/schemas/seo.schema';
 import { CreateSheetWithSeoDto } from './dtos/create-sheet.dto';
 import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
@@ -67,6 +68,42 @@ export class SheetsService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.SHEET_UPDATED_SUCCESS,
+    };
+  }
+
+  async findAll(
+    status: string,
+    search: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<ResponseFormat<any>> {
+    const query: any = {};
+    if (status) query.status = status;
+    if (search) query.title = { $regex: search, $options: 'i' };
+    if (startDate && endDate) {
+      query.createdAt = { $gte: startDate, $lt: endDate };
+    }
+
+    const [sheets, seos] = await Promise.all([
+      this.sheetsRepository.findAll(query),
+      this.seoRepository.findAll({ sheet: { $ne: null } }),
+    ]);
+    if (!sheets || !seos) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAIELD_GET_SHEET_LIST,
+      );
+    }
+
+    const sheetsListWithSeo = sheets.map((category: any) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return category._id.toString() === seo.sheet;
+      });
+      return { category, seo };
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: { sheets: sheetsListWithSeo },
     };
   }
 }

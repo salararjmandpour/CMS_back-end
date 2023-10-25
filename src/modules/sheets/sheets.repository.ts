@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sheet } from './schema/sheet.schema';
@@ -24,5 +24,13 @@ export class SheetsRepository {
 
   updateOne(_id: string, data: UpdateSheetInput) {
     return this.sheetsModel.updateOne({ _id }, { $set: data });
+  }
+
+  findAll(
+    filter?: FilterQuery<Sheet>,
+    projection?: ProjectionType<Sheet>,
+    options?: QueryOptions<Sheet>,
+  ) {
+    return this.sheetsModel.find(filter, projection, options);
   }
 }

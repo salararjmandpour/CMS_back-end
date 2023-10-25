@@ -1,8 +1,10 @@
 import {
+  Get,
   Post,
   Body,
   Param,
   Patch,
+  Query,
   UseGuards,
   Controller,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
 import { ApiCreateSheet } from './docs/create-sheet.doc';
 import { ApiUpdateSheet } from './docs/update-sheet.doc';
+import { ApiGetSheetList } from './docs/get-sheet-list.doc';
 import { CreateSheetWithSeoDto } from './dtos/create-sheet.dto';
 import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
 
@@ -39,5 +42,16 @@ export class SheetsController {
     @Param('id', ParseObjectIdPipe) id: string,
   ) {
     return this.sheetsService.update(id, body);
+  }
+
+  @ApiGetSheetList()
+  @Get()
+  getSheetsList(
+    @Query('status') status: string,
+    @Query('search') search: string,
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
+  ) {
+    return this.sheetsService.findAll(status, search, startDate, endDate);
   }
 }
