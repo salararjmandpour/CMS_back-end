@@ -1,18 +1,27 @@
+import {
+  IsEnum,
+  IsArray,
+  IsString,
+  IsMongoId,
+  IsOptional,
+  ValidateNested,
+  IsNotEmpty,
+  IsEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsNotEmpty, ValidateNested } from 'class-validator';
-import { StatusEnum } from '../schema/sheet.schema';
+import { StatusEnum } from '../schema/post.schema';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
-export class CreateSheetDto {
+export class UpdatePostDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   title: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @ApiProperty()
@@ -24,17 +33,23 @@ export class CreateSheetDto {
   status: StatusEnum;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @IsEmpty()
+  @IsOptional()
   image: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsMongoId({ each: true })
+  @IsOptional()
+  categories: string[];
 }
 
-export class CreateSheetWithSeoDto {
+export class UpdatePostWithSeoDto {
   @ApiProperty()
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => CreateSheetDto)
-  sheet: CreateSheetDto;
+  @Type(() => UpdatePostDto)
+  post: UpdatePostDto;
 
   @ApiProperty()
   @ValidateNested()

@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './schema/post.schema';
-import { CraetePostInput } from './interfaces/post.interface';
+import { CraetePostInput, UpdatePostInput } from './interfaces/post.interface';
 
 @Injectable()
 export class PostsRepository {
@@ -14,5 +14,9 @@ export class PostsRepository {
 
   findOneById(id: string) {
     return this.postModel.findById(id);
+  }
+
+  updateOne(_id: string, data: UpdatePostInput) {
+    return this.postModel.updateOne({ _id }, { $set: data });
   }
 }

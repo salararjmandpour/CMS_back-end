@@ -1,24 +1,24 @@
 import {
   ApiOperation,
   ApiCreatedResponse,
-  ApiNotFoundResponse,
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiCraetePost = () => {
+export const ApiUpdatePost = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'create post',
+      summary: 'update post by ID',
     }),
     ApiCreatedResponse({
       schema: {
         example: {
-          statusCode: HttpStatus.CREATED,
-          message: ResponseMessages.POST_CREATED_SUCCESS,
+          statusCode: HttpStatus.OK,
+          message: ResponseMessages.POST_UPDATED_SUCCESS,
         },
       },
     }),
@@ -31,15 +31,6 @@ export const ApiCraetePost = () => {
         },
       },
     }),
-    ApiUnauthorizedResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.UNAUTHORIZED,
-          message: ResponseMessages.UNAUTHORIZED,
-          error: 'Unauthorized',
-        },
-      },
-    }),
     ApiNotFoundResponse({
       schema: {
         example: {
@@ -49,11 +40,20 @@ export const ApiCraetePost = () => {
         },
       },
     }),
+    ApiUnauthorizedResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: ResponseMessages.UNAUTHORIZED,
+          error: 'Unauthorized',
+        },
+      },
+    }),
     ApiInternalServerErrorResponse({
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_CREATE_POST,
+          message: ResponseMessages.FAILED_UPDATE_POST,
           error: 'Internal Server Error',
         },
       },

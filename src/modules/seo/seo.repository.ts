@@ -82,6 +82,18 @@ export class SeoRepository {
     );
   }
 
+  updateByPostId(
+    postId: any,
+    data: UpdateSeoDto | {},
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.findOneAndUpdate(
+      { post: postId },
+      { $set: data },
+      options,
+    );
+  }
+
   deleteOne(filter?: FilterQuery<SeoDocument>): Promise<any> {
     return this.seoModel.deleteOne(filter);
   }

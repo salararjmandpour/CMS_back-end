@@ -1,11 +1,22 @@
+import {
+  Post,
+  Body,
+  Param,
+  Patch,
+  UseGuards,
+  Controller,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 
 import { PostsService } from './posts.service';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { ApiCraetePost } from './docs/craete-post.dto';
-import { CreatePostWithSeoDto } from './dtos/create-post.dto';
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { GetUser } from 'src/core/decorators/get-user-param.decorator';
+
+import { ApiCraetePost } from './docs/craete-post.dto';
+import { ApiUpdatePost } from './docs/updaet-post.dto';
+import { CreatePostWithSeoDto } from './dtos/create-post.dto';
+import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
 
 @ApiBearerAuth()
 @ApiTags('Posts')
@@ -18,5 +29,15 @@ export class PostsController {
   @Post()
   create(@Body() body: CreatePostWithSeoDto, @GetUser('_id') _id: string) {
     return this.postsSerice.create(_id, body);
+  }
+
+  @ApiUpdatePost()
+  @UseGuards(AuthGuard)
+  @Patch(':id')
+  update(
+    @Body() body: UpdatePostWithSeoDto,
+    @Param('id', ParseObjectIdPipe) id: string,
+  ) {
+    return this.postsSerice.update(id, body);
   }
 }

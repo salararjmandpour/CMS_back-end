@@ -8,3 +8,5 @@ export interface CraetePostInput {
   image: string;
   categories: string[];
 }
+
+export interface UpdatePostInput extends Omit<CraetePostInput, 'writer'> {}
