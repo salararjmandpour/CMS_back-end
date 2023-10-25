@@ -34,7 +34,11 @@ export class SeoRepository {
     return this.seoModel.find({ category: { $ne: null } });
   }
 
-  updateById(_id: any, data: UpdateSeoDto, options?: QueryOptions<SeoDocument>) {
+  updateById(
+    _id: any,
+    data: UpdateSeoDto,
+    options?: QueryOptions<SeoDocument>,
+  ) {
     return this.seoModel.findOneAndUpdate({ _id }, { $set: data }, options);
   }
 

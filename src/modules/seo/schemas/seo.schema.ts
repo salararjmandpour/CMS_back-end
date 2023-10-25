@@ -30,6 +30,11 @@ export class SEO {
     type: Types.ObjectId,
   })
   category: string;
+
+  @Prop({
+    type: Types.ObjectId,
+  })
+  sheet: string;
 }
 
 export type SeoDocument = SEO & Document;
