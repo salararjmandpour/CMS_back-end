@@ -20,6 +20,7 @@ import { ApiUpdateSheet } from './docs/update-sheet.doc';
 import { ApiGetSheetList } from './docs/get-sheet-list.doc';
 import { CreateSheetWithSeoDto } from './dtos/create-sheet.dto';
 import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
+import { ApiGetOneSheet } from './docs/get-one-sheet.doc';
 
 @ApiBearerAuth()
 @ApiTags('Sheets')
@@ -53,5 +54,11 @@ export class SheetsController {
     @Query('endDate') endDate: Date,
   ) {
     return this.sheetsService.findAll(status, search, startDate, endDate);
+  }
+
+  @ApiGetOneSheet()
+  @Get(':id')
+  getSheetById(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.sheetsService.findOneById(id);
   }
 }

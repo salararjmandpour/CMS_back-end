@@ -1,6 +1,6 @@
-import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
 import { SEO, SeoDocument } from './schemas/seo.schema';
 import { CreateSeoDto } from './dto/create-seo.dto';
@@ -24,6 +24,10 @@ export class SeoRepository {
 
   findByCategory(categoryId: string) {
     return this.seoModel.findOne({ category: categoryId });
+  }
+
+  findBySheet(sheetId: string) {
+    return this.seoModel.findOne({ sheet: sheetId });
   }
 
   findBySlug(slug: string) {
@@ -79,7 +83,6 @@ export class SeoRepository {
   }
 
   deleteManyByIds(IDs: any): Promise<any> {
-    console.log(IDs);
     return this.seoModel.deleteMany({ _id: { $in: IDs } });
   }
 }

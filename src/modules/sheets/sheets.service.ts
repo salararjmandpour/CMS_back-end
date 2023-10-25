@@ -106,4 +106,19 @@ export class SheetsService {
       data: { sheets: sheetsListWithSeo },
     };
   }
+
+  async findOneById(id: string): Promise<ResponseFormat<any>> {
+    const [sheet, seo] = await Promise.all([
+      this.sheetsRepository.findOneById(id),
+      this.seoRepository.findBySheet(id),
+    ]);
+    if (!sheet) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_SHEET);
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: seo ? { sheet, seo } : { sheet },
+    };
+  }
 }

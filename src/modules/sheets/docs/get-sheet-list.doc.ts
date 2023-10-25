@@ -18,7 +18,30 @@ export const ApiGetSheetList = () => {
         example: {
           statusCode: HttpStatus.OK,
           date: {
-            sheets: [],
+            sheets: [
+              {
+                category: {
+                  _id: '6538e618dfa0a6e071424a55',
+                  title: 'string',
+                  description: 'string',
+                  writer: '6509eb662f34d1564a88cf20',
+                  view: 0,
+                  status: 'published',
+                  image: 'string',
+                  createdAt: '2023-10-25T09:55:36.626Z',
+                  updatedAt: '2023-10-25T09:55:36.626Z',
+                },
+                seo: {
+                  _id: '6538e618dfa0a6e071424a57',
+                  title: [],
+                  slug: '',
+                  description: '',
+                  sheet: '6538e618dfa0a6e071424a55',
+                  createdAt: '2023-10-25T09:55:36.640Z',
+                  updatedAt: '2023-10-25T09:55:36.640Z',
+                },
+              },
+            ],
           },
         },
       },
@@ -37,7 +60,7 @@ export const ApiGetSheetList = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ResponseMessages.FAILED_UPDATE_SHEET,
+          message: ResponseMessages.FAIELD_GET_SHEET_LIST,
           error: 'Internal Server Error',
         },
       },
