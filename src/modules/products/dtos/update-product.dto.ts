@@ -1,13 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
+import { CreateProductDto } from './create-product.dto';
 
 export class UpdateProductDto {
-  @ApiProperty({
-    type: String,
-    description: 'The productId for product',
-    default: 'MT015',
-  })
-  productId: string;
-
   @ApiProperty({
     type: String,
     description: 'The title for product',
@@ -28,52 +25,42 @@ export class UpdateProductDto {
   shortDescription: string;
 
   @ApiProperty({
-    type: Number,
-    description: 'The slug for product',
-    default: 'chasbe-zed-hasasiat-marta',
+    type: Boolean,
+    description: 'The draft for product',
+    default: false,
   })
-  slug: string;
+  draft: boolean;
+
+  @ApiProperty({
+    type: String,
+    description: 'The category for product. Should be array from ObjectId',
+    default: ['6470a3fbbb82534053e8bb86'],
+  })
+  category: string;
 
   @ApiProperty({
     type: Number,
-    description: 'The shortDescription for product',
+    description: 'The regularPrice for product',
+    required: true,
     default: 250_000,
   })
-  price: number;
+  regularPrice: number;
 
   @ApiProperty({
     type: Number,
-    description: 'The discount for product',
-    default: 0,
+    description: 'The regularPrice for product',
+    default: 250_000,
   })
+  discountedPrice: number;
+
   discount: number;
 
   @ApiProperty({
-    type: Number,
-    description: 'The count for product',
+    type: String,
+    description: 'The discountDate for product',
+    default: '1403/03/26',
   })
-  count: number;
-
-  @ApiProperty({
-    type: Object,
-    description: 'The count for product',
-    default: {
-      length: 60,
-      height: 20,
-      width: 40,
-      weight: 2,
-      weightUnit: 'kg',
-      dimensionsUnit: 'cm',
-    },
-  })
-  size: {
-    length: number;
-    height: number;
-    width: number;
-    weight: number;
-    weightUnit: 'g' | 'kg';
-    dimensionsUnit: 'cm' | 'm';
-  };
+  discountDate: string;
 
   @ApiProperty({
     type: Boolean,
@@ -82,15 +69,61 @@ export class UpdateProductDto {
   inStock: boolean;
 
   @ApiProperty({
-    type: String,
-    description: 'The category for product. Should be ObjectId',
-    default: '6470a3fbbb82534053e8bb86',
+    type: Number,
+    description: 'The inStock for product',
+    required: true,
   })
-  category: string;
+  shortageInStock: number;
+
+  @ApiProperty({
+    type: Number,
+    description: 'The count for product',
+  })
+  count: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'The warehouseName for product',
+    required: true,
+  })
+  warehouseName: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The productUnit for product',
+    required: true,
+    default: 'number',
+  })
+  productUnit: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The warehouseShelfId for product',
+    required: true,
+  })
+  warehouseShelfId: string;
+
+  @ApiProperty({
+    type: Array<String>,
+    description:
+      'The encourageMorePurchases for product. Should be list from ObjectId',
+    required: true,
+    default: ['6470a3fbbb82534053e8bb86'],
+  })
+  encourageMorePurchases: string[];
+
+  @ApiProperty({
+    type: Array<String>,
+    description:
+      'The similarProducts for product. Should be list from ObjectId',
+    required: true,
+    default: ['6470a3fbbb82534053e8bb86'],
+  })
+  similarProducts: string[];
 
   @ApiProperty({
     type: Object,
-    description: 'The category for product. Should be ObjectId',
+    description: 'The specifications for product. Should be array from objects',
     default: [
       {
         key: 'نوع',
@@ -103,5 +136,38 @@ export class UpdateProductDto {
     value: string;
   }[];
 
-  supplier: string;
+  @ApiProperty({
+    type: Object,
+    description: 'The count for product',
+    default: {
+      length: 60,
+      height: 20,
+      width: 40,
+      weight: 2,
+      weightUnit: 'kilogram',
+      dimensionsUnit: 'centimeter',
+    },
+  })
+  size: {
+    length: number;
+    height: number;
+    width: number;
+    weight: number;
+    weightUnit: 'kilogram' | 'gram';
+    dimensionsUnit: 'centimeter' | 'meter';
+  };
+
+  images: string[];
+}
+
+export class UpdateProductWithSeoDto {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UpdateProductDto)
+  product: UpdateProductDto;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UpdateSeoDto)
+  seo: UpdateSeoDto;
 }

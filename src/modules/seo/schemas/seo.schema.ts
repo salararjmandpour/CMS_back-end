@@ -5,19 +5,19 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 export class SEO {
   @Prop({
     type: Array<String>,
-    required: true,
+    default: [],
   })
   title: string[];
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   slug: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   description: string;
 
@@ -30,6 +30,16 @@ export class SEO {
     type: Types.ObjectId,
   })
   category: string;
+
+  @Prop({
+    type: Types.ObjectId,
+  })
+  sheet: string;
+
+  @Prop({
+    type: Types.ObjectId,
+  })
+  post: string;
 }
 
 export type SeoDocument = SEO & Document;

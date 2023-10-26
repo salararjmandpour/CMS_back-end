@@ -1,6 +1,6 @@
-import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
 import { SEO, SeoDocument } from './schemas/seo.schema';
 import { CreateSeoDto } from './dto/create-seo.dto';
@@ -26,6 +26,14 @@ export class SeoRepository {
     return this.seoModel.findOne({ category: categoryId });
   }
 
+  findBySheet(sheetId: string) {
+    return this.seoModel.findOne({ sheet: sheetId });
+  }
+
+  findByPost(postId: string) {
+    return this.seoModel.findOne({ post: postId });
+  }
+
   findBySlug(slug: string) {
     return this.seoModel.findOne({ slug });
   }
@@ -34,8 +42,56 @@ export class SeoRepository {
     return this.seoModel.find({ category: { $ne: null } });
   }
 
-  updateById(_id: any, data: UpdateSeoDto, options: QueryOptions<SeoDocument>) {
+  async findAll(
+    filter?: FilterQuery<SeoDocument>,
+    projection?: ProjectionType<SeoDocument>,
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.find(filter, projection, options);
+  }
+
+  updateById(
+    _id: any,
+    data: UpdateSeoDto | {},
+    options?: QueryOptions<SeoDocument>,
+  ) {
     return this.seoModel.findOneAndUpdate({ _id }, { $set: data }, options);
+  }
+
+  updateByProductId(
+    productId: any,
+    data: UpdateSeoDto,
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.findOneAndUpdate(
+      { product: productId },
+      { $set: data },
+      options,
+    );
+  }
+
+  updateBySheetId(
+    sheetId: any,
+    data: UpdateSeoDto | {},
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.findOneAndUpdate(
+      { sheet: sheetId },
+      { $set: data },
+      options,
+    );
+  }
+
+  updateByPostId(
+    postId: any,
+    data: UpdateSeoDto | {},
+    options?: QueryOptions<SeoDocument>,
+  ) {
+    return this.seoModel.findOneAndUpdate(
+      { post: postId },
+      { $set: data },
+      options,
+    );
   }
 
   deleteOne(filter?: FilterQuery<SeoDocument>): Promise<any> {
@@ -43,13 +99,6 @@ export class SeoRepository {
   }
 
   deleteManyByIds(IDs: any): Promise<any> {
-    console.log(IDs);
     return this.seoModel.deleteMany({ _id: { $in: IDs } });
-  }
-
-  countDocumentsBySlug(slug: string) {
-    return this.seoModel.countDocuments({
-      slug: new RegExp(`^${slug}(-\\d+)?$`),
-    });
   }
 }

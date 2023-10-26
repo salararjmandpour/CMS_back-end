@@ -1,29 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
-interface ISpecifications {
-  key: string;
-  value: string;
-}
-
-interface ISize {
-  length: number;
-  height: number;
-  width: number;
-  weight: number;
-  weightUnit: WeightUnitEnum.GRAM | WeightUnitEnum.KILOGRAM;
-  dimensionsUnit: DimensionsUnitEnum.CENTIMETER | DimensionsUnitEnum.METER;
-}
-
-enum WeightUnitEnum {
-  GRAM = 'gram',
-  KILOGRAM = 'kilogram',
-}
-
-enum DimensionsUnitEnum {
-  CENTIMETER = 'centimeter',
-  METER = 'meter',
-}
+import { ISize, SizeSchema } from './size.schema';
+import { ISpecifications, SpecificationsSchema } from './specification.schema';
 
 export enum ProductUnitEnum {
   NUMBER = 'number',
@@ -35,74 +13,53 @@ export enum ProductUnitEnum {
   GRAM = 'gram',
 }
 
-// Specifications Schema
-@Schema({
-  versionKey: false,
-})
-class Specifications {
-  @Prop({
-    type: String,
-    required: true,
-  })
-  key: string;
-
-  @Prop({
-    type: String,
-    required: true,
-  })
-  value: string;
+enum SMSStatusEnum {
+  AUCTIONED_TIME = 'AUCTIONED_TIME',
+  AVAILABLE_TIEM = 'AVAILABLE_TIEM',
+  ENDING_TIME = 'ENDING_TIME',
 }
 
-// Size Schema
-@Schema({
-  versionKey: false,
-})
-class Size {
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  length: number;
+export type SMS = [
+  {
+    status: SMSStatusEnum.AUCTIONED_TIME;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+  {
+    status: SMSStatusEnum.AVAILABLE_TIEM;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+  {
+    status: SMSStatusEnum.ENDING_TIME;
+    title: String;
+    message: String;
+    isActive: Boolean;
+  },
+];
 
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  height: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  width: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    default: 0,
-  })
-  weight: number;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: [WeightUnitEnum.GRAM, WeightUnitEnum.KILOGRAM],
-  })
-  weightUnit: WeightUnitEnum;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: [DimensionsUnitEnum.CENTIMETER, DimensionsUnitEnum.METER],
-  })
-  dimensionsUnit: DimensionsUnitEnum;
-}
-
-const SizeSchema = SchemaFactory.createForClass(Size);
-const SpecificationsSchema = SchemaFactory.createForClass(Specifications);
+export const productSMS = [
+  {
+    status: SMSStatusEnum.AUCTIONED_TIME,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+  {
+    status: SMSStatusEnum.AVAILABLE_TIEM,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+  {
+    status: SMSStatusEnum.ENDING_TIME,
+    title: '',
+    message: '',
+    isActive: false,
+  },
+];
 
 // Product schema
 @Schema({
@@ -146,6 +103,12 @@ export class Product {
   comments: string[];
 
   @Prop({
+    type: String,
+    default: '',
+  })
+  image: String;
+
+  @Prop({
     type: Array<String>,
     default: [],
   })
@@ -182,15 +145,21 @@ export class Product {
     type: String,
     default: null,
   })
-  discountDate: string;
+  discountStartDate: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  discountEndDate: string;
 
   // *** Warehouse info ***
   @Prop({
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   })
-  productId: string;
+  productId: number;
 
   @Prop({
     type: Boolean,
@@ -265,6 +234,11 @@ export class Product {
   size: ISize;
 
   // *** SMS ***
+  @Prop({
+    type: Array,
+    default: productSMS,
+  })
+  sms: SMS;
 }
 
 export type ProductDocument = Product & Document;

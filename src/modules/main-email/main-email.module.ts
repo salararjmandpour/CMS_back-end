@@ -1,22 +1,26 @@
 import { join, resolve } from 'path';
-import { ConfigService } from '@nestjs/config';
 import { Global, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { MainEmailService } from './main-email.service';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { configService } from 'src/core/config/app.config';
 
-const providersAndExports = [MainEmailService];
 @Global()
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
+      useFactory: () => ({
         transport: {
-          host: config.get<string>('EMAIL_HOST'),
-          port: config.get<number>('EMAIL_PORT'),
+          host: configService.get('EMAIL_HOST'),
+          port: configService.get('EMAIL_PORT'),
           auth: {
-            user: config.get<string>('EMAIL_USER'),
-            pass: config.get<string>('EMAIL_PASS'),
+            user: configService.get('EMAIL_USER'),
+            pass: configService.get('EMAIL_PASS'),
+          },
+          pool: true,
+          secure: true,
+          tls: {
+            rejectUnauthorized: false,
           },
         },
         template: {
@@ -24,11 +28,9 @@ const providersAndExports = [MainEmailService];
           adapter: new EjsAdapter(),
         },
       }),
-      inject: [ConfigService],
     }),
   ],
-  controllers: [],
-  providers: [...providersAndExports],
-  exports: [...providersAndExports],
+  providers: [MainEmailService],
+  exports: [MainEmailService],
 })
 export class MainEmailModule {}

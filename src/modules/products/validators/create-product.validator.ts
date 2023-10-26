@@ -1,34 +1,15 @@
 import * as Joi from 'joi';
 import {
   objectIdPattern,
-  discountDatePattern,
   productUnitPattern,
-  productWeightUnit,
-  productDimensionsUnit,
+  discountDatePattern,
+  productSmsStatusPattern,
 } from 'src/core/constants/pattern.constant';
+import { createSizeValidator } from './size.validator';
+import { SpecificationsValidator } from './specifications.validator';
 import { createSeoValidator } from 'src/modules/seo/validators/create-seo-validator';
 
-const SizeValidator = Joi.object({
-  length: Joi.number().min(0).required(),
-  height: Joi.number().min(0).required(),
-  width: Joi.number().min(0).required(),
-  weight: Joi.number().min(0).required(),
-  weightUnit: Joi.string()
-    .pattern(productWeightUnit)
-    .required()
-    .error(new Error('Invalid weightUnit')),
-  dimensionsUnit: Joi.string()
-    .pattern(productDimensionsUnit)
-    .required()
-    .error(new Error('Invalid dimensionsUnit')),
-});
-
-const SpecificationsValidator = Joi.object({
-  key: Joi.string().required(),
-  value: Joi.string().required(),
-});
-
-export const ProductValidator = Joi.object({
+export const createProductValidator = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   shortDescription: Joi.string().required(),
@@ -37,16 +18,20 @@ export const ProductValidator = Joi.object({
     .items(Joi.string().pattern(objectIdPattern))
     .required()
     .error(new Error('category should be array from objectId')),
+  image: Joi.string(),
+  images: Joi.array().items(Joi.string()),
 
   // price and discount
   regularPrice: Joi.number().required(),
   discountedPrice: Joi.number(),
-  discountDate: Joi.string()
+  discountStartDate: Joi.string()
     .pattern(discountDatePattern)
-    .error(new Error('Invalid discountDate')),
+    .error(new Error('Invalid discountStartDate')),
+  discountEndDate: Joi.string()
+    .pattern(discountDatePattern)
+    .error(new Error('Invalid discountEndDate')),
 
   // warehouse info
-  productId: Joi.string().required(),
   inStock: Joi.boolean().required(),
   shortageInStock: Joi.number().min(0).required(),
   count: Joi.number().min(0).required(),
@@ -71,10 +56,20 @@ export const ProductValidator = Joi.object({
   specifications: Joi.array().items(SpecificationsValidator),
 
   //transportation
-  size: SizeValidator,
-}).required();
+  size: createSizeValidator,
 
-export const createProductValidator = Joi.object({
-  product: ProductValidator,
-  seo: createSeoValidator.required(),
+  // sms
+  sms: Joi.array().items(
+    Joi.object({
+      status: Joi.string().pattern(productSmsStatusPattern).allow(''),
+      title: Joi.string().allow(''),
+      message: Joi.string().allow(''),
+      isActive: Joi.boolean().allow(''),
+    }),
+  ),
+});
+
+export const createProductWithDeoValidator = Joi.object({
+  product: createProductValidator,
+  seo: createSeoValidator,
 });

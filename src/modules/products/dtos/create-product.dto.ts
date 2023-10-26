@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+import { SMS, productSMS } from '../schema/product.schema';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -60,18 +61,17 @@ export class CreateProductDto {
 
   @ApiProperty({
     type: String,
-    description: 'The discountDate for product',
+    description: 'The discountStartDate for product',
     default: '1403/03/26',
   })
-  discountDate: string;
+  discountStartDate: string;
 
   @ApiProperty({
     type: String,
-    description: 'The productId for product',
-    required: true,
-    default: 'MT015',
+    description: 'The discountEndDate for product',
+    default: '1403/03/26',
   })
-  productId: string;
+  discountEndDate: string;
 
   @ApiProperty({
     type: Boolean,
@@ -171,8 +171,24 @@ export class CreateProductDto {
     dimensionsUnit: 'cm' | 'm';
   };
 
-  supplier: string;
+  @ApiProperty({
+    type: String,
+  })
+  image: string;
+
+  @ApiProperty({
+    type: Array<String>,
+  })
   images: string[];
+
+  @ApiProperty({
+    type: Array<Object>,
+    default: productSMS,
+  })
+  sms: SMS;
+
+  supplier: string;
+  productId: string;
 }
 
 export class CreateProductWithCeoDto {
@@ -186,7 +202,7 @@ export class CreateProductWithCeoDto {
 
   @ApiProperty({
     type: CreateSeoDto,
-    default: [],
+    default: CreateSeoDto,
   })
   @ValidateNested()
   @Type(() => CreateSeoDto)
