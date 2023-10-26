@@ -57,7 +57,6 @@ export class PostsController {
   }
 
   @ApiGetOnePost()
-  @UseGuards(AuthGuard)
   @Get(':id')
   getPostById(@Param('id') id: string) {
     return this.postsService.findOneById(id);

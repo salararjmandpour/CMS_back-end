@@ -136,6 +136,7 @@ export class PostsService {
 
   async findOneById(id: string): Promise<ResponseFormat<any>> {
     const [post, seo] = await Promise.all([
+      this.postsRepository.incrementViewCount(id),
       this.postsRepository.findOneById(id),
       this.seoRepository.findByPost(id),
     ]);

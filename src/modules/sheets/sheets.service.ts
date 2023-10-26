@@ -109,6 +109,7 @@ export class SheetsService {
 
   async findOneById(id: string): Promise<ResponseFormat<any>> {
     const [sheet, seo] = await Promise.all([
+      this.sheetsRepository.incrementViewCount(id),
       this.sheetsRepository.findOneById(id),
       this.seoRepository.findBySheet(id),
     ]);

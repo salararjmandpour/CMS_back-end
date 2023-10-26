@@ -1,6 +1,6 @@
-import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { Post } from './schema/post.schema';
 import { CraetePostInput, UpdatePostInput } from './interfaces/post.interface';
 
@@ -26,5 +26,13 @@ export class PostsRepository {
     options?: QueryOptions<Post>,
   ) {
     return this.postModel.find(filter, projection, options);
+  }
+
+  incrementViewCount(postId: string) {
+    return this.postModel.findOneAndUpdate(
+      { _id: postId },
+      { $inc: { view: 1 } },
+      { new: true },
+    );
   }
 }

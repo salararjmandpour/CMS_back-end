@@ -33,4 +33,12 @@ export class SheetsRepository {
   ) {
     return this.sheetsModel.find(filter, projection, options);
   }
+
+  incrementViewCount(sheetId: string) {
+    return this.sheetsModel.findOneAndUpdate(
+      { _id: sheetId },
+      { $inc: { view: 1 } },
+      { new: true },
+    );
+  }
 }
