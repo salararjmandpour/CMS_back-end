@@ -51,7 +51,7 @@ export class SheetsService {
     data: UpdateSheetWithSeoDto,
   ): Promise<ResponseFormat<any>> {
     // check exist sheet and update
-    const [sheet, updatedResult] = await Promise.all([
+    const [_, sheet, updatedResult] = await Promise.all([
       this.sheetsRepository.findOneById(id),
       this.sheetsRepository.updateOne(id, data.sheet),
       this.seoRepository.updateBySheetId(id, data.seo || {}),
