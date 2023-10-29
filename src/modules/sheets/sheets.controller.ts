@@ -7,6 +7,7 @@ import {
   Query,
   UseGuards,
   Controller,
+  Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -21,6 +22,8 @@ import { ApiGetSheetList } from './docs/get-sheet-list.doc';
 import { CreateSheetWithSeoDto } from './dtos/create-sheet.dto';
 import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
 import { ApiGetOneSheet } from './docs/get-one-sheet.doc';
+import { DeleteSheetDto } from './dtos/delete-sheet.dto';
+import { ApiDeleteSheet } from './docs/delete-sheet.dto';
 
 @ApiBearerAuth()
 @ApiTags('Sheets')
@@ -60,5 +63,12 @@ export class SheetsController {
   @Get(':id')
   getSheetById(@Param('id', ParseObjectIdPipe) id: string) {
     return this.sheetsService.findOneById(id);
+  }
+
+  @ApiDeleteSheet()
+  @UseGuards(AuthGuard)
+  @Delete()
+  deleteMany(@Body() body: DeleteSheetDto) {
+    return this.sheetsService.deleteMany(body.sheetIDs);
   }
 }

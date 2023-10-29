@@ -22,6 +22,10 @@ export class SheetsRepository {
     return this.sheetsModel.findById(id);
   }
 
+  findManyByIds(ids: string[]) {
+    return this.sheetsModel.find({ _id: { $in: ids } });
+  }
+
   updateOne(_id: string, data: UpdateSheetInput) {
     return this.sheetsModel.updateOne({ _id }, { $set: data });
   }
@@ -40,5 +44,9 @@ export class SheetsRepository {
       { $inc: { view: 1 } },
       { new: true },
     );
+  }
+
+  deleteManyByIds(sheetIds: string[]): Promise<any> {
+    return this.sheetsModel.deleteMany({ _id: { $in: sheetIds } });
   }
 }
