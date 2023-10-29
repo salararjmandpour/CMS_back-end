@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { SeoRepository } from '../seo/seo.repository';
 import { SheetsRepository } from './sheets.repository';
@@ -120,6 +121,27 @@ export class SheetsService {
     return {
       statusCode: HttpStatus.OK,
       data: seo ? { sheet, seo } : { sheet },
+    };
+  }
+
+  async deleteMany(sheetIDs: string[]): Promise<ResponseFormat<any>> {
+    // check exist sheets
+    const sheets = await this.sheetsRepository.findManyByIds(sheetIDs);
+    if (sheetIDs.length !== sheets.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_SHEETS);
+    }
+
+    // delete sheets from database
+    const manyIds = await this.sheetsRepository.deleteManyByIds(sheetIDs);
+    if (manyIds.deletedCount !== sheetIDs.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_SHEETS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.SHEETS_DELETED_SUCCESS,
     };
   }
 }
