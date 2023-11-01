@@ -149,4 +149,25 @@ export class PostsService {
       data: seo ? { post, seo } : { post },
     };
   }
+
+  async deleteMany(postIDs: string[]): Promise<ResponseFormat<any>> {
+    // check exist posts
+    const post = await this.postsRepository.findAll({ _id: postIDs });
+    if (postIDs.length !== post.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_POSTS);
+    }
+
+    // delete posts from database
+    const manyIds = await this.postsRepository.deleteManyByIds(postIDs);
+    if (manyIds.deletedCount !== postIDs.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_POSTS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.POSTS_DELETED_SUCCESS,
+    };
+  }
 }

@@ -35,4 +35,8 @@ export class PostsRepository {
       { new: true },
     );
   }
+
+  deleteManyByIds(postIds: string[]): Promise<any> {
+    return this.postModel.deleteMany({ _id: { $in: postIds } });
+  }
 }

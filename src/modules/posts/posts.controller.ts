@@ -7,6 +7,7 @@ import {
   Patch,
   UseGuards,
   Controller,
+  Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -21,6 +22,7 @@ import { ApiGetOnePost } from './docs/get-one-sheet.doc';
 import { ApiGetPostList } from './docs/get-post-list.doc';
 import { CreatePostWithSeoDto } from './dtos/create-post.dto';
 import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
+import { DeletePostDto } from './dtos/delete-post.dto';
 
 @ApiBearerAuth()
 @ApiTags('Posts')
@@ -60,5 +62,11 @@ export class PostsController {
   @Get(':id')
   getPostById(@Param('id') id: string) {
     return this.postsService.findOneById(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  deleteMany(@Body() body: DeletePostDto) {
+    return this.postsService.deleteMany(body.postIDs);
   }
 }
