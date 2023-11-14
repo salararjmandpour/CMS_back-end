@@ -30,6 +30,13 @@ export class UserRepository {
     return this.userModel.findOne({ email }, projection);
   }
 
+  findByNationalId(
+    nationalId: string,
+    projection?: ProjectionType<User>,
+  ): Promise<UserDocument> {
+    return this.userModel.findOne({ nationalId }, projection);
+  }
+
   findByUsername(username: string, projection?: ProjectionType<User>) {
     return this.userModel.findOne({ username }, projection);
   }

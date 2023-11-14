@@ -33,6 +33,7 @@ import {
   alphabetNumber,
   nanoid,
 } from 'src/core/utils/nanoid.util';
+import { exist } from 'joi';
 
 @ApiBearerAuth()
 @Injectable()
@@ -315,12 +316,35 @@ export class UsersService {
     body: UpdateUserDto,
   ): Promise<ResponseFormat<any>> {
     // check exist user and update user
-    const existUser = await this.userRepository.findById(userId);
+    const [
+      existUser,
+      duplicatedUsername,
+      duplicatedEmail,
+      duplicatedNationalId,
+    ] = await Promise.all([
+      this.userRepository.findById(userId),
+      this.userRepository.findByUsername(body.username),
+      this.userRepository.findByEmail(body.email),
+      this.userRepository.findByNationalId(body.email),
+    ]);
+
     if (!existUser) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
     }
 
-    
+    if (duplicatedEmail && duplicatedEmail._id.toString() !== userId) {
+      throw new ConflictException(ResponseMessages.EMAIL_ALREADY_EXIST);
+    }
+
+    if (duplicatedUsername && duplicatedUsername._id.toString() !== userId) {
+      throw new ConflictException(ResponseMessages.USERNAME_ALREADY_EXIST);
+    }
+    if (
+      duplicatedNationalId &&
+      duplicatedNationalId._id.toString() !== userId
+    ) {
+      throw new ConflictException(ResponseMessages.NATIONAL_ID_ALREADY_EXIST);
+    }
 
     const updatedResult = await this.userRepository.updateById(userId, body);
     if (updatedResult.modifiedCount !== 1) {

@@ -5,6 +5,7 @@ import {
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -47,6 +48,19 @@ export const ApiUpdateUser = () => {
           statusCode: HttpStatus.NOT_FOUND,
           message: ResponseMessages.NOT_FOUND_USERS,
           error: 'Not Found',
+        },
+      },
+    }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: [
+            ResponseMessages.EMAIL_ALREADY_EXIST,
+            ResponseMessages.USERNAME_ALREADY_EXIST,
+            ResponseMessages.NATIONAL_ID_ALREADY_EXIST,
+          ],
+          error: 'Conflict',
         },
       },
     }),
