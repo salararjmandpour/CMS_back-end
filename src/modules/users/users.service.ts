@@ -325,7 +325,7 @@ export class UsersService {
       this.userRepository.findById(userId),
       this.userRepository.findByUsername(body.username),
       this.userRepository.findByEmail(body.email),
-      this.userRepository.findByNationalId(body.email),
+      this.userRepository.findByNationalId(body.nationalId),
     ]);
 
     if (!existUser) {

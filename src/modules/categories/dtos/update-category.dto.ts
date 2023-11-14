@@ -31,8 +31,10 @@ export class UpdateCategoryDto {
   })
   parent: string;
 
+  @ApiProperty()
+  image: string;
+
   count: number;
-  image: any;
 }
 
 export class UpdateCategoryWithDto {
