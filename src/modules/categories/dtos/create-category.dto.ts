@@ -31,7 +31,9 @@ export class CreateCategoryDto {
   })
   parent: string;
 
-  image: any;
+  @ApiProperty()
+  image: string;
+
   count: number;
 }
 

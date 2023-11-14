@@ -107,12 +107,12 @@ export class CategoriesService {
     if (!existCategory) {
       throw new NotFoundException(ResponseMessages.CATEGORY_NOT_FOUND);
     }
-    if (duplicateTitle) {
+    if (duplicateTitle && id !== duplicateTitle._id.toString()) {
       throw new ConflictException(
         ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
       );
     }
-    if (duplicateSlug) {
+    if (duplicateSlug && id !== duplicateSlug._id.toString()) {
       throw new ConflictException(ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST);
     }
     if (body.category?.parent && !existParent) {
