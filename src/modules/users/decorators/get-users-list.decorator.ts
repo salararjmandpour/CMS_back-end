@@ -12,7 +12,7 @@ export const getUsersListDecorator = () => {
       name: 'role',
       required: false,
       description:
-        "required values: 'CUSTOMER', 'SUPPLIER', 'STOREADMIN', 'SUPERADMIN', 'ALL'",
+        "required values: 'CUSTOMER', 'SALES', 'STOREADMIN', 'SUPERADMIN', 'ALL'",
     }),
     ApiGetUsersList(),
     ApiQuery({ name: 'role', required: false }),

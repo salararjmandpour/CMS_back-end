@@ -315,14 +315,14 @@ export class UsersService {
     body: UpdateUserDto,
   ): Promise<ResponseFormat<any>> {
     // check exist user and update user
-    const [existUser, updatedResult] = await Promise.all([
-      this.userRepository.findById(userId),
-      this.userRepository.updateById(userId, body),
-    ]);
-
+    const existUser = await this.userRepository.findById(userId);
     if (!existUser) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_USERS);
     }
+
+    
+
+    const updatedResult = await this.userRepository.updateById(userId, body);
     if (updatedResult.modifiedCount !== 1) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_UPDATE_USER,

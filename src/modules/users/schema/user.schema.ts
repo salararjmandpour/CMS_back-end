@@ -13,7 +13,8 @@ import { Product } from 'src/modules/products/schema/product.schema';
 export enum RolesEnum {
   SUPERADMIN = 'SUPERADMIN',
   STOREADMIN = 'STOREADMIN',
-  SUPPLIER = 'SUPPLIER',
+  SALES = 'SALES',
+  ADMINISTRATIVE = 'ADMINISTRATIVE',
   CUSTOMER = 'CUSTOMER',
 }
 
@@ -127,7 +128,7 @@ export class User extends Document {
       RolesEnum.SUPERADMIN,
       RolesEnum.CUSTOMER,
       RolesEnum.STOREADMIN,
-      RolesEnum.SUPPLIER,
+      RolesEnum.SALES,
     ],
   })
   role: RolesEnum;
