@@ -4,7 +4,7 @@ import {
   Query,
   Param,
   Controller,
-  UploadedFile,
+  UploadedFiles,
   ValidationPipe,
 } from '@nestjs/common';
 import { Request } from 'express';
@@ -13,7 +13,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GalleryService } from './gallery.service';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 
-import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
@@ -23,6 +22,7 @@ import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
 import { DeleteOneInGalleryDecorator } from './decorators/delete-one-in-gallery.decorator';
 import { UpdateFromGalleryDecorator } from './decorators/update-in-gallery.decorator';
 import { DeleteManyInGalleryDecorator } from './decorators/delete-many-in-gallery.decorator';
+import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -33,11 +33,10 @@ export class GalleryController {
   // add file to gallery
   @AddToGalleryDecorator()
   addToGallery(
-    @Req() req: Request,
-    @Body() body: AddToGalleryDto,
-    @UploadedFile() file: Express.Multer.File,
+    @GetUser('_id') _id: string,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.galleryService.addToGaller(file, body, req);
+    return this.galleryService.addToGaller(_id, files);
   }
 
   // update file in gallery

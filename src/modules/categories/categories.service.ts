@@ -23,10 +23,10 @@ import {
   CreateCategoryDto,
   CreateCategoryWithSeoDto,
 } from './dtos/create-category.dto';
-import { AddToGalleryDto } from '../gallery/dtos/add-to-gallery.dto';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { AddToGalleryInput } from '../gallery/interfaces/add-to-gallery.interface';
 
 @Injectable()
 export class CategoriesService {
@@ -271,7 +271,7 @@ export class CategoriesService {
         mimetype: file.mimetype,
         uploadedBy: userId,
         uploadedIn: userId,
-      } as AddToGalleryDto);
+      } as AddToGalleryInput);
 
       return {
         statusCode: HttpStatus.OK,

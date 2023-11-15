@@ -17,9 +17,9 @@ import { CustomException } from 'src/core/utils/custom-exception.util';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
+import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
 
 @Injectable()
 export class GalleryService {
@@ -29,32 +29,38 @@ export class GalleryService {
   ) {}
 
   async addToGaller(
-    file: Express.Multer.File,
-    body: AddToGalleryDto,
-    req: Request,
+    userId: string,
+    files: Express.Multer.File[],
   ): Promise<ResponseFormat<any>> {
     try {
       // check exist file
-      if (!file) {
+      if (!files) {
         throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
       }
-      const path = file?.path?.replace(/\\/g, '/');
-      const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
-      const dimensions = type === 'image' ? imageSize(path) : undefined;
-      const size = file.size;
-      const userId = req.user?._id;
 
-      const createdResult = await this.galleryRepositoy.create({
-        ...body,
-        path,
-        type,
-        size,
-        dimensions,
-        filename: file.filename,
-        mimetype: file.mimetype,
-        uploadedBy: userId,
-        uploadedIn: userId,
-      });
+      const createdResult = await Promise.all(
+        files.map((file) => {
+          const path = file?.path?.replace(/\\/g, '/');
+          const type = getTypeFile(file.mimetype) as
+            | 'image'
+            | 'video'
+            | 'audio';
+          const dimensions = type === 'image' ? imageSize(path) : undefined;
+          const size = file.size;
+
+          return this.galleryRepositoy.create({
+            path,
+            type,
+            size,
+            dimensions,
+            filename: file.filename,
+            mimetype: file.mimetype,
+            uploadedBy: userId,
+            uploadedIn: userId,
+          });
+        }),
+      );
+
       if (!createdResult) {
         throw new InternalServerErrorException(
           ResponseMessages.FAILED_ADD_TO_GALLERY,
@@ -63,15 +69,15 @@ export class GalleryService {
 
       return {
         statusCode: HttpStatus.CREATED,
-        message: ResponseMessages.FILE_ADDED_TO_GALLERY,
+        message: ResponseMessages.FILES_ADDED_TO_GALLERY,
         data: {
-          file: createdResult,
+          files: createdResult,
         },
       };
     } catch (error) {
-      if (file) {
-        const path = file?.path?.replace(/\\/g, '/');
-        this.fileService.deleteFileByPath(path);
+      if (files) {
+        const paths = listOfImagesFromRequest(files);
+        this.fileService.deleteFilesByPath(paths);
       }
       throw new CustomException(error.message, error.status);
     }
