@@ -3,9 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
 import { Gallery } from './schemas/gallery.schema';
-import { AddToGalleryDto } from './dtos/add-to-gallery.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
-import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
+import { AddToGalleryInput } from './interfaces/add-to-gallery.interface';
 
 @Injectable()
 export class GalleryRepository {
@@ -13,7 +12,7 @@ export class GalleryRepository {
     @InjectModel(Gallery.name) private galleryModel: Model<Gallery>,
   ) {}
 
-  create(data: AddToGalleryDto) {
+  create(data: AddToGalleryInput) {
     return this.galleryModel.create(data);
   }
 
