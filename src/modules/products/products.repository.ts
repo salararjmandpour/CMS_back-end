@@ -57,6 +57,8 @@ export class ProductsRepository {
 
   searchByTitle(title: string) {
     console.log({ title });
-    return this.productModel.find({ title: { $regex: title, $options: 'i' } });
+    return this.productModel
+      .find({ title: { $regex: title, $options: 'i' } })
+      .limit(20);
   }
 }
