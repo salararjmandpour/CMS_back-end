@@ -55,8 +55,7 @@ export class ProductsRepository {
     return this.productModel.findOneAndUpdate({ _id }, update, options);
   }
 
-  searchByTitle(title: string) {
-    console.log({ title });
+  searchByTitle(title: string = '') {
     return this.productModel
       .find({ title: { $regex: title, $options: 'i' } })
       .limit(20);

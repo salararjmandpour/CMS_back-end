@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Param,
@@ -42,7 +42,8 @@ export class ProductsController {
 
   // search products by title
   @SearchByTitleDoc()
-  @Get('/similar')
+  @ApiQuery({ name: 'title', required: false })
+  @Get('/search')
   searchProductsByTitle(@Query('title') title: string) {
     return this.productService.searchByTitle(title);
   }
