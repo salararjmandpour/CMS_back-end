@@ -79,7 +79,6 @@ export const ApiUpdateCategory = () => {
           message: [
             ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
             ResponseMessages.SLUG_ALREADY_EXIST,
-            ResponseMessages.SEO_SLUG_ALREADY_EXIST,
           ],
         },
       },

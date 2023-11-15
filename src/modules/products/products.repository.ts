@@ -54,4 +54,9 @@ export class ProductsRepository {
   ) {
     return this.productModel.findOneAndUpdate({ _id }, update, options);
   }
+
+  searchByTitle(title: string) {
+    console.log({ title });
+    return this.productModel.find({ title: { $regex: title, $options: 'i' } });
+  }
 }

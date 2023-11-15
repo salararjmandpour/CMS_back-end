@@ -1,5 +1,12 @@
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Body, Param, Query, Controller, UploadedFiles } from '@nestjs/common';
+import {
+  Body,
+  Param,
+  Query,
+  Controller,
+  UploadedFiles,
+  Get,
+} from '@nestjs/common';
 
 import { ProductsService } from './products.service';
 
@@ -16,6 +23,7 @@ import { UpdateProductDecorator } from './decorators/update-product.decorator';
 import { CreateProductDecorator } from './decorators/create-product.decorator';
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { updateProductWithDeoValidator } from './validators/update-product.validator';
+import { SearchByTitleDoc } from './docs/search-product-by-title.doc';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -30,6 +38,13 @@ export class ProductsController {
     @GetUser('_id') _id: string,
   ) {
     return this.productService.create(_id, body);
+  }
+
+  // search products by title
+  @SearchByTitleDoc()
+  @Get('/similar')
+  searchProductsByTitle(@Query('title') title: string) {
+    return this.productService.searchByTitle(title);
   }
 
   // get one product by ID

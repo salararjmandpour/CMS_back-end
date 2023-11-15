@@ -77,7 +77,6 @@ export const ApiCreateCategory = () => {
           message: [
             ResponseMessages.CATEGORY_TITLE_ALREADY_EXIST,
             ResponseMessages.CATEGORY_SLUG_ALREADY_EXIST,
-            ResponseMessages.SEO_SLUG_ALREADY_EXIST,
           ],
           error: 'Conflict',
         },

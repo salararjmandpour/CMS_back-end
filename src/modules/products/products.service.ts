@@ -218,4 +218,19 @@ export class ProductsService {
       },
     };
   }
+
+  async searchByTitle(title: string): Promise<ResponseFormat<any>> {
+    if (!title) {
+      throw new BadRequestException(ResponseMessages.TITLE_IS_REQUIRED);
+    }
+
+    const products = await this.productRepository.searchByTitle(title);
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        products,
+      },
+    };
+  }
 }
