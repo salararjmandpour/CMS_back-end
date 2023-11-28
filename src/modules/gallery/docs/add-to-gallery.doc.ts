@@ -56,7 +56,13 @@ export const ApiAddToGallery = () => {
       schema: {
         example: {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: ResponseMessages.BAD_REQUEST,
+          message: [
+            ResponseMessages.FILE_IS_REQUIRED,
+            ResponseMessages.VIDEO_FILE_MUST_BE_ATLEAST_50MG,
+            ResponseMessages.GIF_FILE_MUST_BE_ATLEAST_10MG,
+            ResponseMessages.IMAGE_FILE_MUST_BE_ATLEAST_2MG,
+            ResponseMessages.AUDIO_FILE_MUST_BE_ATLEAST_10MG,
+          ],
           error: 'Bad Request',
         },
       },

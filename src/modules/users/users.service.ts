@@ -33,7 +33,6 @@ import {
   alphabetNumber,
   nanoid,
 } from 'src/core/utils/nanoid.util';
-import { exist } from 'joi';
 
 @ApiBearerAuth()
 @Injectable()
