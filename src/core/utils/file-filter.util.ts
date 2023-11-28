@@ -8,7 +8,7 @@ export function imageFilter(req: Request, file: any, cb: FileFilterCallback) {
   if (file.size > maxSize) {
     cb(new BadRequestException(ResponseMessages.FILE_SIZE_TOO_LARGE));
   }
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  if (!file.originalname.match(/\.(webp|jpg|jpeg|png|gif)$/)) {
     return cb(new BadRequestException(ResponseMessages.INVALID_FILE_FORMAT));
   }
   cb(null, true);
@@ -19,7 +19,7 @@ export function fileFilter(
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ) {
-  const allowedFormats = /\.(pdf|webp|jpg|jpeg|png|mov|mkv|mp4|mp3)$/;
+  const allowedFormats = /\.(pdf|webp|jpg|jpeg|png|mov|mkv|mp4|mp3|gif)$/;
 
   if (!file.originalname.match(allowedFormats)) {
     return cb(new BadRequestException(ResponseMessages.INVALID_FILE_FORMAT));
