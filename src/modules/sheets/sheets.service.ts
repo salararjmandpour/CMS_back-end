@@ -95,11 +95,11 @@ export class SheetsService {
       );
     }
 
-    const sheetsListWithSeo = sheets.map((category: any) => {
+    const sheetsListWithSeo = sheets.map((sheet: any) => {
       const seo = seos.find((seo: SeoDocument) => {
-        return category._id.toString() === seo.sheet;
+        return sheet._id.toString() === seo.sheet;
       });
-      return { category, seo };
+      return { sheet, seo };
     });
 
     return {

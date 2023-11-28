@@ -4,6 +4,7 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  ConflictException,
 } from '@nestjs/common';
 
 import { FileService } from '../file/file.service';
@@ -38,6 +39,13 @@ export class ProductsService {
       throw new BadRequestException('product is required');
     }
 
+    const duplicatedProductId = await this.productRepository.findByProductId(
+      body.product.productId,
+    );
+    if (duplicatedProductId) {
+      throw new ConflictException(ResponseMessages.PRODUCT_ID_ALREADY_EXIST);
+    }
+
     // *** calculate discount percentage ***
     const { regularPrice, discountedPrice } = body.product;
 
@@ -60,6 +68,7 @@ export class ProductsService {
       ...body.product,
       supplier: userId,
     });
+
     if (!createdResult) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_CREATE_PRODUCT,
@@ -78,7 +87,10 @@ export class ProductsService {
 
   async findById(id: string): Promise<ResponseFormat<any>> {
     // check exist product
-    const product = await this.productRepository.findById(id);
+    const [_, product] = await Promise.all([
+      this.productRepository.incrementViewCount(id),
+      this.productRepository.findById(id),
+    ]);
     if (!product) {
       throw new NotFoundException(ResponseMessages.PRODUCT_NOT_FOUND);
     }

@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsBoolean, IsOptional, ValidateNested } from 'class-validator';
 import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
-import { CreateProductDto } from './create-product.dto';
 
 export class UpdateProductDto {
   @ApiProperty({
@@ -158,6 +157,14 @@ export class UpdateProductDto {
   };
 
   images: string[];
+
+  @ApiProperty({
+    type: Boolean,
+    default: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  review: false;
 }
 
 export class UpdateProductWithSeoDto {

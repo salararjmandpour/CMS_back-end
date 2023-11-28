@@ -51,16 +51,19 @@ export class Gallery {
 
   @Prop({
     type: String,
+    default: '',
   })
   alt: string;
 
   @Prop({
     type: String,
+    default: '',
   })
   title: string;
 
   @Prop({
     type: String,
+    default: '',
   })
   description: string;
 

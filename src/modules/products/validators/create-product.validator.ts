@@ -32,6 +32,7 @@ export const createProductValidator = Joi.object({
     .error(new Error('Invalid discountEndDate')),
 
   // warehouse info
+  productId: Joi.string(),
   inStock: Joi.boolean().required(),
   shortageInStock: Joi.number().min(0).required(),
   count: Joi.number().min(0).required(),

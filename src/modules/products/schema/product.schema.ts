@@ -1,6 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ISize, SizeSchema } from './size.schema';
+import { Category } from 'src/modules/categories/schemas/category.schema';
 import { ISpecifications, SpecificationsSchema } from './specification.schema';
 
 export enum ProductUnitEnum {
@@ -93,6 +94,7 @@ export class Product {
   @Prop({
     type: Types.ObjectId,
     required: true,
+    ref: 'User',
   })
   supplier: string;
 
@@ -117,6 +119,7 @@ export class Product {
   @Prop({
     type: Array<Types.ObjectId>,
     required: true,
+    ref: Category.name,
   })
   category: string[];
 
@@ -155,11 +158,11 @@ export class Product {
 
   // *** Warehouse info ***
   @Prop({
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   })
-  productId: number;
+  productId: string;
 
   @Prop({
     type: Boolean,
@@ -239,6 +242,18 @@ export class Product {
     default: productSMS,
   })
   sms: SMS;
+
+  @Prop({
+    type: Number,
+    default: 0,
+  })
+  view: number;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  review: boolean;
 }
 
 export type ProductDocument = Product & Document;

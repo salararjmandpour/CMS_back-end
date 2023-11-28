@@ -187,8 +187,10 @@ export class CreateProductDto {
   })
   sms: SMS;
 
-  supplier: string;
+  @ApiProperty()
   productId: string;
+
+  supplier: string;
 }
 
 export class CreateProductWithCeoDto {

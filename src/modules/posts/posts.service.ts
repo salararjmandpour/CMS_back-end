@@ -121,11 +121,11 @@ export class PostsService {
       );
     }
 
-    const postsListWithSeo = posts.map((category: any) => {
+    const postsListWithSeo = posts.map((post: any) => {
       const seo = seos.find((seo: SeoDocument) => {
-        return category._id.toString() === seo.post;
+        return post._id.toString() === seo.post;
       });
-      return { category, seo };
+      return { post, seo };
     });
 
     return {

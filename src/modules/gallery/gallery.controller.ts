@@ -1,5 +1,4 @@
 import {
-  Req,
   Body,
   Query,
   Param,
@@ -7,7 +6,6 @@ import {
   UploadedFiles,
   ValidationPipe,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { GalleryService } from './gallery.service';
@@ -17,12 +15,12 @@ import { GetGalleryQueryDto } from './dtos/get-gallery-query.dto';
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
 
+import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 import { GetGalleryDecorator } from './decorators/get-gallery.decorator';
 import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
-import { DeleteOneInGalleryDecorator } from './decorators/delete-one-in-gallery.decorator';
 import { UpdateFromGalleryDecorator } from './decorators/update-in-gallery.decorator';
+import { DeleteOneInGalleryDecorator } from './decorators/delete-one-in-gallery.decorator';
 import { DeleteManyInGalleryDecorator } from './decorators/delete-many-in-gallery.decorator';
-import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
