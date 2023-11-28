@@ -19,12 +19,6 @@ export function fileFilter(
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ) {
-  const maxSize = 1024 * 1024 * 10; // 10MB
-
-  if (file.size > maxSize) {
-    return cb(new BadRequestException(ResponseMessages.FILE_SIZE_TOO_LARGE));
-  }
-
   const allowedFormats = /\.(pdf|webp|jpg|jpeg|png|mov|mkv|mp4|mp3)$/;
 
   if (!file.originalname.match(allowedFormats)) {

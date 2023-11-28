@@ -5,14 +5,12 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import imageSize from 'image-size';
 
 import { FileService } from '../file/file.service';
 import { GalleryRepository } from './gallery.repository';
 
 import { getTypeFile } from 'src/core/utils/gallery-type-file';
-import { CustomException } from 'src/core/utils/custom-exception.util';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -20,6 +18,12 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { UpdateFromGalleryDto } from './dtos/update-from-gallery.dto';
 import { DeleteManyInGalleryDto } from './dtos/delete-many-in-gallery.dto';
 import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
+
+const maxSize = {
+  '50MG': 1024 * 1024 * 50,
+  '10MG': 1024 * 1024 * 10,
+  '2MG': 1024 * 1024 * 2,
+};
 
 @Injectable()
 export class GalleryService {
@@ -37,6 +41,43 @@ export class GalleryService {
       if (!files || !files.length) {
         throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
       }
+
+      files.map((file: Express.Multer.File) => {
+        const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+
+        if (type === 'video' && file.size > maxSize['50MG']) {
+          const path = file?.path?.replace(/\\/g, '/');
+          this.fileService.deleteFileByPath(path);
+
+          throw new BadRequestException(
+            ResponseMessages.VIDEO_FILE_MUST_BE_ATLEAST_50MG,
+          );
+        }
+
+        if (file.mimetype === 'images/gif' && file.size > maxSize['10MG']) {
+          const path = file?.path?.replace(/\\/g, '/');
+          this.fileService.deleteFileByPath(path);
+          throw new BadRequestException(
+            ResponseMessages.GIF_FILE_MUST_BE_ATLEAST_10MG,
+          );
+        }
+
+        if (type === 'image' && file.size > maxSize['2MG']) {
+          const path = file?.path?.replace(/\\/g, '/');
+          this.fileService.deleteFileByPath(path);
+          throw new BadRequestException(
+            ResponseMessages.IMAGE_FILE_MUST_BE_ATLEAST_2MG,
+          );
+        }
+
+        if (type === 'audio' && file.size > maxSize['10MG']) {
+          const path = file?.path?.replace(/\\/g, '/');
+          this.fileService.deleteFileByPath(path);
+          throw new BadRequestException(
+            ResponseMessages.AUDIO_FILE_MUST_BE_ATLEAST_10MG,
+          );
+        }
+      });
 
       const createdResult = await Promise.all(
         files.map((file) => {
@@ -79,7 +120,7 @@ export class GalleryService {
         const paths = listOfImagesFromRequest(files);
         this.fileService.deleteFilesByPath(paths);
       }
-      throw new CustomException(error.message, error.status);
+      throw error;
     }
   }
 
