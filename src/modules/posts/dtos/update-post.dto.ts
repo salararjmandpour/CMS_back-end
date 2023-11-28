@@ -33,7 +33,7 @@ export class UpdatePostDto {
   status: StatusEnum;
 
   @ApiProperty()
-  @IsEmpty()
+  @IsString()
   @IsOptional()
   image: string;
 

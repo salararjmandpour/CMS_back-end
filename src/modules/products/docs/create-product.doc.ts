@@ -4,6 +4,7 @@ import {
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -72,6 +73,14 @@ export const ApiCreateProduct = () => {
           statusCode: HttpStatus.BAD_REQUEST,
           message: ResponseMessages.BAD_REQUEST,
           error: 'Bad Request',
+        },
+      },
+    }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: ResponseMessages.PRODUCT_ID_ALREADY_EXIST,
         },
       },
     }),

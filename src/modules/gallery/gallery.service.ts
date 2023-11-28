@@ -34,7 +34,7 @@ export class GalleryService {
   ): Promise<ResponseFormat<any>> {
     try {
       // check exist file
-      if (!files) {
+      if (!files || !files.length) {
         throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
       }
 

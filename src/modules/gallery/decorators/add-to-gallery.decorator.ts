@@ -9,7 +9,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { ApiAddToGallery } from '../docs/add-to-gallery.doc';
-import { imageFilter } from 'src/core/utils/file-filter.util';
+import { fileFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFiles } from 'src/core/decorators/api-file.decorator';
 
@@ -23,7 +23,7 @@ export const AddToGalleryDecorator = () => {
     UseInterceptors(
       FilesInterceptor('files', 10, {
         storage: fileStorage('gallery', 'date'),
-        fileFilter: imageFilter,
+        fileFilter,
       }),
     ),
   );

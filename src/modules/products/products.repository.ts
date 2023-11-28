@@ -9,7 +9,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from './schema/product.schema';
 import { CreateProductDto } from './dtos/create-product.dto';
-import { alphabetNumber, nanoid } from 'src/core/utils/nanoid.util';
 
 @Injectable()
 export class ProductsRepository {
@@ -18,21 +17,52 @@ export class ProductsRepository {
   ) {}
 
   create(data: CreateProductDto) {
-    return this.productModel.create({
-      ...data,
-      productId: nanoid(alphabetNumber, 16),
-    });
+    return this.productModel.create(data);
   }
 
   findOne(
     filder: FilterQuery<ProductDocument>,
     projection?: ProjectionFields<ProductDocument>,
   ) {
-    return this.productModel.findOne(filder, projection).exec();
+    return this.productModel
+      .findOne(filder, projection)
+      .populate([
+        { path: 'category', select: '_id title slug' },
+        {
+          path: 'supplier',
+          select: '_id avatar mobile email role firstName lastName username',
+        },
+      ])
+      .exec();
   }
 
   findById(id: string, projection?: ProjectionFields<ProductDocument>) {
-    return this.productModel.findById(id, projection);
+    return this.productModel
+      .findById(id, projection)
+      .populate([
+        { path: 'category', select: '_id title slug' },
+        {
+          path: 'supplier',
+          select: '_id avatar mobile email role firstName lastName username',
+        },
+      ])
+      .exec();
+  }
+
+  findByProductId(
+    productId: string,
+    projection?: ProjectionFields<ProductDocument>,
+  ) {
+    return this.productModel
+      .findOne({ productId }, projection)
+      .populate([
+        { path: 'category', select: '_id title slug' },
+        {
+          path: 'supplier',
+          select: '_id avatar mobile email role firstName lastName username',
+        },
+      ])
+      .exec();
   }
 
   getProductList(
@@ -44,7 +74,14 @@ export class ProductsRepository {
       .find(search ? { $text: { $search: search } } : {})
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .populate([
+        { path: 'category', select: '_id title slug' },
+        {
+          path: 'supplier',
+          select: '_id avatar mobile email role firstName lastName username',
+        },
+      ]);
   }
 
   findByIdAndUpdate(
@@ -58,6 +95,21 @@ export class ProductsRepository {
   searchByTitle(title: string = '') {
     return this.productModel
       .find({ title: { $regex: title, $options: 'i' } })
-      .limit(20);
+      .limit(20)
+      .populate([
+        { path: 'category', select: '_id title slug' },
+        {
+          path: 'supplier',
+          select: '_id avatar mobile email role firstName lastName username',
+        },
+      ]);
+  }
+
+  incrementViewCount(productId: string) {
+    return this.productModel.findOneAndUpdate(
+      { _id: productId },
+      { $inc: { view: 1 } },
+      { new: true },
+    );
   }
 }
