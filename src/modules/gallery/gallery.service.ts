@@ -41,9 +41,12 @@ export class GalleryService {
       if (!files || !files.length) {
         throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
       }
-
       files.map((file: Express.Multer.File) => {
-        const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+        const type = getTypeFile(file.mimetype) as
+          | 'image'
+          | 'video'
+          | 'audio'
+          | 'file';
 
         if (type === 'video' && file.size > maxSize['50MG']) {
           throw new BadRequestException(
@@ -80,7 +83,8 @@ export class GalleryService {
           const type = getTypeFile(file.mimetype) as
             | 'image'
             | 'video'
-            | 'audio';
+            | 'audio'
+            | 'file';
           const dimensions = type === 'image' ? imageSize(path) : undefined;
           const size = file.size;
 
@@ -220,7 +224,7 @@ export class GalleryService {
 
   async getGallery(
     search?: string,
-    type?: 'image' | 'audio' | 'video' | 'all',
+    type?: 'image' | 'audio' | 'video' | 'file' | 'all',
     startDate?: Date,
     endDate?: Date,
   ): Promise<ResponseFormat<any>> {

@@ -1,6 +1,6 @@
 export interface AddToGalleryInput {
   path: string;
-  type: 'image' | 'video' | 'audio';
+  type: 'image' | 'video' | 'audio' | 'file';
   filename: string;
   mimetype: string;
   size: number;

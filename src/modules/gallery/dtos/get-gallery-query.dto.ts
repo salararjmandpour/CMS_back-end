@@ -1,10 +1,10 @@
 import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
-import { IsJalaliDateFormat } from 'src/core/validators/jalali-date-format.validator';
 
 export enum TypeEnum {
   IMAGE = 'image',
   AUDIO = 'audio',
   VIDEO = 'video',
+  FILE = 'file',
   ALL = 'all',
 }
 

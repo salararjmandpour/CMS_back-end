@@ -1,4 +1,4 @@
-const defaultAllowedTypes = ['image', 'video', 'audio'];
+const defaultAllowedTypes = ['image', 'video', 'audio', 'application'];
 
 export const getTypeFile = (
   mimetype: string,
@@ -9,5 +9,6 @@ export const getTypeFile = (
     typeMap[`${type}/`] = type;
   });
   const type = allowedTypes.find((type) => mimetype.startsWith(`${type}/`));
-  return type ? typeMap[`${type}/`] : 'unknown';
+  console.log('test ', mimetype, typeMap);
+  return type ? typeMap[`${type}/`].replace('application', 'file') : 'unknown';
 };
