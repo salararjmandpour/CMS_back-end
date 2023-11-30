@@ -21,6 +21,8 @@ import { AddToGalleryDecorator } from './decorators/add-to-gallery.decorator';
 import { UpdateFromGalleryDecorator } from './decorators/update-in-gallery.decorator';
 import { DeleteOneInGalleryDecorator } from './decorators/delete-one-in-gallery.decorator';
 import { DeleteManyInGalleryDecorator } from './decorators/delete-many-in-gallery.decorator';
+import { joiValidation } from 'src/core/utils/joi-validator.util';
+import { updateFromGalleryValidator } from './validators/update-from-gallery';
 
 @ApiBearerAuth()
 @ApiTags('Gallery')
@@ -43,6 +45,7 @@ export class GalleryController {
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateFromGalleryDto,
   ) {
+    // joiValidation(updateFromGalleryValidator, body);
     return this.galleryService.updateInGallery(id, body);
   }
 
