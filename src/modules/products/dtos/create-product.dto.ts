@@ -13,6 +13,9 @@ export class CreateProductDto {
   })
   title: string;
 
+  @ApiProperty()
+  slug: string;
+
   @ApiProperty({
     type: String,
     description: 'The description for product',

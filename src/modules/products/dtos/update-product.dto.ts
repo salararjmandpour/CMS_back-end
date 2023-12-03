@@ -11,6 +11,9 @@ export class UpdateProductDto {
   })
   title: string;
 
+  @ApiProperty()
+  slug: string;
+
   @ApiProperty({
     type: String,
     description: 'The description for product',

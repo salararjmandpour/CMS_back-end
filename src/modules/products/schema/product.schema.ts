@@ -78,6 +78,12 @@ export class Product {
     type: String,
     required: true,
   })
+  slug: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
   description: string;
 
   @Prop({

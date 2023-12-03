@@ -11,6 +11,7 @@ import {
 
 export const updateProductValidator = Joi.object({
   title: Joi.string(),
+  slug: Joi.string(),
   description: Joi.string(),
   shortDescription: Joi.string(),
   draft: Joi.boolean(),
@@ -67,6 +68,8 @@ export const updateProductValidator = Joi.object({
       isActive: Joi.boolean().allow(''),
     }),
   ),
+
+  review: Joi.boolean(),
 });
 
 export const updateProductWithDeoValidator = Joi.object({

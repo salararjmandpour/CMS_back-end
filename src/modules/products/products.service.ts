@@ -179,7 +179,10 @@ export class ProductsService {
     // update product in database
     const updatedResult = await this.productRepository.findByIdAndUpdate(
       productId,
-      body,
+      body.product,
+      {
+        new: true,
+      },
     );
     if (!updatedResult) {
       throw new InternalServerErrorException(

@@ -4,9 +4,8 @@ import {
   IsString,
   IsMongoId,
   IsOptional,
-  ValidateNested,
   IsNotEmpty,
-  IsEmpty,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -18,6 +17,11 @@ export class UpdatePostDto {
   @IsString()
   @IsOptional()
   title: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  slug: string;
 
   @ApiProperty()
   @IsString()

@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { string } from 'joi';
 import { Document, Types } from 'mongoose';
 
 export enum StatusEnum {
@@ -16,6 +17,12 @@ export class Post {
     required: true,
   })
   title: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  slug: string;
 
   @Prop({
     type: String,
