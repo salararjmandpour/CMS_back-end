@@ -57,7 +57,7 @@ export class AdminAuthService {
     }
 
     // check exist user and user role
-    if (user?.role !== 'SUPERADMIN') {
+    if (user?.role === RolesEnum.CUSTOMER) {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
     // check match password
@@ -159,7 +159,7 @@ export class AdminAuthService {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
 
-    if (user.role !== RolesEnum.SUPERADMIN) {
+    if (user.role === RolesEnum.CUSTOMER) {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
 
@@ -175,6 +175,8 @@ export class AdminAuthService {
         ResponseMessages.FAILED_RESET_PASSWORD,
       );
     }
+
+    console.log('inside FP', { token });
 
     const link = `${configService.get(
       'HOST',
