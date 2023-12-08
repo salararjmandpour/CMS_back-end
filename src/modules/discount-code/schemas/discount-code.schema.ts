@@ -1,5 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Product } from 'src/modules/products/schema/product.schema';
+import { Category } from 'src/modules/categories/schemas/category.schema';
 
 export enum DiscountTypeEnum {
   PERCENTAGE_DISCOUNT = 'PERCENTAGE_DISCOUNT',
@@ -83,24 +85,28 @@ export class DiscountCode {
   @Prop({
     type: Array<Types.ObjectId>,
     default: [],
+    ref: Product.name,
   })
   products: string[];
 
   @Prop({
     type: Array<Types.ObjectId>,
     default: [],
+    ref: Product.name,
   })
   exceptProducts: string[];
 
   @Prop({
     type: Array<Types.ObjectId>,
     default: [],
+    ref: Category.name,
   })
   categories: string[];
 
   @Prop({
     type: Array<Types.ObjectId>,
     default: [],
+    ref: Category.name,
   })
   exceptCategirues: string[];
 
