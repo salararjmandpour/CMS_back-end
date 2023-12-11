@@ -25,4 +25,12 @@ export class DiscountCodeRepository {
   findById(id: string, projection?: ProjectionType<DiscountCode>) {
     return this.discountCodeModel.findOne({ _id: id }, projection);
   }
+
+  findManyByIds(ids: string[], projection?: ProjectionType<DiscountCode>) {
+    return this.discountCodeModel.find({ _id: { $in: ids } }, projection);
+  }
+
+  deleteMany(ids: string[]): Promise<any> {
+    return this.discountCodeModel.deleteMany({ _id: { $in: ids } });
+  }
 }

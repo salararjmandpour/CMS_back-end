@@ -64,4 +64,23 @@ export class DiscountCodeService {
       message: ResponseMessages.DISCOUNT_CODE_UPDATED_SUCCESS,
     };
   }
+
+  async delete(ids: string[]): Promise<ResponseFormat<any>> {
+    const discountCodes = await this.discountCodeRepo.findManyByIds(ids);
+    if (discountCodes.length !== ids.length) {
+      throw new BadRequestException(ResponseMessages.NOT_FOUNDS_DISCOUNT_CODES);
+    }
+
+    const deletedResult = await this.discountCodeRepo.deleteMany(ids);
+    if (deletedResult.deletedCount !== ids.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_DISCOUNT_CODES,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.DISCOUNT_CODES_DELETED_SUCCESS,
+    };
+  }
 }

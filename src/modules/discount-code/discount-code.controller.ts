@@ -3,6 +3,7 @@ import {
   Post,
   Param,
   Patch,
+  Delete,
   UseGuards,
   Controller,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { CreateDiscountCodeDto } from './dtos/create-discount-code.dto';
 import { ApiCreateDiscountCode } from './docs/create-discount-code.doc';
 import { UpdateDiscountCodeDto } from './dtos/update-discount-code.dto';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { DeletDiscountCodeDto } from './dtos/delete-discount-code.dto';
 
 @ApiBearerAuth()
 @ApiTags('DiscountCode')
@@ -23,16 +25,22 @@ export class DiscountCodeController {
   @ApiCreateDiscountCode()
   @UseGuards(AuthGuard)
   @Post()
-  createDiscount(@Body() body: CreateDiscountCodeDto) {
+  createDiscountCode(@Body() body: CreateDiscountCodeDto) {
     return this.discountCodeService.create(body);
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  updateDiscount(
+  updateDiscountCode(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateDiscountCodeDto,
   ) {
     return this.discountCodeService.update(id, body);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  deleteDiscountCode(@Body() body: DeletDiscountCodeDto) {
+    return this.discountCodeService.delete(body.ids);
   }
 }
