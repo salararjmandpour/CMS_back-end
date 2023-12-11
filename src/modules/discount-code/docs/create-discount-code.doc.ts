@@ -25,7 +25,7 @@ export const ApiCreateDiscountCode = () => {
       schema: {
         example: {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: ResponseMessages.BAD_REQUEST,
+          message: ResponseMessages.PLEASE_ENTER_A_DISCOUNT_CODE,
           error: 'Bad Request',
         },
       },

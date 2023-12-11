@@ -19,3 +19,6 @@ export interface CreateDiscountCodeInput {
   XItemUseLimit?: number;
   userConsumptionLimit?: number;
 }
+
+export interface UpdateDiscountCodeInput
+  extends Omit<CreateDiscountCodeInput, 'generateDiscountCode'> {}
