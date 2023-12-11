@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { DiscountCodeService } from './discount-code.service';
 import { DiscountCodeController } from './discount-code.controller';
 import { DiscountCodeRepository } from './discount-code.repository';
-import { MongooseModule } from '@nestjs/mongoose';
 import {
   DiscountCode,
   DiscountCodeSchema,

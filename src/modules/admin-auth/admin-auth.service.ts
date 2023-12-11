@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as bcrypt from 'bcryptjs';
 
 import { JwtService } from '../jwt/jwt.service';
 import { MainEmailService } from '../main-email/main-email.service';
@@ -175,8 +174,6 @@ export class AdminAuthService {
         ResponseMessages.FAILED_RESET_PASSWORD,
       );
     }
-
-    console.log('inside FP', { token });
 
     const link = `${configService.get(
       'HOST',

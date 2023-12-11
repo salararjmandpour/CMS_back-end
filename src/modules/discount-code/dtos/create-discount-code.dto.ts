@@ -1,5 +1,4 @@
 import {
-  IsDate,
   IsEnum,
   IsArray,
   IsNumber,
@@ -8,6 +7,7 @@ import {
   IsBoolean,
   IsOptional,
   IsNotEmpty,
+  IsDateString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { DiscountTypeEnum } from '../schemas/discount-code.schema';
@@ -41,7 +41,7 @@ export class CreateDiscountCodeDto {
   discountPercentage: number;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   expireDate: Date;
 

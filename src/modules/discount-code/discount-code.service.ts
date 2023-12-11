@@ -3,6 +3,11 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import {
+  nanoid,
+  alphabetNumber,
+  alphabetLetters,
+} from 'src/core/utils/nanoid.util';
 import { DiscountCodeRepository } from './discount-code.repository';
 import { CreateDiscountCodeDto } from './dtos/create-discount-code.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
@@ -14,6 +19,10 @@ export class DiscountCodeService {
 
   async create(body: CreateDiscountCodeDto): Promise<ResponseFormat<any>> {
     if (body.generateDiscountCode) {
+    }
+
+    if (body.generateDiscountCode) {
+      body.discountCode = nanoid(alphabetLetters + alphabetNumber);
     }
 
     const createdProduct = await this.discountCodeRepo.create(body);
