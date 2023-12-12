@@ -55,13 +55,13 @@ export class DiscountCodeService {
     id: string,
     body: UpdateDiscountCodeDto,
   ): Promise<ResponseFormat<any>> {
-    const discountCode = await this.discountCodeRepo.findById(id);
+    const [discountCode, duplicatedDiscountCode] = await Promise.all([
+      this.discountCodeRepo.findById(id),
+      this.discountCodeRepo.findByDiscountCode(body.discountCode),
+    ]);
     if (!discountCode) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_DISCOUNT_CODE);
     }
-
-    const duplicatedDiscountCode =
-      await this.discountCodeRepo.findByDiscountCode(body.discountCode);
     if (
       duplicatedDiscountCode &&
       id !== duplicatedDiscountCode._id.toString()

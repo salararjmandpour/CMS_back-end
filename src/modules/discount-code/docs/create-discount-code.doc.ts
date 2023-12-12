@@ -4,6 +4,7 @@ import {
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -36,6 +37,15 @@ export const ApiCreateDiscountCode = () => {
           statusCode: HttpStatus.UNAUTHORIZED,
           message: ResponseMessages.UNAUTHORIZED,
           error: 'Unauthorized',
+        },
+      },
+    }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: ResponseMessages.DISCOUNT_CODE_ALREADY_EXIST,
+          error: 'Conflict',
         },
       },
     }),

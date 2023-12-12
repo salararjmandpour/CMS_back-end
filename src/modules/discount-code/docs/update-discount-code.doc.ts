@@ -1,10 +1,11 @@
 import {
   ApiOperation,
   ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiConflictResponse,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -46,6 +47,15 @@ export const ApiUpdateDiscountCode = () => {
           statusCode: HttpStatus.NOT_FOUND,
           message: ResponseMessages.NOT_FOUND_DISCOUNT_CODE,
           error: 'Not Found',
+        },
+      },
+    }),
+    ApiConflictResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.CONFLICT,
+          message: ResponseMessages.DISCOUNT_CODE_ALREADY_EXIST,
+          error: 'Conflict',
         },
       },
     }),
