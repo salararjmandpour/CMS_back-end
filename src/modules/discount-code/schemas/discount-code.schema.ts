@@ -17,6 +17,7 @@ export class DiscountCode {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   discountCode: string;
 

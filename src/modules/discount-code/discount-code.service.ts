@@ -1,8 +1,10 @@
 import {
   HttpStatus,
   Injectable,
+  ConflictException,
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   nanoid,
@@ -26,6 +28,12 @@ export class DiscountCodeService {
       );
     }
 
+    const duplicatedDiscountCode =
+      await this.discountCodeRepo.findByDiscountCode(body.discountCode);
+    if (duplicatedDiscountCode) {
+      throw new ConflictException(ResponseMessages.DISCOUNT_CODE_ALREADY_EXIST);
+    }
+
     if (body.generateDiscountCode) {
       body.discountCode = nanoid(alphabetLetters + alphabetNumber);
     }
@@ -47,10 +55,19 @@ export class DiscountCodeService {
     id: string,
     body: UpdateDiscountCodeDto,
   ): Promise<ResponseFormat<any>> {
-    // const duplicatedDiscountCode = await this.discountCodeRepo.findById(id)
-    // if (duplicatedDiscountCode && duplicatedDiscountCode ===duplicatedDiscountCode.) {
+    const discountCode = await this.discountCodeRepo.findById(id);
+    if (!discountCode) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_DISCOUNT_CODE);
+    }
 
-    // }
+    const duplicatedDiscountCode =
+      await this.discountCodeRepo.findByDiscountCode(body.discountCode);
+    if (
+      duplicatedDiscountCode &&
+      id !== duplicatedDiscountCode._id.toString()
+    ) {
+      throw new ConflictException(ResponseMessages.DISCOUNT_CODE_ALREADY_EXIST);
+    }
 
     const createdProduct = await this.discountCodeRepo.update(id, body);
     if (createdProduct.modifiedCount !== 1) {
@@ -81,6 +98,17 @@ export class DiscountCodeService {
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.DISCOUNT_CODES_DELETED_SUCCESS,
+    };
+  }
+
+  async findAll(): Promise<ResponseFormat<any>> {
+    const discountCode = await this.discountCodeRepo.findAll();
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        discountCode,
+      },
     };
   }
 }
