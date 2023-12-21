@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { string } from 'joi';
 import { Document, Types } from 'mongoose';
 
 export enum StatusEnum {
@@ -25,7 +24,7 @@ export class Post {
   slug: string;
 
   @Prop({
-    type: String,
+    type: Array,
     required: true,
   })
   description: true;
