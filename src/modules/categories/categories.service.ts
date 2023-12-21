@@ -37,7 +37,10 @@ export class CategoriesService {
     private categoriesRepository: CategoriesRepository,
   ) {}
 
-  async create(body: CreateCategoryWithSeoDto): Promise<ResponseFormat<any>> {
+  async create(
+    userId: string,
+    body: CreateCategoryWithSeoDto,
+  ): Promise<ResponseFormat<any>> {
     // prevent duplicate title and slug
     const [duplicateTitle, duplicateSlug, existParent] = await Promise.all([
       this.categoriesRepository.findByTitle(body.category.title),
@@ -57,9 +60,10 @@ export class CategoriesService {
     }
 
     // save category in database
-    const createdCategory = await this.categoriesRepository.create(
-      body.category,
-    );
+    const createdCategory = await this.categoriesRepository.create({
+      ...body.category,
+      supplier: userId,
+    });
     if (!createdCategory) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_CREATE_CATEGORY,

@@ -43,6 +43,13 @@ export class Category {
     default: 0,
   })
   count: number;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: true
+  })
+  supplier: string
 }
 
 export type CategoryDocument = Category & Document;

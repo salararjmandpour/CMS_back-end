@@ -14,6 +14,6 @@ export const categoryValidator = Joi.object({
 });
 
 export const createCategoryValidator = Joi.object({
-  category: categoryValidator.required(),
+  category: categoryValidator,
   seo: createSeoValidator,
 });

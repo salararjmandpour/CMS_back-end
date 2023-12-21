@@ -21,10 +21,10 @@ import { DeleteCategoryDecorator } from './decorators/delete-category.decorator'
 import { GetCategoryListDecorator } from './decorators/get-categories-list.decorator';
 
 import { joiValidation } from 'src/core/utils/joi-validator.util';
+import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
-import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
-import { DeleteManyUsersDto } from '../users/dtos/delete-many-users.dto';
 import { CategoryDeleteManysDto } from './dtos/delete-many-category.dto';
+import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -34,8 +34,8 @@ export class CategoriesController {
 
   // create category
   @CreateCategoryDecorator()
-  create(@Body() body: CreateCategoryWithSeoDto) {
-    return this.categoriesService.create(body);
+  create(@Body() body: CreateCategoryWithSeoDto, @GetUser('_id') _id: string) {
+    return this.categoriesService.create(_id, body);
   }
 
   @UploadImageDecorator()
@@ -66,7 +66,7 @@ export class CategoriesController {
 
   // get category list
   @GetCategoryListDecorator()
-  getCategoryList(@Query('search',) serach: string) {
+  getCategoryList(@Query('search') serach: string) {
     return this.categoriesService.getCategoryList(serach);
   }
 }

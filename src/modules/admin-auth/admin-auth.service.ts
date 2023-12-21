@@ -124,12 +124,12 @@ export class AdminAuthService {
       }
       userId = createdResult._id;
 
-      // send password to user email
-      await this.mainEmailService.sendًPasswordToAdmin(
-        createdResult.email,
-        password,
-      );
       console.log({ password });
+      // send password to user email
+      // await this.mainEmailService.sendًPasswordToAdmin(
+      //   createdResult.email,
+      //   password,
+      // );
       return {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.PASSWORD_EMAILED_FOR_YOU,

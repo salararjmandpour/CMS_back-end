@@ -35,6 +35,7 @@ export class CreateCategoryDto {
   image: string;
 
   count: number;
+  supplier?: string;
 }
 
 export class CreateCategoryWithSeoDto {
