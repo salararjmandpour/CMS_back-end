@@ -81,10 +81,10 @@ export class Product {
   slug: string;
 
   @Prop({
-    type: String,
+    type: Array,
     required: true,
   })
-  description: string;
+  description: object[];
 
   @Prop({
     type: String,

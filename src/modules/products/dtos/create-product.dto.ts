@@ -21,7 +21,7 @@ export class CreateProductDto {
     description: 'The description for product',
     required: true,
   })
-  description: string;
+  description: object[];
 
   @ApiProperty({
     type: String,

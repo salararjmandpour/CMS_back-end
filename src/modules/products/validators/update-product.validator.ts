@@ -12,7 +12,7 @@ import {
 export const updateProductValidator = Joi.object({
   title: Joi.string(),
   slug: Joi.string(),
-  description: Joi.string(),
+  description: Joi.array(),
   shortDescription: Joi.string(),
   draft: Joi.boolean(),
   category: Joi.array()
