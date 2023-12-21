@@ -21,10 +21,10 @@ export class Category {
   slug: string;
 
   @Prop({
-    type: String,
+    type: Array,
     required: true,
   })
-  description: boolean;
+  description: object[];
 
   @Prop({
     type: Types.ObjectId,
@@ -46,10 +46,10 @@ export class Category {
 
   @Prop({
     type: Types.ObjectId,
-    ref: "User",
-    required: true
+    ref: 'User',
+    required: true,
   })
-  supplier: string
+  supplier: string;
 }
 
 export type CategoryDocument = Category & Document;
