@@ -25,7 +25,9 @@ export class UpdatePostDto {
   slug: string;
 
   @ApiProperty()
-  @IsObject()
+  @IsObject({
+    each: true,
+  })
   @IsOptional()
   description: object[];
 

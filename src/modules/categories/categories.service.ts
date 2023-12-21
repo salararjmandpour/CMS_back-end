@@ -188,12 +188,10 @@ export class CategoriesService {
       );
     }
 
-    console.log(categoriesIds[0]);
-    console.log(await this.seoRepository.findById(categoriesIds[0]));
     const deletedSeoResult = await this.seoRepository.deleteManyByIds(
       categoriesIds,
     );
-    console.log({ deletedSeoResult });
+
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.CATEGORIES_DELETED,

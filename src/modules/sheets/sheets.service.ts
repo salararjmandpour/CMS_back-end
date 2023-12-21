@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
-  BadRequestException,
 } from '@nestjs/common';
 import { SeoRepository } from '../seo/seo.repository';
 import { SheetsRepository } from './sheets.repository';

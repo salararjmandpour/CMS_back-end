@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { StatusEnum } from '../schema/sheet.schema';
 import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
 
@@ -11,9 +17,11 @@ export class UpdateSheetDto {
   title: string;
 
   @ApiProperty()
-  @IsString()
+  @IsObject({
+    each: true,
+  })
   @IsOptional()
-  description: string;
+  description: object[];
 
   @ApiProperty()
   @IsString()

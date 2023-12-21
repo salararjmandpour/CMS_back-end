@@ -1,6 +1,12 @@
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsNotEmpty, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsString,
+  IsNotEmpty,
+  ValidateNested,
+  IsObject,
+} from 'class-validator';
 import { StatusEnum } from '../schema/sheet.schema';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
@@ -11,9 +17,11 @@ export class CreateSheetDto {
   title: string;
 
   @ApiProperty()
-  @IsString()
+  @IsObject({
+    each: true,
+  })
   @IsNotEmpty()
-  description: string;
+  description: object[];
 
   @ApiProperty()
   @IsString()
