@@ -20,6 +20,7 @@ import { MainEmailModule } from './modules/main-email/main-email.module';
 import { SheetsModule } from './modules/sheets/sheets.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { DiscountCodeModule } from './modules/discount-code/discount-code.module';
+import { PropertiesModule } from './modules/properties/properties.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { DiscountCodeModule } from './modules/discount-code/discount-code.module
     SheetsModule,
     PostsModule,
     DiscountCodeModule,
+    PropertiesModule,
   ],
   controllers: [],
   providers: [],
