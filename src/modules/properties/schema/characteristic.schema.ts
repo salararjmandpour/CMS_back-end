@@ -11,6 +11,7 @@ export class Characteristic {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 

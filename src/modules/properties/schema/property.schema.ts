@@ -19,6 +19,7 @@ export class Property {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 
