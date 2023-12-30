@@ -65,4 +65,19 @@ export class PropertiesRepository {
   findCharacteristicBySlug(slug: string) {
     return this.propertyModel.findOne({ 'characteristics.slug': slug });
   }
+
+  findCharacteristicById(_id: string) {
+    return this.propertyModel.findOne({ 'characteristics._id': _id });
+  }
+
+  updateCharacteristic(
+    propertyId: string,
+    characteristicId: string,
+    data: CreateCharacteristicDto,
+  ) {
+    return this.propertyModel.updateOne(
+      { _id: propertyId, 'characteristics._id': characteristicId },
+      { $set: { 'characteristics.$': data } },
+    );
+  }
 }

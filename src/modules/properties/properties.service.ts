@@ -14,6 +14,7 @@ import { UpdatePropertyDto } from './dtos/update-property.dto';
 import { CreatePropertyDto } from './dtos/create-property.dto';
 import { DeletePropertiesDto } from './dtos/delete-property.dto';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
+import { UpdateCharacteristicDto } from './dtos/update-characteristic.dto';
 
 @Injectable()
 export class PropertiesService {
@@ -141,6 +142,49 @@ export class PropertiesService {
     return {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.CHARACTERISTIC_CREATED_SUCCESS,
+    };
+  }
+
+  public async updateCharacteristic(
+    propertyId: string,
+    characteristicId: string,
+    body: UpdateCharacteristicDto,
+  ): Promise<ResponseFormat<any>> {
+    const [existProperty, existCharacteristic, duplicatedCharacteristicSlug] =
+      await Promise.all([
+        this.propertiesRepository.findOne({ _id: propertyId }),
+        this.propertiesRepository.findCharacteristicById(characteristicId),
+        this.propertiesRepository.findCharacteristicBySlug(body.slug),
+      ]);
+    if (!existProperty) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
+    }
+    if (!existCharacteristic) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTIC);
+    }
+    if (
+      duplicatedCharacteristicSlug &&
+      duplicatedCharacteristicSlug._id !== characteristicId
+    ) {
+      throw new ConflictException(
+        ResponseMessages.CHARACTERISTIC_SLUG_ALREADY_EXIST,
+      );
+    }
+
+    const updatedResult = await this.propertiesRepository.updateCharacteristic(
+      propertyId,
+      characteristicId,
+      body,
+    );
+    if (updatedResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_UPDATE_CHARACTERISTIC,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.CHARACTERISTIC_UPDATED_SUCCESS,
     };
   }
 }
