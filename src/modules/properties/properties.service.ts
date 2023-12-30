@@ -93,4 +93,15 @@ export class PropertiesService {
       message: ResponseMessages.PROPERTY_DELETED_SUCCESS,
     };
   }
+
+  async findAllProperties(): Promise<ResponseFormat<any>> {
+    const properties = await this.propertiesRepository.find();
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        properties,
+      },
+    };
+  }
 }

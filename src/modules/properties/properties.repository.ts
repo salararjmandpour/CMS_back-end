@@ -46,4 +46,12 @@ export class PropertiesRepository {
   ): Promise<any> {
     return this.propertyModel.deleteMany({ _id: { $in: ids } }, options);
   }
+
+  find(
+    filter?: FilterQuery<PropertyDocument>,
+    projection?: ProjectionType<PropertyDocument>,
+    options?: QueryOptions<PropertyDocument>,
+  ) {
+    return this.propertyModel.find(filter, projection, options);
+  }
 }

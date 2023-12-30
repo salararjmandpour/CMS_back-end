@@ -1,4 +1,5 @@
 import {
+  Get,
   Post,
   Body,
   Param,
@@ -16,6 +17,7 @@ import { DeletePropertiesDto } from './dtos/delete-property.dto';
 import { ApiUpdateProperty } from './docs/update-property.doc';
 import { ApiCreateProperty } from './docs/create-property.doc';
 import { ApiDeleteProperties } from './docs/delete-property.doc';
+import { ApiFindProperties } from './docs/find-property.doc';
 
 @ApiBearerAuth()
 @ApiTags('Properties')
@@ -42,5 +44,12 @@ export class PropertiesController {
   @Delete()
   deleteProperties(@Body() body: DeletePropertiesDto) {
     return this.propertiesService.deleteProperties(body);
+  }
+
+  @ApiFindProperties()
+  @UseGuards(AuthGuard)
+  @Get()
+  getPropertiesList() {
+    return this.propertiesService.findAllProperties();
   }
 }
