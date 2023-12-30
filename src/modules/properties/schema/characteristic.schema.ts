@@ -1,6 +1,9 @@
 import { Document } from 'mongoose';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
+@Schema({
+  versionKey: false,
+})
 export class Characteristic {
   @Prop({
     type: String,

@@ -13,12 +13,15 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { UpdatePropertyDto } from './dtos/update-property.dto';
 import { CreatePropertyDto } from './dtos/create-property.dto';
 import { DeletePropertiesDto } from './dtos/delete-property.dto';
+import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
 
 @Injectable()
 export class PropertiesService {
   constructor(private propertiesRepository: PropertiesRepository) {}
 
-  async createProperty(body: CreatePropertyDto): Promise<ResponseFormat<any>> {
+  public async createProperty(
+    body: CreatePropertyDto,
+  ): Promise<ResponseFormat<any>> {
     // prevented duplicated slug
     const duplicatedSlug = await this.propertiesRepository.findOne({
       slug: body.slug,
@@ -27,7 +30,9 @@ export class PropertiesService {
       throw new ConflictException(ResponseMessages.PROPERTY_SLUG_ALREADY_EXIST);
     }
 
-    const createdProperty = await this.propertiesRepository.create(body);
+    const createdProperty = await this.propertiesRepository.createProperty(
+      body,
+    );
     if (!createdProperty) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_CREATE_PROPERTY,
@@ -40,7 +45,7 @@ export class PropertiesService {
     };
   }
 
-  async updateProperty(
+  public async updateProperty(
     _id: string,
     body: UpdatePropertyDto,
   ): Promise<ResponseFormat<any>> {
@@ -69,7 +74,7 @@ export class PropertiesService {
     };
   }
 
-  async deleteProperties(
+  public async deleteProperties(
     body: DeletePropertiesDto,
   ): Promise<ResponseFormat<any>> {
     const existedProperties = await this.propertiesRepository.findManyByIds(
@@ -94,7 +99,7 @@ export class PropertiesService {
     };
   }
 
-  async findAllProperties(): Promise<ResponseFormat<any>> {
+  public async findAllProperties(): Promise<ResponseFormat<any>> {
     const properties = await this.propertiesRepository.find();
 
     return {
@@ -102,6 +107,40 @@ export class PropertiesService {
       data: {
         properties,
       },
+    };
+  }
+
+  public async createCharacteristic(
+    propertyId: string,
+    body: CreateCharacteristicDto,
+  ): Promise<ResponseFormat<any>> {
+    // prevented duplicated slug
+    const [existProperty, duplicatedSlug] = await Promise.all([
+      this.propertiesRepository.findOne({ _id: propertyId }),
+      this.propertiesRepository.findCharacteristicBySlug(body.slug),
+    ]);
+    if (!existProperty) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
+    }
+    if (duplicatedSlug) {
+      throw new ConflictException(
+        ResponseMessages.CHARACTERISTIC_SLUG_ALREADY_EXIST,
+      );
+    }
+
+    const craetedResult = await this.propertiesRepository.createCharacteristic(
+      propertyId,
+      body,
+    );
+    if (!craetedResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_CREATE_CHARACTERISTIC,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: ResponseMessages.CHARACTERISTIC_CREATED_SUCCESS,
     };
   }
 }

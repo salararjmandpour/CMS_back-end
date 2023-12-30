@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
 import {
-  FilterQuery,
   Model,
-  ProjectionType,
-  QueryOptions,
+  FilterQuery,
   UpdateQuery,
+  QueryOptions,
+  ProjectionType,
   UpdateWithAggregationPipeline,
 } from 'mongoose';
-import { Property, PropertyDocument } from './schema/property.schema';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Property, PropertyDocument } from './schema/property.schema';
 import { CreatePropertyDto } from './dtos/create-property.dto';
-import { UpdatePropertyDto } from './dtos/update-property.dto';
+import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
 
 @Injectable()
 export class PropertiesRepository {
@@ -25,7 +25,7 @@ export class PropertiesRepository {
     return this.propertyModel.findOne(filter, projection);
   }
 
-  create(data: CreatePropertyDto) {
+  createProperty(data: CreatePropertyDto) {
     return this.propertyModel.create(data);
   }
 
@@ -53,5 +53,16 @@ export class PropertiesRepository {
     options?: QueryOptions<PropertyDocument>,
   ) {
     return this.propertyModel.find(filter, projection, options);
+  }
+
+  createCharacteristic(propertyId: string, data: CreateCharacteristicDto) {
+    return this.propertyModel.updateOne(
+      { _id: propertyId },
+      { $push: { characteristics: data } },
+    );
+  }
+
+  findCharacteristicBySlug(slug: string) {
+    return this.propertyModel.findOne({ 'characteristics.slug': slug });
   }
 }
