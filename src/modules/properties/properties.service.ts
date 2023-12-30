@@ -187,4 +187,38 @@ export class PropertiesService {
       message: ResponseMessages.CHARACTERISTIC_UPDATED_SUCCESS,
     };
   }
+
+  // public async deleteManyCharacteristic(
+  //   propertyId: string,
+  //   characteristicIds: string[],
+  // ): Promise<ResponseFormat<any>> {
+  //   const [existProperty, existCharacteristic] =
+  //     await Promise.all([
+  //       this.propertiesRepository.findOne({ _id: propertyId }),
+  //       this.propertiesRepository.findCharacteristicById(characteristicId),
+  //     ]);
+  //   if (!existProperty) {
+  //     throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
+  //   }
+  //   if (!existCharacteristic) {
+  //     throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTIC);
+  //   }
+ 
+
+  //   const updatedResult = await this.propertiesRepository.updateCharacteristic(
+  //     propertyId,
+  //     characteristicId,
+  //     body,
+  //   );
+  //   if (updatedResult.modifiedCount !== 1) {
+  //     throw new InternalServerErrorException(
+  //       ResponseMessages.FAILED_UPDATE_CHARACTERISTIC,
+  //     );
+  //   }
+
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: ResponseMessages.CHARACTERISTIC_UPDATED_SUCCESS,
+  //   };
+  // }
 }

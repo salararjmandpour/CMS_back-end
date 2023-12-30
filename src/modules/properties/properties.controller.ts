@@ -20,7 +20,7 @@ import { ApiCreateProperty } from './docs/create-property.doc';
 import { ApiDeleteProperties } from './docs/delete-property.doc';
 import { ApiFindProperties } from './docs/find-property.doc';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
-import { ApiCreateCharacteristic } from './docs/characteristic-property.doc';
+import { ApiCreateCharacteristic } from './docs/create-characteristic.doc';
 import { ApiUpdateCharacteristic } from './docs/update-characteristic.doc';
 
 @ApiBearerAuth()

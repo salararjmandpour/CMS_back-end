@@ -80,4 +80,11 @@ export class PropertiesRepository {
       { $set: { 'characteristics.$': data } },
     );
   }
+
+  // updateCharacteristic(propertyId: string, characteristicId: string): {
+  //   return this.propertyModel.updateOne(
+  //     { _id: propertyId, 'characteristics._id': characteristicId },
+  //     { $pull: { characteristics: { _id: characteristicId } } },
+  //   );
+  // }
 }
