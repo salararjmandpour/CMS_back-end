@@ -3,6 +3,7 @@ import {
   Body,
   Param,
   Patch,
+  Delete,
   UseGuards,
   Controller,
 } from '@nestjs/common';
@@ -10,9 +11,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/core/guards/auth.guard';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dtos/create-property.dto';
-import { ApiCreateProperty } from './docs/create-property.doc';
 import { UpdatePropertyDto } from './dtos/update-property.dto';
+import { DeletePropertiesDto } from './dtos/delete-property.dto';
 import { ApiUpdateProperty } from './docs/update-property.doc';
+import { ApiCreateProperty } from './docs/create-property.doc';
+import { ApiDeleteProperties } from './docs/delete-property.doc';
 
 @ApiBearerAuth()
 @ApiTags('Properties')
@@ -32,5 +35,12 @@ export class PropertiesController {
   @Patch(':id')
   updateProperties(@Param('id') id: string, @Body() body: UpdatePropertyDto) {
     return this.propertiesService.updateProperty(id, body);
+  }
+
+  @ApiDeleteProperties()
+  @UseGuards(AuthGuard)
+  @Delete()
+  deleteProperties(@Body() body: DeletePropertiesDto) {
+    return this.propertiesService.deleteProperties(body);
   }
 }
