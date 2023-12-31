@@ -41,6 +41,8 @@ export class Characteristic {
   equivalent: number;
 }
 
-export type CharacteristicDocument = Characteristic & Document;
+export interface CharacteristicDocument extends Characteristic {
+  _id: string;
+}
 export const CharacteristicSchema =
   SchemaFactory.createForClass(Characteristic);

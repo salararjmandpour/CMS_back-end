@@ -22,6 +22,7 @@ import { ApiFindProperties } from './docs/find-property.doc';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
 import { ApiCreateCharacteristic } from './docs/create-characteristic.doc';
 import { ApiUpdateCharacteristic } from './docs/update-characteristic.doc';
+import { DeleteCharacteristicDto } from './dtos/delete-characteristic.dto';
 
 @ApiBearerAuth()
 @ApiTags('Properties')
@@ -79,6 +80,18 @@ export class PropertiesController {
       propertyId,
       characteristicId,
       body,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':id/characteristic')
+  deleteManyCharacteristic(
+    @Param('id') propertyId: string,
+    @Body() body: DeleteCharacteristicDto,
+  ) {
+    return this.propertiesService.deleteManyCharacteristic(
+      propertyId,
+      body.characteristicIDs,
     );
   }
 }

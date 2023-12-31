@@ -15,6 +15,7 @@ import { CreatePropertyDto } from './dtos/create-property.dto';
 import { DeletePropertiesDto } from './dtos/delete-property.dto';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
 import { UpdateCharacteristicDto } from './dtos/update-characteristic.dto';
+import { CharacteristicDocument } from './schema/characteristic.schema';
 
 @Injectable()
 export class PropertiesService {
@@ -188,37 +189,32 @@ export class PropertiesService {
     };
   }
 
-  // public async deleteManyCharacteristic(
-  //   propertyId: string,
-  //   characteristicIds: string[],
-  // ): Promise<ResponseFormat<any>> {
-  //   const [existProperty, existCharacteristic] =
-  //     await Promise.all([
-  //       this.propertiesRepository.findOne({ _id: propertyId }),
-  //       this.propertiesRepository.findCharacteristicById(characteristicId),
-  //     ]);
-  //   if (!existProperty) {
-  //     throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
-  //   }
-  //   if (!existCharacteristic) {
-  //     throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTIC);
-  //   }
- 
+  public async deleteManyCharacteristic(
+    propertyId: string,
+    characteristicIds: string[],
+  ): Promise<ResponseFormat<any>> {
+    const existProperty = await this.propertiesRepository.findOne({
+      _id: propertyId,
+    });
+    if (!existProperty) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
+    }
 
-  //   const updatedResult = await this.propertiesRepository.updateCharacteristic(
-  //     propertyId,
-  //     characteristicId,
-  //     body,
-  //   );
-  //   if (updatedResult.modifiedCount !== 1) {
-  //     throw new InternalServerErrorException(
-  //       ResponseMessages.FAILED_UPDATE_CHARACTERISTIC,
-  //     );
-  //   }
+    const matchingCharacteristics = existProperty.characteristics.filter(
+      (item: CharacteristicDocument) =>
+        characteristicIds.includes(item._id.toString()),
+    );
+    if (matchingCharacteristics.length !== characteristicIds.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTICS);
+    }
+    const deletedResult = await this.propertiesRepository.deleteCharacteristic(
+      propertyId,
+      characteristicIds,
+    );
 
-  //   return {
-  //     statusCode: HttpStatus.OK,
-  //     message: ResponseMessages.CHARACTERISTIC_UPDATED_SUCCESS,
-  //   };
-  // }
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.CHARACTERISTIC_DELETED_SUCCESS,
+    };
+  }
 }

@@ -11,6 +11,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Property, PropertyDocument } from './schema/property.schema';
 import { CreatePropertyDto } from './dtos/create-property.dto';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
+import { CharacteristicDocument } from './schema/characteristic.schema';
 
 @Injectable()
 export class PropertiesRepository {
@@ -70,6 +71,14 @@ export class PropertiesRepository {
     return this.propertyModel.findOne({ 'characteristics._id': _id });
   }
 
+  findManyCharacteristicByIds(IDs: string[]): Promise<any> {
+    return this.propertyModel
+      .find({
+        'characteristics._id': { $in: IDs },
+      })
+      .select('_id characteristics');
+  }
+
   updateCharacteristic(
     propertyId: string,
     characteristicId: string,
@@ -81,10 +90,13 @@ export class PropertiesRepository {
     );
   }
 
-  // updateCharacteristic(propertyId: string, characteristicId: string): {
-  //   return this.propertyModel.updateOne(
-  //     { _id: propertyId, 'characteristics._id': characteristicId },
-  //     { $pull: { characteristics: { _id: characteristicId } } },
-  //   );
-  // }
+  deleteCharacteristic(
+    propertyId: string,
+    characteristicId: string[],
+  ): Promise<any> {
+    return this.propertyModel.updateOne(
+      { _id: propertyId, 'characteristics._id': characteristicId },
+      { $pull: { characteristics: { _id: { $in: characteristicId } } } },
+    );
+  }
 }

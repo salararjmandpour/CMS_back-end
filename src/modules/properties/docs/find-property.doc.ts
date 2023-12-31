@@ -22,7 +22,17 @@ export const ApiFindProperties = () => {
                 name: 'سایز',
                 slug: 'size',
                 description: 'This is test message for size',
-                characteristics: [],
+                characteristics: [
+                  {
+                    name: 'test',
+                    slug: 'test',
+                    description: 'test',
+                    color: 'test',
+                    image: 'test',
+                    equivalent: 0,
+                    _id: '65914d3be3cb47cc72ffc5dc',
+                  },
+                ],
                 createdAt: '2023-12-30T20:26:50.560Z',
                 updatedAt: '2023-12-30T20:26:50.560Z',
               },

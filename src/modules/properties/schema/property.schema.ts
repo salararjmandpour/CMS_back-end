@@ -33,7 +33,7 @@ export class Property {
     type: [{ type: CharacteristicSchema }],
     default: [],
   })
-  characteristics: CharacteristicDocument;
+  characteristics: CharacteristicDocument[];
 }
 
 export type PropertyDocument = Property & Document;
