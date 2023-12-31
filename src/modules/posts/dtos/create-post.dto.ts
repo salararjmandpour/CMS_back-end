@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsArray,
   IsString,
+  IsObject,
   IsMongoId,
   IsNotEmpty,
   ValidateNested,
@@ -20,7 +21,14 @@ export class CreatePostDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  description: string;
+  slug: string;
+
+  @ApiProperty()
+  @IsObject({
+    each: true,
+  })
+  @IsNotEmpty()
+  description: object[];
 
   @ApiProperty()
   @IsString()

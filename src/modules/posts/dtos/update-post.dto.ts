@@ -2,11 +2,10 @@ import {
   IsEnum,
   IsArray,
   IsString,
+  IsObject,
   IsMongoId,
   IsOptional,
   ValidateNested,
-  IsNotEmpty,
-  IsEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -22,10 +21,18 @@ export class UpdatePostDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  description: string;
+  slug: string;
+
+  @ApiProperty()
+  @IsObject({
+    each: true,
+  })
+  @IsOptional()
+  description: object[];
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   @IsEnum({
     draft: StatusEnum.DRAFT,
     published: StatusEnum.PUBLISHED,
@@ -46,7 +53,6 @@ export class UpdatePostDto {
 
 export class UpdatePostWithSeoDto {
   @ApiProperty()
-  @IsNotEmpty()
   @ValidateNested()
   @Type(() => UpdatePostDto)
   post: UpdatePostDto;

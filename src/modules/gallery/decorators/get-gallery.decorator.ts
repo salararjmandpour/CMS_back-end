@@ -8,6 +8,7 @@ enum TypeEnum {
   'image' = 'image',
   'audio' = 'audio',
   'video' = 'video',
+  'file' = 'file',
 }
 
 export const GetGalleryDecorator = () => {

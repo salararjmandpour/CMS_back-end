@@ -21,6 +21,12 @@ export class Post {
     type: String,
     required: true,
   })
+  slug: string;
+
+  @Prop({
+    type: Array,
+    required: true,
+  })
   description: true;
 
   @Prop({

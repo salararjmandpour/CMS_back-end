@@ -12,7 +12,8 @@ export const ApiAddToGallery = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'add many file to gallery',
-      description: 'add many file to gallery',
+      description:
+        'allowed format: pdf | webp | jpg | jpeg | png | mov | mkv | mp4 | mp3 | gif',
     }),
     ApiCreatedResponse({
       schema: {

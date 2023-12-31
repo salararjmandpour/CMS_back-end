@@ -11,7 +11,8 @@ import { createSeoValidator } from 'src/modules/seo/validators/create-seo-valida
 
 export const createProductValidator = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string().required(),
+  slug: Joi.string().required(),
+  description: Joi.array().required(),
   shortDescription: Joi.string().required(),
   draft: Joi.boolean(),
   category: Joi.array()

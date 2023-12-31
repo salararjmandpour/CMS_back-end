@@ -18,10 +18,10 @@ export class Sheet {
   title: string;
 
   @Prop({
-    type: String,
+    type: Array,
     required: true,
   })
-  description: true;
+  description: object[];
 
   @Prop({
     type: Types.ObjectId,

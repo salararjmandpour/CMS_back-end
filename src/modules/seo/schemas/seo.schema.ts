@@ -55,7 +55,6 @@ SeoSchema.pre('save', async function (next) {
 
   while (true) {
     const duplicatedSlug = await SeoModel.findOne({ slug: slug });
-    console.log({ count, slug, duplicatedSlug: !!duplicatedSlug });
 
     if (!duplicatedSlug) {
       this.slug = count === 0 ? this.slug : `${this.slug}-${count}`;

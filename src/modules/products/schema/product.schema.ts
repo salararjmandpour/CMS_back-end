@@ -78,7 +78,13 @@ export class Product {
     type: String,
     required: true,
   })
-  description: string;
+  slug: string;
+
+  @Prop({
+    type: Array,
+    required: true,
+  })
+  description: object[];
 
   @Prop({
     type: String,

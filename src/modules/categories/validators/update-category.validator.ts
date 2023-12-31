@@ -5,7 +5,7 @@ import { createSeoValidator } from 'src/modules/seo/validators/create-seo-valida
 
 export const updateCategoryValidator = Joi.object({
   title: Joi.string(),
-  description: Joi.string(),
+  description: Joi.array(),
   slug: Joi.string(),
   image: Joi.string(),
   parent: Joi.string()

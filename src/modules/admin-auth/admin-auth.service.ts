@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as bcrypt from 'bcryptjs';
 
 import { JwtService } from '../jwt/jwt.service';
 import { MainEmailService } from '../main-email/main-email.service';
@@ -57,7 +56,7 @@ export class AdminAuthService {
     }
 
     // check exist user and user role
-    if (user?.role !== 'SUPERADMIN') {
+    if (user?.role === RolesEnum.CUSTOMER) {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
     // check match password
@@ -125,12 +124,12 @@ export class AdminAuthService {
       }
       userId = createdResult._id;
 
-      // send password to user email
-      await this.mainEmailService.sendًPasswordToAdmin(
-        createdResult.email,
-        password,
-      );
       console.log({ password });
+      // send password to user email
+      // await this.mainEmailService.sendًPasswordToAdmin(
+      //   createdResult.email,
+      //   password,
+      // );
       return {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.PASSWORD_EMAILED_FOR_YOU,
@@ -159,7 +158,7 @@ export class AdminAuthService {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
 
-    if (user.role !== RolesEnum.SUPERADMIN) {
+    if (user.role === RolesEnum.CUSTOMER) {
       throw new ForbiddenException(ResponseMessages.ACCESS_DENIED);
     }
 

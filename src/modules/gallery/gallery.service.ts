@@ -41,38 +41,36 @@ export class GalleryService {
       if (!files || !files.length) {
         throw new BadRequestException(ResponseMessages.FILE_IS_REQUIRED);
       }
-
       files.map((file: Express.Multer.File) => {
-        const type = getTypeFile(file.mimetype) as 'image' | 'video' | 'audio';
+        const type = getTypeFile(file.mimetype) as
+          | 'image'
+          | 'video'
+          | 'audio'
+          | 'file';
 
         if (type === 'video' && file.size > maxSize['50MG']) {
-          const path = file?.path?.replace(/\\/g, '/');
-          this.fileService.deleteFileByPath(path);
-
           throw new BadRequestException(
             ResponseMessages.VIDEO_FILE_MUST_BE_ATLEAST_50MG,
           );
         }
 
-        if (file.mimetype === 'images/gif' && file.size > maxSize['10MG']) {
-          const path = file?.path?.replace(/\\/g, '/');
-          this.fileService.deleteFileByPath(path);
+        if (
+          type === 'image' &&
+          file.mimetype.includes('gif') &&
+          file.size > maxSize['10MG']
+        ) {
           throw new BadRequestException(
             ResponseMessages.GIF_FILE_MUST_BE_ATLEAST_10MG,
           );
         }
 
         if (type === 'image' && file.size > maxSize['2MG']) {
-          const path = file?.path?.replace(/\\/g, '/');
-          this.fileService.deleteFileByPath(path);
           throw new BadRequestException(
             ResponseMessages.IMAGE_FILE_MUST_BE_ATLEAST_2MG,
           );
         }
 
         if (type === 'audio' && file.size > maxSize['10MG']) {
-          const path = file?.path?.replace(/\\/g, '/');
-          this.fileService.deleteFileByPath(path);
           throw new BadRequestException(
             ResponseMessages.AUDIO_FILE_MUST_BE_ATLEAST_10MG,
           );
@@ -85,7 +83,8 @@ export class GalleryService {
           const type = getTypeFile(file.mimetype) as
             | 'image'
             | 'video'
-            | 'audio';
+            | 'audio'
+            | 'file';
           const dimensions = type === 'image' ? imageSize(path) : undefined;
           const size = file.size;
 
@@ -225,7 +224,7 @@ export class GalleryService {
 
   async getGallery(
     search?: string,
-    type?: 'image' | 'audio' | 'video' | 'all',
+    type?: 'image' | 'audio' | 'video' | 'file' | 'all',
     startDate?: Date,
     endDate?: Date,
   ): Promise<ResponseFormat<any>> {

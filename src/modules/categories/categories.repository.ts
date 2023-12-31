@@ -24,15 +24,30 @@ export class CategoriesRepository {
   }
 
   findById(id: string, projection?: ProjectionType<CategoryDocument>) {
-    return this.categoryModel.findById(id, projection);
+    return this.categoryModel.findById(id, projection).populate([
+      {
+        path: 'supplier',
+        select: '_id mobile email role firstName lastName',
+      },
+    ]);
   }
 
   findManyByIds(IDs: string[]) {
-    return this.categoryModel.find({ _id: { $in: IDs } });
+    return this.categoryModel.find({ _id: { $in: IDs } }).populate([
+      {
+        path: 'supplier',
+        select: '_id mobile email role firstName lastName',
+      },
+    ]);
   }
 
   findBySlug(slug: string, projection?: ProjectionType<CategoryDocument>) {
-    return this.categoryModel.findOne({ slug }, projection);
+    return this.categoryModel.findOne({ slug }, projection).populate([
+      {
+        path: 'supplier',
+        select: '_id mobile email role firstName lastName',
+      },
+    ]);
   }
 
   findByTitle(title: string, projection?: ProjectionType<CategoryDocument>) {
@@ -40,7 +55,12 @@ export class CategoriesRepository {
   }
 
   findAll(filter?: FilterQuery<CategoryDocument>) {
-    return this.categoryModel.find(filter);
+    return this.categoryModel.find(filter).populate([
+      {
+        path: 'supplier',
+        select: '_id mobile email role firstName lastName',
+      },
+    ]);
   }
 
   deleteManyByIds(Ids: string[]): Promise<any> {

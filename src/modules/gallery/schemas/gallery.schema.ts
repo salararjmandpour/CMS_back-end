@@ -5,6 +5,7 @@ export enum TypeEnum {
   IMAGE = 'image',
   AUDIO = 'audio',
   VIDEO = 'video',
+  FILE = 'file',
 }
 
 @Schema({
@@ -21,7 +22,7 @@ export class Gallery {
   @Prop({
     type: String,
     required: true,
-    enum: [TypeEnum.IMAGE, TypeEnum.AUDIO, TypeEnum.VIDEO],
+    enum: [TypeEnum.IMAGE, TypeEnum.AUDIO, TypeEnum.VIDEO, TypeEnum.FILE],
   })
   type: TypeEnum;
 

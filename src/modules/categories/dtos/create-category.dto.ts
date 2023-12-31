@@ -22,7 +22,7 @@ export class CreateCategoryDto {
     type: String,
     default: '',
   })
-  description: string;
+  description: object[];
 
   @ApiProperty({
     type: String,
@@ -35,6 +35,7 @@ export class CreateCategoryDto {
   image: string;
 
   count: number;
+  supplier?: string;
 }
 
 export class CreateCategoryWithSeoDto {

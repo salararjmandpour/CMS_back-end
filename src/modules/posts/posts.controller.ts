@@ -5,9 +5,9 @@ import {
   Param,
   Query,
   Patch,
+  Delete,
   UseGuards,
   Controller,
-  Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
