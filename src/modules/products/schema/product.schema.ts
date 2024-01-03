@@ -87,9 +87,9 @@ export class Product {
   description: object[];
 
   @Prop({
-    type: String,
+    type: Array,
   })
-  shortDescription: string;
+  shortDescription: object[];
 
   @Prop({
     type: Boolean,

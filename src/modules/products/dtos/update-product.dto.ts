@@ -24,7 +24,7 @@ export class UpdateProductDto {
     type: String,
     description: 'The shortDescription for product',
   })
-  shortDescription: string;
+  shortDescription: object[];
 
   @ApiProperty({
     type: Boolean,
