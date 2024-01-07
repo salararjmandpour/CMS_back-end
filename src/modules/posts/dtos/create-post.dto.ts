@@ -6,6 +6,7 @@ import {
   IsMongoId,
   IsNotEmpty,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -40,13 +41,13 @@ export class CreatePostDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   image: string;
 
   @ApiProperty()
   @IsArray()
   @IsMongoId({ each: true })
-  @IsNotEmpty()
+  @IsOptional()
   categories: string[];
 }
 

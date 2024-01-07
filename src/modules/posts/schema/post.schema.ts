@@ -50,11 +50,13 @@ export class Post {
 
   @Prop({
     type: String,
+    default: null,
   })
   image: string;
 
   @Prop({
     type: Array<Types.ObjectId>,
+    default: [],
   })
   categories: string[];
 }
