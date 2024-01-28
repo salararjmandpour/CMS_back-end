@@ -8,13 +8,19 @@ import { Document as MongooseDocument } from 'mongoose';
 export class PublicSettings {
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   siteTitle: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
+  })
+  description: string;
+
+  @Prop({
+    type: String,
+    default: '',
   })
   email: string;
 
@@ -22,14 +28,26 @@ export class PublicSettings {
     type: String,
     required: true,
   })
-  role: string;
+  siteAddress: string;
 
   @Prop({
     type: String,
     required: true,
   })
+  routeAddress: string;
+
+  @Prop({
+    type: String,
+  })
+  role: string;
+
+  @Prop({
+    type: String,
+    default: 'Asia/Tehran',
+  })
   timezone: string;
 }
 
 export type PublicSettingsDocument = PublicSettings & MongooseDocument;
-export const PublicSettingsSchema = SchemaFactory.createForClass(PublicSettings);
+export const PublicSettingsSchema =
+  SchemaFactory.createForClass(PublicSettings);
