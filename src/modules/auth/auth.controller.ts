@@ -14,9 +14,11 @@ import { GetOtpDecorator } from './decorators/get-otp-decorator';
 import { CheckOtpDecorator } from './decorators/check-otp.decorator';
 import { GoogleLoginDecorator } from './decorators/google-login.decorator';
 import { RefreshTokenDecorator } from './decorators/refresh-token.decorator';
+import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
+@ExcludePublicSettings()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
