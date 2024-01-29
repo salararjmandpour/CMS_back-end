@@ -12,8 +12,10 @@ import { SetSmsConfigDecorator } from './decorators/set-sms-config.decorator';
 import { GetEmailConfigDecorator } from './decorators/get-email-config.decorator';
 import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator';
 import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
+import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
 
 @ApiTags('Settings')
+@ExcludePublicSettings()
 @Controller('settings')
 export class SettingsController {
   constructor(private settingsService: SettingsService) {}

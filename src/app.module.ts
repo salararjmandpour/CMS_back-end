@@ -1,4 +1,3 @@
-import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -22,7 +21,6 @@ import { SheetsModule } from './modules/sheets/sheets.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { DiscountCodeModule } from './modules/discount-code/discount-code.module';
 import { PropertiesModule } from './modules/properties/properties.module';
-import { RequiredPublicSettingsGuard } from './core/guards/public-setting.guard';
 
 @Module({
   imports: [
@@ -53,11 +51,6 @@ import { RequiredPublicSettingsGuard } from './core/guards/public-setting.guard'
     PropertiesModule,
   ],
   controllers: [],
-  // providers: [
-  //   {
-  //     provide: APP_GUARD,
-  //     useClass: RequiredPublicSettingsGuard,
-  //   },
-  // ],
+  providers: [],
 })
 export class AppModule {}

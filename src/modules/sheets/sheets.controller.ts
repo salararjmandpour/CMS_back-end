@@ -24,6 +24,7 @@ import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
 import { ApiGetOneSheet } from './docs/get-one-sheet.doc';
 import { DeleteSheetDto } from './dtos/delete-sheet.dto';
 import { ApiDeleteSheet } from './docs/delete-sheet.dto';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 @ApiBearerAuth()
 @ApiTags('Sheets')
@@ -32,14 +33,14 @@ export class SheetsController {
   constructor(private sheetsService: SheetsService) {}
 
   @ApiCreateSheet()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post()
   create(@Body() body: CreateSheetWithSeoDto, @GetUser('_id') _id: string) {
     return this.sheetsService.create(_id, body);
   }
 
   @ApiUpdateSheet()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Patch(':id')
   update(
     @Body() body: UpdateSheetWithSeoDto,
@@ -66,7 +67,7 @@ export class SheetsController {
   }
 
   @ApiDeleteSheet()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete()
   deleteMany(@Body() body: DeleteSheetDto) {
     return this.sheetsService.deleteMany(body.sheetIDs);

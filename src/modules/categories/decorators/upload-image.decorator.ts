@@ -12,6 +12,7 @@ import { ApiUploadImage } from '../docs/upload-image.doc';
 import { imageFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFile } from 'src/core/decorators/api-file.decorator';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 export const UploadImageDecorator = () => {
   return applyDecorators(
@@ -19,7 +20,7 @@ export const UploadImageDecorator = () => {
     ApiUploadImage(),
     ApiConsumes('multipart/form-data'),
     ApiFile('avatar'),
-    UseGuards(AuthGuard),
+    UseGuards(AuthGuard, RequiredPublicSettingsGuard),
     UseInterceptors(
       FileInterceptor('avatar', {
         storage: fileStorage('avatars'),

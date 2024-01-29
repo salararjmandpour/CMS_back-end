@@ -12,11 +12,12 @@ import { ApiAddToGallery } from '../docs/add-to-gallery.doc';
 import { fileFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFiles } from 'src/core/decorators/api-file.decorator';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 export const AddToGalleryDecorator = () => {
   return applyDecorators(
     Post(),
-    UseGuards(AuthGuard),
+    UseGuards(AuthGuard, RequiredPublicSettingsGuard),
     ApiConsumes('multipart/form-data'),
     ApiAddToGallery(),
     ApiFiles('files'),

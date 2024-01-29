@@ -23,6 +23,7 @@ import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
 import { ApiCreateCharacteristic } from './docs/create-characteristic.doc';
 import { ApiUpdateCharacteristic } from './docs/update-characteristic.doc';
 import { DeleteCharacteristicDto } from './dtos/delete-characteristic.dto';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 @ApiBearerAuth()
 @ApiTags('Properties')
@@ -31,21 +32,21 @@ export class PropertiesController {
   constructor(private propertiesService: PropertiesService) {}
 
   @ApiCreateProperty()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post()
   createProperties(@Body() body: CreatePropertyDto) {
     return this.propertiesService.createProperty(body);
   }
 
   @ApiUpdateProperty()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Patch(':id')
   updateProperties(@Param('id') id: string, @Body() body: UpdatePropertyDto) {
     return this.propertiesService.updateProperty(id, body);
   }
 
   @ApiDeleteProperties()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete()
   deleteProperties(@Body() body: DeletePropertiesDto) {
     return this.propertiesService.deleteProperties(body);
@@ -59,7 +60,7 @@ export class PropertiesController {
   }
 
   @ApiCreateCharacteristic()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post(':id/characteristic')
   createCharacteristic(
     @Param('id') id: string,
@@ -69,7 +70,7 @@ export class PropertiesController {
   }
 
   @ApiUpdateCharacteristic()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Put(':propertyId/:characteristicId')
   updateCharacteristic(
     @Param('propertyId') propertyId: string,
@@ -83,7 +84,7 @@ export class PropertiesController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete(':id/characteristic')
   deleteManyCharacteristic(
     @Param('id') propertyId: string,
