@@ -1,36 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
 
 export class SetPublicConfigDto {
-  @ApiProperty({
-    type: String,
-    required: true,
-    default: '',
-  })
-  timezone?: string;
-
-  @ApiProperty({
-    type: String,
-    default: '',
-  })
+  @ApiProperty()
   siteTitle?: string;
 
-  @ApiProperty({
-    type: String,
-    default: '',
-  })
+  @ApiProperty()
+  description?: string;
+
+  @ApiProperty()
   email?: string;
 
-  @ApiProperty({
-    type: String,
-    default: '',
-  })
+  @ApiProperty()
+  siteAddress: string;
+
+  @ApiProperty()
+  routeAddress: string;
+
+  @ApiProperty()
   role?: string;
 
-  @ApiProperty({
-    type: String,
-    default: '64c6556e14ba201e0504a2c3',
-  })
-  @IsOptional()
-  _id?: string;
+  @ApiProperty()
+  timezone?: string;
 }

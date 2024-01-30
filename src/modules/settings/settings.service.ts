@@ -2,8 +2,8 @@ import {
   Injectable,
   HttpStatus,
   NotFoundException,
-  InternalServerErrorException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 import { SmsSettingsRepository } from './repositories/sms-settings.repository';
@@ -26,22 +26,30 @@ export class SettingsService {
     private smsSettingsRepository: SmsSettingsRepository,
   ) {}
 
-  // get public config
+  // *** get public settings ***
   async getPublicConfig(): Promise<ResponseFormat<any>> {
     let publicSettings = await this.publicSettingsRepository.findAll();
     if (!publicSettings || publicSettings.length === 0) {
-      throw new NotFoundException(ResponseMessages.NOT_FOUND_PUBLIC_CONFIG);
+      throw new NotFoundException(
+        ResponseMessages.NOT_CONFIGURED_PUBLIC_SETTINGS,
+      );
     }
 
     return {
       statusCode: HttpStatus.OK,
       data: {
-        publicConfig: publicSettings[0],
+        publicSettings: {
+          ...publicSettings[0],
+          localTime: new Date().toLocaleString('fa-IR', {
+            timeZone: 'Asia/Tehran',
+          }),
+          utcTime: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
+        },
       },
     };
   }
 
-  // set public config
+  // *** set public settings ***
   async setPublicConfig(
     data: SetPublicConfigDto,
   ): Promise<ResponseFormat<any>> {
@@ -69,18 +77,22 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
+        data: {
+          ...createdResult,
+          localTime: new Date().toLocaleString('fa-IR', {
+            timeZone: 'Asia/Tehran',
+          }),
+          utcTime: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
+        },
       };
     }
 
+    const documentId = publicSettings?.[0]?._id?.toString();
+
     // update config
     const updateResult: any = await this.publicSettingsRepository.findAndUpdate(
-      data?._id,
-      {
-        siteTitle: data.siteTitle,
-        email: data.email,
-        role: data.role,
-        timezone: data.timezone,
-      },
+      documentId,
+      data,
       {
         new: true,
         runValidators: true,
@@ -98,8 +110,15 @@ export class SettingsService {
 
     return {
       statusCode: HttpStatus.CREATED,
+      message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
       data: {
-        emailConfig: updateResult,
+        emailConfig: {
+          ...updateResult._doc,
+          localTime: new Date().toLocaleString('fa-IR', {
+            timeZone: 'Asia/Tehran',
+          }),
+          utcTime: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
+        },
       },
     };
   }
