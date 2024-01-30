@@ -17,6 +17,7 @@ import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
+import { copyObject } from 'src/core/utils/copy-object';
 
 @Injectable()
 export class SettingsService {
@@ -39,7 +40,7 @@ export class SettingsService {
       statusCode: HttpStatus.OK,
       data: {
         publicSettings: {
-          ...publicSettings[0],
+          ...copyObject(publicSettings[0]),
           localTime: new Date().toLocaleString('fa-IR', {
             timeZone: 'Asia/Tehran',
           }),
@@ -78,7 +79,7 @@ export class SettingsService {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
         data: {
-          ...createdResult,
+          ...copyObject(publicSettings[0]),
           localTime: new Date().toLocaleString('fa-IR', {
             timeZone: 'Asia/Tehran',
           }),
@@ -90,7 +91,7 @@ export class SettingsService {
     const documentId = publicSettings?.[0]?._id?.toString();
 
     // update config
-    const updateResult: any = await this.publicSettingsRepository.findAndUpdate(
+    const updateResult = await this.publicSettingsRepository.findAndUpdate(
       documentId,
       data,
       {
@@ -113,7 +114,7 @@ export class SettingsService {
       message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
       data: {
         emailConfig: {
-          ...updateResult._doc,
+          ...copyObject(publicSettings[0]),
           localTime: new Date().toLocaleString('fa-IR', {
             timeZone: 'Asia/Tehran',
           }),
