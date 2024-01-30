@@ -79,11 +79,13 @@ export class SettingsService {
         statusCode: HttpStatus.CREATED,
         message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
         data: {
-          ...copyObject(publicSettings[0]),
-          localTime: new Date().toLocaleString('fa-IR', {
-            timeZone: 'Asia/Tehran',
-          }),
-          utcTime: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
+          publicSettings: {
+            ...copyObject(publicSettings[0]),
+            localTime: new Date().toLocaleString('fa-IR', {
+              timeZone: 'Asia/Tehran',
+            }),
+            utcTime: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
+          },
         },
       };
     }
@@ -113,7 +115,7 @@ export class SettingsService {
       statusCode: HttpStatus.CREATED,
       message: ResponseMessages.CONFIGURED_SUCCESSFULLY,
       data: {
-        emailConfig: {
+        publicSettings: {
           ...copyObject(publicSettings[0]),
           localTime: new Date().toLocaleString('fa-IR', {
             timeZone: 'Asia/Tehran',
