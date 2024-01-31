@@ -12,10 +12,11 @@ import { ApiUploadImages } from '../docs/upload-images.doc';
 import { imageFilter } from 'src/core/utils/file-filter.util';
 import { fileStorage } from 'src/core/utils/upload-storage.util';
 import { ApiFiles } from 'src/core/decorators/api-file.decorator';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 export const UploadImagesDecorator = () => {
   return applyDecorators(
-    UseGuards(AuthGuard),
+    UseGuards(AuthGuard, RequiredPublicSettingsGuard),
     ApiConsumes('multipart/form-data'),
     ApiFiles('images'),
     ApiUploadImages(),

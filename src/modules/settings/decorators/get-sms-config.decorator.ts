@@ -1,5 +1,6 @@
-import { Get, applyDecorators } from '@nestjs/common';
+import { Get, UseGuards, applyDecorators } from '@nestjs/common';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 export const GetSmsConfigDecorator = () => {
-  return applyDecorators(Get('/sms/get-config'));
+  return applyDecorators(UseGuards(AuthGuard), Get('/sms/get-config'));
 };

@@ -13,7 +13,7 @@ export const updateProductValidator = Joi.object({
   title: Joi.string(),
   slug: Joi.string(),
   description: Joi.array(),
-  shortDescription: Joi.string(),
+  shortDescription: Joi.array(),
   draft: Joi.boolean(),
   category: Joi.array()
     .items(Joi.string().pattern(objectIdPattern))

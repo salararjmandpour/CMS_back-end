@@ -13,7 +13,7 @@ export const createProductValidator = Joi.object({
   title: Joi.string().required(),
   slug: Joi.string().required(),
   description: Joi.array().required(),
-  shortDescription: Joi.string().required(),
+  shortDescription: Joi.array().required(),
   draft: Joi.boolean(),
   category: Joi.array()
     .items(Joi.string().pattern(objectIdPattern))

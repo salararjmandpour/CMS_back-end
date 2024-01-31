@@ -28,11 +28,13 @@ export class PostsService {
     data: CreatePostWithSeoDto,
   ): Promise<ResponseFormat<any>> {
     // check exist categories
-    const categories = await this.categoriesRepository.findManyByIds(
-      data.post.categories,
-    );
-    if (categories.length !== data.post.categories.length) {
-      throw new NotFoundException(ResponseMessages.CATEGORIES_NOT_FOUND);
+    if (data.post?.categories && data.post?.categories.length > 0) {
+      const categories = await this.categoriesRepository.findManyByIds(
+        data.post.categories,
+      );
+      if (categories.length !== data.post.categories.length) {
+        throw new NotFoundException(ResponseMessages.CATEGORIES_NOT_FOUND);
+      }
     }
 
     // save post in database

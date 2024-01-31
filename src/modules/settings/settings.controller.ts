@@ -1,5 +1,5 @@
-import { ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Get } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller } from '@nestjs/common';
 
 import { SettingsService } from './settings.service';
 
@@ -12,8 +12,12 @@ import { SetSmsConfigDecorator } from './decorators/set-sms-config.decorator';
 import { GetEmailConfigDecorator } from './decorators/get-email-config.decorator';
 import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator';
 import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
+import { GetPublicConfigDecorator } from './decorators/get-public-config.decorator';
+import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
 
+@ApiBearerAuth()
 @ApiTags('Settings')
+@ExcludePublicSettings()
 @Controller('settings')
 export class SettingsController {
   constructor(private settingsService: SettingsService) {}
@@ -43,7 +47,7 @@ export class SettingsController {
   }
 
   // get public config (timezone)
-  @Get('/public/get-config')
+  @GetPublicConfigDecorator()
   getPublicConfig() {
     return this.settingsService.getPublicConfig();
   }
@@ -54,3 +58,4 @@ export class SettingsController {
     return this.settingsService.setPublicConfig(body);
   }
 }
+// { offset: "+03:30", label: "(GMT+03:30) Tehran", tzCode: "Asia/Tehran" },

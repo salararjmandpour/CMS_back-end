@@ -24,11 +24,11 @@ export class CreateProductDto {
   description: object[];
 
   @ApiProperty({
-    type: String,
+    type: Array<Object>,
     description: 'The shortDescription for product',
     required: true,
   })
-  shortDescription: string;
+  shortDescription: object[];
 
   @ApiProperty({
     type: Boolean,

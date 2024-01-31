@@ -15,9 +15,11 @@ import {
   PostResetPasswordDto,
 } from './dtos/forgot-password.dto';
 import { PostResetPasswordDecorator } from './decorators/post-reset-password.decorator';
+import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
 
 @ApiTags('Admin Auth')
 @Controller('admin-auth')
+@ExcludePublicSettings()
 export class AdminAuthController {
   constructor(private adminAuthService: AdminAuthService) {}
 

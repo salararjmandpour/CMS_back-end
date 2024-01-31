@@ -21,6 +21,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { copyObject } from 'src/core/utils/copy-object';
 import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
 import { calculateDiscountPercentage } from 'src/core/utils/discount-percentage.util';
+import { SeoDocument } from '../seo/schemas/seo.schema';
 
 @Injectable()
 export class ProductsService {
@@ -108,22 +109,28 @@ export class ProductsService {
     limit: number | undefined,
     search?: string | undefined,
   ): Promise<ResponseFormat<any>> {
-    const products = await this.productRepository.getProductList(
-      page,
-      limit,
-      search,
-    );
+    const [products, seos] = await Promise.all([
+      this.productRepository.getProductList(page, limit, search),
+      this.seoRepository.findAll(),
+    ]);
 
-    if (!products) {
+    if (!products || !seos) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_PRODUCT_LIST,
       );
     }
 
+    const productsListWithSeo = products.map((product: ProductDocument) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return product._id.toString() === seo.product;
+      });
+      return { product, seo };
+    });
+
     return {
       statusCode: HttpStatus.OK,
       data: {
-        products,
+        products: productsListWithSeo,
       },
     };
   }
