@@ -130,13 +130,15 @@ export class SettingsService {
   async getEmailConfig(): Promise<ResponseFormat<any>> {
     let emailSettings = await this.emailSettingsRepository.findAll();
     if (!emailSettings || emailSettings.length === 0) {
-      throw new NotFoundException(ResponseMessages.NOT_FOUND_EMAIL_CONFIG);
+      throw new NotFoundException(
+        ResponseMessages.NOT_CONFIGURED_EMAIL_SETTINGS,
+      );
     }
 
     return {
       statusCode: HttpStatus.OK,
       data: {
-        emailConfig: emailSettings[0],
+        emailSettings: emailSettings[0],
       },
     };
   }
@@ -156,13 +158,15 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         data: {
-          emailConfig: createdResult,
+          emailSettings: createdResult,
         },
       };
     }
 
+    const documentId = emailSettings[0]._id.toString();
+
     const updateResult: any = await this.emailSettingsRepository.findAndUpdate(
-      data?._id,
+      documentId,
       {
         host: data.host,
         port: data.port,

@@ -7,6 +7,6 @@ export const SetEmailConfigDecorator = () => {
   return applyDecorators(
     UseGuards(AuthGuard),
     UsePipes(new JoiValidatorPipe(setEmailConfigValidator)),
-    Post('/email/set-config'),
+    Post('/email'),
   );
 };
