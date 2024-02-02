@@ -11,7 +11,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Property, PropertyDocument } from './schema/property.schema';
 import { CreatePropertyDto } from './dtos/create-property.dto';
 import { CreateCharacteristicDto } from './dtos/create-characteristic.dto';
-import { CharacteristicDocument } from './schema/characteristic.schema';
 
 @Injectable()
 export class PropertiesRepository {
@@ -63,8 +62,11 @@ export class PropertiesRepository {
     );
   }
 
-  findCharacteristicBySlug(slug: string) {
-    return this.propertyModel.findOne({ 'characteristics.slug': slug });
+  findCharacteristicBySlug(property: string, slug: string) {
+    return this.propertyModel.findOne({
+      _id: property,
+      'characteristics.slug': slug,
+    });
   }
 
   findCharacteristicById(_id: string) {
