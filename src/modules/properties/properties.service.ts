@@ -166,10 +166,13 @@ export class PropertiesService {
     if (!existCharacteristic) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTIC);
     }
-    if (
-      duplicatedCharacteristicSlug &&
-      duplicatedCharacteristicSlug._id !== characteristicId
-    ) {
+
+    const isDuplicatedCharacteristicSlug =
+      duplicatedCharacteristicSlug.characteristics.every((item) => {
+        return item._id.toString() !== characteristicId;
+      });
+
+    if (duplicatedCharacteristicSlug && isDuplicatedCharacteristicSlug) {
       throw new ConflictException(
         ResponseMessages.CHARACTERISTIC_SLUG_ALREADY_EXIST,
       );
