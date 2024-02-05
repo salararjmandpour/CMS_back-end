@@ -1,4 +1,3 @@
-import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({
@@ -14,7 +13,6 @@ export class Characteristic {
   @Prop({
     type: String,
     required: true,
-    unique: true,
   })
   slug: string;
 

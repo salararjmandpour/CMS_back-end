@@ -1,19 +1,22 @@
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Body, Controller } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { SettingsService } from './settings.service';
 
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
+import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
 import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 
 import { GetSmsConfigDecorator } from './decorators/get-sms-config.decorator';
 import { SetSmsConfigDecorator } from './decorators/set-sms-config.decorator';
+import { SetSlugConfigDecorator } from './decorators/set-slug-config.decorator';
 import { GetEmailConfigDecorator } from './decorators/get-email-config.decorator';
 import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator';
 import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
 import { GetPublicConfigDecorator } from './decorators/get-public-config.decorator';
 import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
+import { GetSlugConfigDecorator } from './decorators/get-slug-config.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Settings')
@@ -56,6 +59,17 @@ export class SettingsController {
   @SetPublicConfigDecorator()
   setPublicConfig(@Body() body: SetPublicConfigDto) {
     return this.settingsService.setPublicConfig(body);
+  }
+
+  // get slug config (timezone)
+  @GetSlugConfigDecorator()
+  getSlugConfig() {
+    return this.settingsService.getSlugConfig();
+  }
+
+  @SetSlugConfigDecorator()
+  setSlugConfig(@Body() body: SetSlugCnfigDto) {
+    return this.settingsService.setSlugConfig(body);
   }
 }
 // { offset: "+03:30", label: "(GMT+03:30) Tehran", tzCode: "Asia/Tehran" },

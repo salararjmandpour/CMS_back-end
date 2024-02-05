@@ -3,11 +3,44 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { configService } from 'src/core/config/app.config';
 import { StatusEnum } from '../order/schema/order.schema';
+import { SmsPanelEnum } from '../settings/schemas/sms-settings.schema';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { SmsSettingsRepository } from '../settings/repositories/sms-settings.repository';
 
 @Injectable()
 export class SmsService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly smsSettingsRepo: SmsSettingsRepository,
+  ) {}
+
+  public async sendOtp(mobile: string, code: string) {
+    const smsSettings = await this.smsSettingsRepo.findAll();
+    const panel = smsSettings?.[0]?.panel;
+
+    switch (panel) {
+      case SmsPanelEnum.IPPANEL:
+        await this.sendOtpSms_ippanel(mobile, code);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  public async sendPasswordToUser(mobile: string, password: string) {
+    const smsSettings = await this.smsSettingsRepo.findAll();
+    const panel = smsSettings?.[0]?.panel;
+
+    switch (panel) {
+      case SmsPanelEnum.IPPANEL:
+        await this.sendPasswordToUser_ippanel(mobile, password);
+        break;
+
+      default:
+        break;
+    }
+  }
 
   // send otp sms (ippanel)
   async sendOtpSms_ippanel(mobile: string, code: string) {

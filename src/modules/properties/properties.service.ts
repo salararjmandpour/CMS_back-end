@@ -119,7 +119,7 @@ export class PropertiesService {
     // prevented duplicated slug
     const [existProperty, duplicatedSlug] = await Promise.all([
       this.propertiesRepository.findOne({ _id: propertyId }),
-      this.propertiesRepository.findCharacteristicBySlug(body.slug),
+      this.propertiesRepository.findCharacteristicBySlug(propertyId, body.slug),
     ]);
     if (!existProperty) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
@@ -155,7 +155,10 @@ export class PropertiesService {
       await Promise.all([
         this.propertiesRepository.findOne({ _id: propertyId }),
         this.propertiesRepository.findCharacteristicById(characteristicId),
-        this.propertiesRepository.findCharacteristicBySlug(body.slug),
+        this.propertiesRepository.findCharacteristicBySlug(
+          propertyId,
+          body.slug,
+        ),
       ]);
     if (!existProperty) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_PROPERTY);
@@ -163,10 +166,13 @@ export class PropertiesService {
     if (!existCharacteristic) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_CHARACTERISTIC);
     }
-    if (
-      duplicatedCharacteristicSlug &&
-      duplicatedCharacteristicSlug._id !== characteristicId
-    ) {
+
+    const isDuplicatedCharacteristicSlug =
+      duplicatedCharacteristicSlug.characteristics.every((item) => {
+        return item._id.toString() !== characteristicId;
+      });
+
+    if (duplicatedCharacteristicSlug && isDuplicatedCharacteristicSlug) {
       throw new ConflictException(
         ResponseMessages.CHARACTERISTIC_SLUG_ALREADY_EXIST,
       );

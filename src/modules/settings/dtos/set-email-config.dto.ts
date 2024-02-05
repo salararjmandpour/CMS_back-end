@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
 
 export class SetEmailConfigDto {
   @ApiProperty({
@@ -36,12 +35,4 @@ export class SetEmailConfigDto {
     default: 'test@test.com',
   })
   senderEmail: string;
-
-  @ApiProperty({
-    type: String,
-    required: true,
-    default: '64c6556e14ba201e0504a2c3',
-  })
-  @IsOptional()
-  _id: string;
 }

@@ -22,7 +22,7 @@ export class CreateCategoryDto {
     type: String,
     default: '',
   })
-  description: object[];
+  description: string;
 
   @ApiProperty({
     type: String,

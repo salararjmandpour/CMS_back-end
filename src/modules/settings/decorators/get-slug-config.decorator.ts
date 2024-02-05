@@ -1,11 +1,11 @@
 import { Get, UseGuards, applyDecorators } from '@nestjs/common';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { GetEmailConfigDoc } from '../docs/get-email-config.doc';
+import { GetSlugConfigDoc } from '../docs/get-slug-config.doc';
 
-export const GetEmailConfigDecorator = () => {
+export const GetSlugConfigDecorator = () => {
   return applyDecorators(
-    GetEmailConfigDoc(),
+    GetSlugConfigDoc(),
     UseGuards(AuthGuard),
-    Get('/email'),
+    Get('/slug'),
   );
 };

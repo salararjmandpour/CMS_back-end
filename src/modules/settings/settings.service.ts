@@ -7,24 +7,27 @@ import {
 } from '@nestjs/common';
 
 import { SmsSettingsRepository } from './repositories/sms-settings.repository';
+import { SlugSettingsRepository } from './repositories/slug-settings.repository';
 import { EmailSettingsRepository } from './repositories/email-settings.repository';
 import { PublicSettingsRepository } from './repositories/public-settings.repository';
 
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
+import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
 import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 
-import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
 import { copyObject } from 'src/core/utils/copy-object';
+import { ResponseFormat } from 'src/core/interfaces/response.interface';
+import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class SettingsService {
   constructor(
-    private publicSettingsRepository: PublicSettingsRepository,
-    private emailSettingsRepository: EmailSettingsRepository,
     private smsSettingsRepository: SmsSettingsRepository,
+    private slugSettingsRepository: SlugSettingsRepository,
+    private emailSettingsRepository: EmailSettingsRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   // *** get public settings ***
@@ -126,22 +129,24 @@ export class SettingsService {
     };
   }
 
-  // get email config
+  // *** get email config ***
   async getEmailConfig(): Promise<ResponseFormat<any>> {
     let emailSettings = await this.emailSettingsRepository.findAll();
     if (!emailSettings || emailSettings.length === 0) {
-      throw new NotFoundException(ResponseMessages.NOT_FOUND_EMAIL_CONFIG);
+      throw new NotFoundException(
+        ResponseMessages.NOT_CONFIGURED_EMAIL_SETTINGS,
+      );
     }
 
     return {
       statusCode: HttpStatus.OK,
       data: {
-        emailConfig: emailSettings[0],
+        emailSettings: emailSettings[0],
       },
     };
   }
 
-  // set email config
+  // *** set email config ***
   async setEmailConfig(data: SetEmailConfigDto): Promise<ResponseFormat<any>> {
     let emailSettings = await this.emailSettingsRepository.findAll();
 
@@ -156,13 +161,15 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         data: {
-          emailConfig: createdResult,
+          emailSettings: createdResult,
         },
       };
     }
 
+    const documentId = emailSettings[0]._id.toString();
+
     const updateResult: any = await this.emailSettingsRepository.findAndUpdate(
-      data?._id,
+      documentId,
       {
         host: data.host,
         port: data.port,
@@ -185,12 +192,12 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.CREATED,
       data: {
-        emailConfig: updateResult,
+        emailSettings: updateResult,
       },
     };
   }
 
-  // get sms config
+  // *** get sms config ***
   async getSmsConfig(): Promise<ResponseFormat<any>> {
     let smsSettings = await this.smsSettingsRepository.findAll();
     if (!smsSettings || smsSettings.length === 0) {
@@ -200,12 +207,12 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.OK,
       data: {
-        smsConfig: smsSettings[0],
+        smsSettings: smsSettings[0],
       },
     };
   }
 
-  // set sms config
+  // *** set sms config ***
   async setSmsConfig(data: SetSmsConfigDto): Promise<ResponseFormat<any>> {
     let smsSettings = await this.smsSettingsRepository.findAll();
 
@@ -220,13 +227,14 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         data: {
-          smsConfig: createdResult,
+          smsSettings: createdResult,
         },
       };
     }
 
+    const documentId = smsSettings?.[0]?._id?.toString();
     const updateResult = await this.smsSettingsRepository.findAndUpdate(
-      data?._id,
+      documentId,
       {
         panel: data.panel,
         username: data.username,
@@ -248,7 +256,68 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.CREATED,
       data: {
-        smsConfig: updateResult,
+        smsSettings: updateResult,
+      },
+    };
+  }
+
+  // *** get slug config ***
+  async getSlugConfig(): Promise<ResponseFormat<any>> {
+    let slugSettings = await this.slugSettingsRepository.findAll();
+    if (!slugSettings || slugSettings.length === 0) {
+      throw new NotFoundException(
+        ResponseMessages.NOT_CONFIGURED_SLUG_SETTINGS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        slugSettings: slugSettings[0],
+      },
+    };
+  }
+
+  // *** set slug config ***
+  public async setSlugConfig(data: SetSlugCnfigDto) {
+    const slugSettings = await this.slugSettingsRepository.findAll();
+
+    if (!slugSettings || slugSettings.length === 0) {
+      const createdResult = await this.slugSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_SLUG_CONFIG,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          slugSettings: createdResult,
+        },
+      };
+    }
+
+    const documentId = slugSettings?.[0]._id.toString();
+    const updateResult = await this.slugSettingsRepository.findAndUpdate(
+      documentId,
+      data,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_CONFIG_SLUG,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        slugSettings: updateResult,
       },
     };
   }

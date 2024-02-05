@@ -1,5 +1,5 @@
+import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document as MongooseDocument } from 'mongoose';
 
 export enum SmsPanelEnum {
   'SMS.IR' = 'sms.ir',
@@ -43,5 +43,5 @@ export class SmsSettings {
   senderNumber: string;
 }
 
-export type SmsSettingsDocument = SmsSettings & MongooseDocument;
+export type SmsSettingsDocument = SmsSettings & Document;
 export const SmsSettingsSchema = SchemaFactory.createForClass(SmsSettings);
