@@ -16,6 +16,7 @@ import { SetEmailConfigDecorator } from './decorators/set-email-config.decorator
 import { SetPublicConfigDecorator } from './decorators/set-public-config.decorator';
 import { GetPublicConfigDecorator } from './decorators/get-public-config.decorator';
 import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
+import { GetSlugConfigDecorator } from './decorators/get-slug-config.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Settings')
@@ -58,6 +59,12 @@ export class SettingsController {
   @SetPublicConfigDecorator()
   setPublicConfig(@Body() body: SetPublicConfigDto) {
     return this.settingsService.setPublicConfig(body);
+  }
+
+  // get slug config (timezone)
+  @GetSlugConfigDecorator()
+  getSlugConfig() {
+    return this.settingsService.getSlugConfig();
   }
 
   @SetSlugConfigDecorator()

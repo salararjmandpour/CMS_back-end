@@ -260,6 +260,23 @@ export class SettingsService {
     };
   }
 
+  // get slug config
+  async getSlugConfig(): Promise<ResponseFormat<any>> {
+    let slugSettings = await this.slugSettingsRepository.findAll();
+    if (!slugSettings || slugSettings.length === 0) {
+      throw new NotFoundException(
+        ResponseMessages.NOT_CONFIGURED_SLUG_SETTINGS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        slugSettings: slugSettings[0],
+      },
+    };
+  }
+
   public async setSlugConfig(data: SetSlugCnfigDto) {
     const slugSettings = await this.slugSettingsRepository.findAll();
 
