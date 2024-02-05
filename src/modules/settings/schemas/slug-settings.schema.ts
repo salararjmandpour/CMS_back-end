@@ -1,9 +1,10 @@
 import { Document as MongooseDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { LinkeStructuresEnum } from '../dtos/set-slug-config.dto';
 
 export interface ISlug {
   category: string;
-  linkeStructures: string;
+  linkeStructures: LinkeStructuresEnum;
   link: string;
 }
 
