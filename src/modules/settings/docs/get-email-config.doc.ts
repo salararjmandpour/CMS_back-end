@@ -7,29 +7,23 @@ import {
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiGetPublicConfig = () => {
+export const GetEmailConfigDoc = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'get public settings',
+      summary: 'get email settings',
     }),
     ApiOkResponse({
       schema: {
         example: {
           statusCode: HttpStatus.OK,
           data: {
-            publicSettings: {
-              _id: '65b8f4d611036664e2e05c5b',
-              siteTitle: 'mamad',
-              description: 'test',
-              email: 'askarpourdev@gmail.com',
-              siteAddress: 'www.google.com',
-              routeAddress: 'www.google.com/',
-              role: 'CUSTOMER',
-              timezone: 'Asia/Tehran',
-              createdAt: '2024-01-30T13:08:38.082Z',
-              updatedAt: '2024-01-30T13:22:51.099Z',
-              localTime: '۱۴۰۲/۱۱/۱۰, ۱۶:۵۲:۵۴',
-              utcTime: '1/30/2024, 1:22:54 PM',
+            emailSettings: {
+              _id: '65bcad2f2623e8cd4d1df167',
+              host: 'irweb.ir',
+              port: '354',
+              user: 'test@irweb.ir',
+              pass: 'D9)F?d4%6Q&5',
+              senderEmail: 'test@test.com',
             },
           },
         },
@@ -48,7 +42,7 @@ export const ApiGetPublicConfig = () => {
       schema: {
         example: {
           statusCode: HttpStatus.NOT_FOUND,
-          message: ResponseMessages.NOT_CONFIGURED_PUBLIC_SETTINGS,
+          message: ResponseMessages.NOT_CONFIGURED_EMAIL_SETTINGS,
           error: 'Not Found',
         },
       },

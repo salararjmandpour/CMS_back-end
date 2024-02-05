@@ -7,27 +7,27 @@ import {
 } from '@nestjs/common';
 
 import { SmsSettingsRepository } from './repositories/sms-settings.repository';
+import { SlugSettingsRepository } from './repositories/slug-settings.repository';
 import { EmailSettingsRepository } from './repositories/email-settings.repository';
 import { PublicSettingsRepository } from './repositories/public-settings.repository';
 
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
+import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
 import { SetPublicConfigDto } from './dtos/set-public-config.dto';
 
-import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
-import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
 import { copyObject } from 'src/core/utils/copy-object';
-import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
-import { SlugSettingsRepository } from './repositories/slug-settings.repository';
+import { ResponseFormat } from 'src/core/interfaces/response.interface';
+import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class SettingsService {
   constructor(
-    private publicSettingsRepository: PublicSettingsRepository,
-    private emailSettingsRepository: EmailSettingsRepository,
     private smsSettingsRepository: SmsSettingsRepository,
     private slugSettingsRepository: SlugSettingsRepository,
+    private emailSettingsRepository: EmailSettingsRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   // *** get public settings ***
@@ -129,7 +129,7 @@ export class SettingsService {
     };
   }
 
-  // get email config
+  // *** get email config ***
   async getEmailConfig(): Promise<ResponseFormat<any>> {
     let emailSettings = await this.emailSettingsRepository.findAll();
     if (!emailSettings || emailSettings.length === 0) {
@@ -146,7 +146,7 @@ export class SettingsService {
     };
   }
 
-  // set email config
+  // *** set email config ***
   async setEmailConfig(data: SetEmailConfigDto): Promise<ResponseFormat<any>> {
     let emailSettings = await this.emailSettingsRepository.findAll();
 
@@ -192,12 +192,12 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.CREATED,
       data: {
-        emailConfig: updateResult,
+        emailSettings: updateResult,
       },
     };
   }
 
-  // get sms config
+  // *** get sms config ***
   async getSmsConfig(): Promise<ResponseFormat<any>> {
     let smsSettings = await this.smsSettingsRepository.findAll();
     if (!smsSettings || smsSettings.length === 0) {
@@ -207,12 +207,12 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.OK,
       data: {
-        smsConfig: smsSettings[0],
+        smsSettings: smsSettings[0],
       },
     };
   }
 
-  // set sms config
+  // *** set sms config ***
   async setSmsConfig(data: SetSmsConfigDto): Promise<ResponseFormat<any>> {
     let smsSettings = await this.smsSettingsRepository.findAll();
 
@@ -227,7 +227,7 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         data: {
-          smsConfig: createdResult,
+          smsSettings: createdResult,
         },
       };
     }
@@ -255,12 +255,12 @@ export class SettingsService {
     return {
       statusCode: HttpStatus.CREATED,
       data: {
-        smsConfig: updateResult,
+        smsSettings: updateResult,
       },
     };
   }
 
-  // get slug config
+  // *** get slug config ***
   async getSlugConfig(): Promise<ResponseFormat<any>> {
     let slugSettings = await this.slugSettingsRepository.findAll();
     if (!slugSettings || slugSettings.length === 0) {
@@ -277,6 +277,7 @@ export class SettingsService {
     };
   }
 
+  // *** set slug config ***
   public async setSlugConfig(data: SetSlugCnfigDto) {
     const slugSettings = await this.slugSettingsRepository.findAll();
 
@@ -291,7 +292,7 @@ export class SettingsService {
       return {
         statusCode: HttpStatus.CREATED,
         data: {
-          slugConfig: createdResult,
+          slugSettings: createdResult,
         },
       };
     }
