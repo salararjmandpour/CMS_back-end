@@ -21,10 +21,10 @@ export class Category {
   slug: string;
 
   @Prop({
-    type: Array,
+    type: String,
     required: true,
   })
-  description: object[];
+  description: string;
 
   @Prop({
     type: Types.ObjectId,
