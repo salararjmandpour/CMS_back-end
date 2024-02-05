@@ -232,8 +232,9 @@ export class SettingsService {
       };
     }
 
+    const documentId = smsSettings?.[0]?._id?.toString();
     const updateResult = await this.smsSettingsRepository.findAndUpdate(
-      data?._id,
+      documentId,
       {
         panel: data.panel,
         username: data.username,
