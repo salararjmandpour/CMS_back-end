@@ -1,4 +1,11 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Document as MongooseDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+export interface ISlug {
+  category: string;
+  linkeStructures: string;
+  link: string;
+}
 
 @Schema({
   timestamps: true,
@@ -9,10 +16,26 @@ export class SlugSettings {
     type: Object,
     required: true,
   })
-  postSettings: {
-    categories: string;
-  };
-  postLableSettings: {};
-  productSettings: {};
-  productLableSettings: {};
+  postSettings: ISlug;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  postLableSettings: ISlug;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  productSettings: ISlug;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  productLableSettings: ISlug;
 }
+
+export type SlugSettingsDocument = SlugSettings & MongooseDocument;
+export const SlugSettingsSchema = SchemaFactory.createForClass(SlugSettings);

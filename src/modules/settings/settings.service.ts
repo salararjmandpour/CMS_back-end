@@ -18,6 +18,8 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
 import { copyObject } from 'src/core/utils/copy-object';
+import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
+import { SlugSettingsRepository } from './repositories/slug-settings.repository';
 
 @Injectable()
 export class SettingsService {
@@ -25,6 +27,7 @@ export class SettingsService {
     private publicSettingsRepository: PublicSettingsRepository,
     private emailSettingsRepository: EmailSettingsRepository,
     private smsSettingsRepository: SmsSettingsRepository,
+    private slugSettingsRepository: SlugSettingsRepository,
   ) {}
 
   // *** get public settings ***
@@ -253,6 +256,49 @@ export class SettingsService {
       statusCode: HttpStatus.CREATED,
       data: {
         smsConfig: updateResult,
+      },
+    };
+  }
+
+  public async setSlugConfig(data: SetSlugCnfigDto) {
+    const slugSettings = await this.slugSettingsRepository.findAll();
+
+    if (!slugSettings || slugSettings.length === 0) {
+      const createdResult = await this.slugSettingsRepository.create(data);
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages.FAILED_CREATE_SLUG_CONFIG,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          slugConfig: createdResult,
+        },
+      };
+    }
+
+    const documentId = slugSettings?.[0]._id.toString();
+    const updateResult = await this.slugSettingsRepository.findAndUpdate(
+      documentId,
+      data,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_CONFIG_SLUG,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        slugSettings: updateResult,
       },
     };
   }
