@@ -23,15 +23,26 @@ export class DiscountCodeRepository {
   }
 
   findById(id: string, projection?: ProjectionType<DiscountCode>) {
-    return this.discountCodeModel.findOne({ _id: id }, projection);
+    return this.discountCodeModel
+      .findOne({ _id: id }, projection)
+      .populate([{ path: 'categories', select: '_id title slug' }]);
   }
 
   findByDiscountCode(discountCode: string) {
-    return this.discountCodeModel.findOne({ discountCode });
+    return this.discountCodeModel
+      .findOne({ discountCode })
+      .populate([{ path: 'categories', select: '_id title slug' }]);
   }
 
   findManyByIds(ids: string[], projection?: ProjectionType<DiscountCode>) {
-    return this.discountCodeModel.find({ _id: { $in: ids } }, projection);
+    return this.discountCodeModel
+      .find({ _id: { $in: ids } }, projection)
+      .populate([
+        { path: 'categories', select: '_id title slug' },
+        { path: 'exceptCategirues', select: '_id title slug' },
+        { path: 'products', select: '_id title slug' },
+        { path: 'exceptProducts', select: '_id title slug' },
+      ]);
   }
 
   deleteMany(ids: string[]): Promise<any> {
@@ -42,6 +53,8 @@ export class DiscountCodeRepository {
     filter?: FilterQuery<DiscountCode>,
     projection?: ProjectionType<DiscountCode>,
   ) {
-    return this.discountCodeModel.find(filter, projection);
+    return this.discountCodeModel
+      .find(filter, projection)
+      .populate([{ path: 'categories', select: '_id title slug' }]);
   }
 }

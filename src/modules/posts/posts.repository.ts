@@ -13,7 +13,13 @@ export class PostsRepository {
   }
 
   findOneById(id: string) {
-    return this.postModel.findById(id);
+    return this.postModel.findById(id).populate([
+      { path: 'categories', select: '_id title slug' },
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
   }
 
   updateOne(_id: string, data: UpdatePostInput) {
@@ -25,7 +31,13 @@ export class PostsRepository {
     projection?: ProjectionType<Post>,
     options?: QueryOptions<Post>,
   ) {
-    return this.postModel.find(filter, projection, options);
+    return this.postModel.find(filter, projection, options).populate([
+      { path: 'categories', select: '_id title slug' },
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
   }
 
   incrementViewCount(postId: string) {

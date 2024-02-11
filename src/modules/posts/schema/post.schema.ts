@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { User } from 'src/modules/users/schema/user.schema';
+import { Category } from 'src/modules/categories/schemas/category.schema';
 
 export enum StatusEnum {
   DRAFT = 'draft',
@@ -32,6 +34,7 @@ export class Post {
   @Prop({
     type: Types.ObjectId,
     required: true,
+    ref: User.name,
   })
   writer: string;
 
@@ -57,6 +60,7 @@ export class Post {
   @Prop({
     type: Array<Types.ObjectId>,
     default: [],
+    ref: Category.name,
   })
   categories: string[];
 }

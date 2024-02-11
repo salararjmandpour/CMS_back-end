@@ -27,7 +27,7 @@ export class CategoriesRepository {
     return this.categoryModel.findById(id, projection).populate([
       {
         path: 'supplier',
-        select: '_id mobile email role firstName lastName',
+        select: '_id avatar mobile email role firstName lastName username',
       },
     ]);
   }
@@ -36,7 +36,7 @@ export class CategoriesRepository {
     return this.categoryModel.find({ _id: { $in: IDs } }).populate([
       {
         path: 'supplier',
-        select: '_id mobile email role firstName lastName',
+        select: '_id avatar mobile email role firstName lastName username',
       },
     ]);
   }
@@ -45,7 +45,7 @@ export class CategoriesRepository {
     return this.categoryModel.findOne({ slug }, projection).populate([
       {
         path: 'supplier',
-        select: '_id mobile email role firstName lastName',
+        select: '_id avatar mobile email role firstName lastName username',
       },
     ]);
   }
@@ -58,7 +58,7 @@ export class CategoriesRepository {
     return this.categoryModel.find(filter).populate([
       {
         path: 'supplier',
-        select: '_id mobile email role firstName lastName',
+        select: '_id avatar mobile email role firstName lastName username',
       },
     ]);
   }

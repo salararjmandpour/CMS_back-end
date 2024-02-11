@@ -19,11 +19,21 @@ export class SheetsRepository {
   }
 
   findOneById(id: string) {
-    return this.sheetsModel.findById(id);
+    return this.sheetsModel.findById(id).populate([
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
   }
 
   findManyByIds(ids: string[]) {
-    return this.sheetsModel.find({ _id: { $in: ids } });
+    return this.sheetsModel.find({ _id: { $in: ids } }).populate([
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
   }
 
   updateOne(_id: string, data: UpdateSheetInput) {
@@ -35,7 +45,12 @@ export class SheetsRepository {
     projection?: ProjectionType<Sheet>,
     options?: QueryOptions<Sheet>,
   ) {
-    return this.sheetsModel.find(filter, projection, options);
+    return this.sheetsModel.find(filter, projection, options).populate([
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
   }
 
   incrementViewCount(sheetId: string) {
