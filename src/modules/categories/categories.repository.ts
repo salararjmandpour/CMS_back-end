@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
 import { CreateCategoryDto } from './dtos/create-category.dto';
-import { Category, CategoryDocument } from './schemas/category.schema';
+import {
+  Category,
+  CategoryDocument,
+  TypeEnum,
+} from './schemas/category.schema';
 
 @Injectable()
 export class CategoriesRepository {
@@ -65,5 +69,37 @@ export class CategoriesRepository {
 
   deleteManyByIds(Ids: string[]): Promise<any> {
     return this.categoryModel.deleteMany({ _id: { $in: Ids } });
+  }
+
+  findByProductWithoutCategory() {
+    return this.categoryModel.findOne({
+      slug: 'without-category',
+      type: TypeEnum.PRODUCT,
+    });
+  }
+
+  findByPostWithoutCategory() {
+    return this.categoryModel.findOne({
+      slug: 'without-category',
+      type: TypeEnum.POST,
+    });
+  }
+
+  createProductWithoutCategory() {
+    return this.categoryModel.create({
+      slug: 'without-category',
+      type: TypeEnum.PRODUCT,
+      title: 'بدون دسته بندی',
+      supplier: '65c89bd7838c4be7ade9bdab',
+    });
+  }
+
+  createPostWithoutCategory() {
+    return this.categoryModel.create({
+      slug: 'without-category',
+      type: TypeEnum.POST,
+      title: 'بدون دسته بندی',
+      supplier: '65c89bd7838c4be7ade9bdab',
+    });
   }
 }

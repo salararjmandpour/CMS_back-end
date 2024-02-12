@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { ValidateNested } from 'class-validator';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+import { TypeEnum } from '../schemas/category.schema';
 
 export class CreateCategoryDto {
   @ApiProperty({
@@ -33,6 +34,9 @@ export class CreateCategoryDto {
 
   @ApiProperty()
   image: string;
+
+  @ApiProperty()
+  type: TypeEnum;
 
   count: number;
   supplier?: string;

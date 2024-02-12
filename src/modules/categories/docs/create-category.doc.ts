@@ -14,7 +14,7 @@ export const ApiCreateCategory = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'create category',
-      description: 'create category',
+      description: 'property `type` shuld be `product` or `post`',
     }),
     ApiCreatedResponse({
       schema: {

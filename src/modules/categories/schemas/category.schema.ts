@@ -1,5 +1,10 @@
-import { Document, Types } from 'mongoose';
+import { Document, Types, Mixed } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+export enum TypeEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+}
 
 @Schema({
   timestamps: true,
@@ -8,21 +13,19 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 export class Category {
   @Prop({
     type: String,
-    unique: true,
     required: true,
   })
   title: string;
 
   @Prop({
     type: String,
-    unique: true,
     required: true,
   })
   slug: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   description: string;
 
@@ -50,6 +53,13 @@ export class Category {
     required: true,
   })
   supplier: string;
+
+  @Prop({
+    type: String,
+    enum: [TypeEnum.PRODUCT, TypeEnum.POST],
+    required: true,
+  })
+  type: TypeEnum;
 }
 
 export type CategoryDocument = Category & Document;

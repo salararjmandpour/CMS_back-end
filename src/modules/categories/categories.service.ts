@@ -201,21 +201,31 @@ export class CategoriesService {
   async getCategoryList(
     search: string | undefined,
   ): Promise<ResponseFormat<any>> {
-    const [categories, seos] = await Promise.all([
-      this.categoriesRepository.findAll(
-        search ? { title: { $regex: search, $options: 'i' } } : {},
-      ),
-      this.seoRepository.findWithCategory(),
-    ]);
+    const [seos, hasWithoutCategoryProduct, hasWithoutCategoryPost] =
+      await Promise.all([
+        this.seoRepository.findWithCategory(),
+        this.categoriesRepository.findByProductWithoutCategory(),
+        this.categoriesRepository.findByPostWithoutCategory(),
+      ]);
 
-    if (!categories) {
-      throw new InternalServerErrorException(
-        ResponseMessages.FAILED_GET_CATEGORY_LIST,
-      );
-    }
     if (!seos) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_SEO_LIST,
+      );
+    }
+    if (!hasWithoutCategoryProduct) {
+      await this.categoriesRepository.createProductWithoutCategory();
+    }
+    if (!hasWithoutCategoryPost) {
+      await this.categoriesRepository.createPostWithoutCategory();
+    }
+
+    const categories = await this.categoriesRepository.findAll(
+      search ? { title: { $regex: search, $options: 'i' } } : {},
+    );
+    if (!categories) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_CATEGORY_LIST,
       );
     }
 
