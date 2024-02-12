@@ -28,6 +28,12 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { AddToGalleryInput } from '../gallery/interfaces/add-to-gallery.interface';
 
+export enum TypeQueryEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+  ALL = 'all',
+}
+
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -199,6 +205,7 @@ export class CategoriesService {
   }
 
   async getCategoryList(
+    type: TypeQueryEnum,
     search: string | undefined,
   ): Promise<ResponseFormat<any>> {
     const [seos, hasWithoutCategoryProduct, hasWithoutCategoryPost] =
@@ -220,9 +227,12 @@ export class CategoriesService {
       await this.categoriesRepository.createPostWithoutCategory();
     }
 
-    const categories = await this.categoriesRepository.findAll(
-      search ? { title: { $regex: search, $options: 'i' } } : {},
-    );
+    let query: any = {};
+    if (type === TypeQueryEnum.POST) query.type = TypeQueryEnum.POST;
+    if (type === TypeQueryEnum.PRODUCT) query.type = TypeQueryEnum.PRODUCT;
+    if (search) query.title = { $regex: search, $options: 'i' };
+
+    const categories = await this.categoriesRepository.findAll(query);
     if (!categories) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_GET_CATEGORY_LIST,

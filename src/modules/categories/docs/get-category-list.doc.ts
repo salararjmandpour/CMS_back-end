@@ -10,7 +10,7 @@ export const ApiGetCategoryList = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'get category list',
-      description: 'get category list',
+      description: '`type` query shuld be `product` or `post` or `all` values',
     }),
     ApiOkResponse({
       schema: {

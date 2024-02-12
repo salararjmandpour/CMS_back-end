@@ -25,6 +25,13 @@ import { GetUser } from 'src/core/decorators/get-user-param.decorator';
 import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
 import { CategoryDeleteManysDto } from './dtos/delete-many-category.dto';
 import { updateCategoryWithSeoValidator } from './validators/update-category.validator';
+import { ParseCategoryType } from './pipes/parse-category-type.pipe';
+
+export enum TypeQueryEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+  ALL = 'all',
+}
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -66,7 +73,10 @@ export class CategoriesController {
 
   // get category list
   @GetCategoryListDecorator()
-  getCategoryList(@Query('search') serach: string) {
-    return this.categoriesService.getCategoryList(serach);
+  getCategoryList(
+    @Query('search') serach: string,
+    @Query('type', ParseCategoryType) type: TypeQueryEnum,
+  ) {
+    return this.categoriesService.getCategoryList(type, serach);
   }
 }
