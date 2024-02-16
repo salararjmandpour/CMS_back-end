@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
+import { Model, FilterQuery, QueryOptions, ProjectionType } from 'mongoose';
 import { Post } from './schema/post.schema';
 import { CraetePostInput, UpdatePostInput } from './interfaces/post.interface';
 

@@ -58,9 +58,9 @@ export class Post {
   image: string;
 
   @Prop({
-    type: Array<Types.ObjectId>,
-    default: [],
+    type: [Types.ObjectId],
     ref: Category.name,
+    default: [],
   })
   categories: string[];
 }
