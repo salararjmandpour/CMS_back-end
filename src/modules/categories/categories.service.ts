@@ -27,6 +27,7 @@ import {
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { AddToGalleryInput } from '../gallery/interfaces/add-to-gallery.interface';
+import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
 
 export enum TypeQueryEnum {
   PRODUCT = 'product',
@@ -41,6 +42,7 @@ export class CategoriesService {
     private seoRepository: SeoRepository,
     private galleryRepositoy: GalleryRepository,
     private categoriesRepository: CategoriesRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   async create(
@@ -75,6 +77,18 @@ export class CategoriesService {
         ResponseMessages.FAILED_CREATE_CATEGORY,
       );
     }
+
+    // set url
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    const clientDomain: string = publicSettings[0].siteAddress;
+    const updatedResult = await this.categoriesRepository.updateById(
+      createdCategory._id.toString(),
+      {
+        idUrl: `${clientDomain}/categories/${createdCategory._id}`,
+        slugUrl: `${clientDomain}/categories/${body.category.slug}`,
+      },
+    );
+    console.log(updatedResult);
 
     // save seo in database
     if (body.seo) {
@@ -140,6 +154,15 @@ export class CategoriesService {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_UPDATE_CATEGORY,
       );
+    }
+
+    // update url
+    if (body.category.slug) {
+      const publicSettings = await this.publicSettingsRepository.findAll();
+      const clientDomain: string = publicSettings[0].siteAddress;
+      await this.categoriesRepository.updateById(id, {
+        slugUrl: `${clientDomain}/categories/${body.category.slug}`,
+      });
     }
 
     // if exist seo, update seo in database

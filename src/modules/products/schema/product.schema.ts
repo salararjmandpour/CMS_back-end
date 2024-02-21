@@ -260,6 +260,16 @@ export class Product {
     default: false,
   })
   review: boolean;
+
+  @Prop({
+    type: String,
+  })
+  slugUrl: string;
+
+  @Prop({
+    type: String,
+  })
+  idUrl: string;
 }
 
 export type ProductDocument = Product & Document;

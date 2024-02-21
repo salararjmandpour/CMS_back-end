@@ -36,6 +36,11 @@ export class UpdateSheetDto {
   @IsString()
   @IsOptional()
   image: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  slug: string;
 }
 
 export class UpdateSheetWithSeoDto {

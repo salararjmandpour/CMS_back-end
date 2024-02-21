@@ -21,10 +21,14 @@ export class CategoriesRepository {
 
   updateById(
     _id: string,
-    update: CreateCategoryDto,
+    update: Partial<CreateCategoryDto>,
     options?: QueryOptions<Category>,
   ) {
-    return this.categoryModel.findOneAndUpdate({ _id }, update, options);
+    return this.categoryModel.findOneAndUpdate(
+      { _id },
+      { $set: update },
+      options,
+    );
   }
 
   findById(id: string, projection?: ProjectionType<CategoryDocument>) {
@@ -91,6 +95,7 @@ export class CategoriesRepository {
       type: TypeEnum.PRODUCT,
       title: 'بدون دسته بندی',
       supplier: '65c89bd7838c4be7ade9bdab',
+      isWthOutCategory: true,
     });
   }
 
@@ -100,6 +105,7 @@ export class CategoriesRepository {
       type: TypeEnum.POST,
       title: 'بدون دسته بندی',
       supplier: '65c89bd7838c4be7ade9bdab',
+      isWthOutCategory: true,
     });
   }
 }

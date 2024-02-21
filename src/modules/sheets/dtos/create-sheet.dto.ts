@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   ValidateNested,
   IsObject,
+  IsOptional,
 } from 'class-validator';
 import { StatusEnum } from '../schema/sheet.schema';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
@@ -35,6 +36,11 @@ export class CreateSheetDto {
   @IsString()
   @IsNotEmpty()
   image: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  slug: string;
 }
 
 export class CreateSheetWithSeoDto {

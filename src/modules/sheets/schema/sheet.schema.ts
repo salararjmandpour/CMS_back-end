@@ -48,6 +48,21 @@ export class Sheet {
     type: String,
   })
   image: string;
+
+  @Prop({
+    type: String,
+  })
+  slugUrl: string;
+
+  @Prop({
+    type: String,
+  })
+  idUrl: string;
+
+  @Prop({
+    type: String,
+  })
+  slug: string;
 }
 
 export type SheetDocument = Sheet & Document;

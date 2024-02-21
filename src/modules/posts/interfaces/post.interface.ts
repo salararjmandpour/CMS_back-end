@@ -9,4 +9,8 @@ export interface CraetePostInput {
   categories: string[];
 }
 
-export interface UpdatePostInput extends Omit<CraetePostInput, 'writer'> {}
+export interface UpdatePostInput
+  extends Partial<Omit<CraetePostInput, 'writer'>> {
+  idUrl?: string;
+  slugUrl?: string;
+}

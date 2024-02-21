@@ -14,6 +14,7 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { UpdatePostWithSeoDto } from './dtos/update-post.dto';
 import { SeoDocument } from '../seo/schemas/seo.schema';
+import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
 
 @Injectable()
 export class PostsService {
@@ -21,6 +22,7 @@ export class PostsService {
     private seoRepository: SeoRepository,
     private postsRepository: PostsRepository,
     private categoriesRepository: CategoriesRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   async create(
@@ -54,6 +56,22 @@ export class PostsService {
       ...data.seo,
       post: createdPost._id.toString(),
     });
+
+    await this.seoRepository.updateById(createdPost._id, {
+      idUrl: createdPost._id,
+    });
+
+    // set url
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    const clientDomain: string = publicSettings[0].siteAddress;
+    const updatedResult = await this.postsRepository.updateOne(
+      createdPost._id.toString(),
+      {
+        idUrl: `${clientDomain}/posts/${createdPost._id}`,
+        slugUrl: `${clientDomain}/posts/${data.post.slug}`,
+      },
+    );
+    console.log(updatedResult);
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -92,6 +110,15 @@ export class PostsService {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_UPDATE_POST,
       );
+    }
+
+    // update url
+    if (data.post.slug) {
+      const publicSettings = await this.publicSettingsRepository.findAll();
+      const clientDomain: string = publicSettings[0].siteAddress;
+      await this.postsRepository.updateOne(id, {
+        slugUrl: `${clientDomain}/posts/${data.post.slug}`,
+      });
     }
 
     return {

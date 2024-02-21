@@ -22,6 +22,7 @@ import { copyObject } from 'src/core/utils/copy-object';
 import { listOfImagesFromRequest } from 'src/core/utils/imaeg-list-from-request.util';
 import { calculateDiscountPercentage } from 'src/core/utils/discount-percentage.util';
 import { SeoDocument } from '../seo/schemas/seo.schema';
+import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
 
 @Injectable()
 export class ProductsService {
@@ -29,6 +30,7 @@ export class ProductsService {
     private fileService: FileService,
     private seoRepository: SeoRepository,
     private productRepository: ProductsRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   async create(
@@ -79,6 +81,20 @@ export class ProductsService {
     // save seo in database
     const product: ProductDocument = copyObject(createdResult);
     await this.seoRepository.create({ ...body.seo, product: product._id });
+
+    // set url
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    const clientDomain: string = publicSettings[0].siteAddress;
+    const updatedResult = await this.productRepository.findByIdAndUpdate(
+      product._id,
+      {
+        $set: {
+          idUrl: `${clientDomain}/products/${product._id}`,
+          slugUrl: `${clientDomain}/products/${body.product.slug}`,
+        },
+      },
+    );
+    console.log(updatedResult);
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -196,6 +212,18 @@ export class ProductsService {
         ResponseMessages.FAILED_UPDATE_PRODUCT,
       );
     }
+
+    // update url
+    if (body.product.slug) {
+      const publicSettings = await this.publicSettingsRepository.findAll();
+      const clientDomain: string = publicSettings[0].siteAddress;
+      await this.productRepository.findByIdAndUpdate(productId, {
+        $set: {
+          slugUrl: `${clientDomain}/products/${body.product.slug}`,
+        },
+      });
+    }
+
     response.data.product = updatedResult;
 
     return response;

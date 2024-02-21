@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
-  BadRequestException,
 } from '@nestjs/common';
 import { SeoRepository } from '../seo/seo.repository';
 import { SheetsRepository } from './sheets.repository';
@@ -12,12 +11,14 @@ import { CreateSheetWithSeoDto } from './dtos/create-sheet.dto';
 import { UpdateSheetWithSeoDto } from './dtos/update-sheet.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
 
 @Injectable()
 export class SheetsService {
   constructor(
     private sheetsRepository: SheetsRepository,
     private seoRepository: SeoRepository,
+    private publicSettingsRepository: PublicSettingsRepository,
   ) {}
 
   async create(
@@ -40,6 +41,18 @@ export class SheetsService {
       ...data.seo,
       sheet: createdSheet._id.toString(),
     });
+
+    // set url
+    const publicSettings = await this.publicSettingsRepository.findAll();
+    const clientDomain: string = publicSettings[0].siteAddress;
+    const updatedResult = await this.sheetsRepository.updateOne(
+      createdSheet._id.toString(),
+      {
+        idUrl: `${clientDomain}/sheets/${createdSheet._id}`,
+        slugUrl: `${clientDomain}/sheets/${data.sheet.slug}`,
+      },
+    );
+    console.log(updatedResult);
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -64,6 +77,15 @@ export class SheetsService {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_UPDATE_SHEET,
       );
+    }
+
+    // update url
+    if (data.sheet.slug) {
+      const publicSettings = await this.publicSettingsRepository.findAll();
+      const clientDomain: string = publicSettings[0].siteAddress;
+      await this.sheetsRepository.updateOne(id, {
+        slugUrl: `${clientDomain}/sheets/${data.sheet.slug}`,
+      });
     }
 
     return {

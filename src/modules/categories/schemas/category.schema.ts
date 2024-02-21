@@ -1,4 +1,4 @@
-import { Document, Types, Mixed } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export enum TypeEnum {
@@ -60,6 +60,21 @@ export class Category {
     required: true,
   })
   type: TypeEnum;
+
+  @Prop({
+    type: Boolean,
+  })
+  isWthOutCategory?: boolean;
+
+  @Prop({
+    type: String,
+  })
+  slugUrl: string;
+
+  @Prop({
+    type: String,
+  })
+  idUrl: string;
 }
 
 export type CategoryDocument = Category & Document;

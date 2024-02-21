@@ -63,6 +63,16 @@ export class Post {
     default: [],
   })
   categories: string[];
+
+  @Prop({
+    type: String,
+  })
+  slugUrl: string;
+
+  @Prop({
+    type: String,
+  })
+  idUrl: string;
 }
 
 export type PostDocument = Post & Document;

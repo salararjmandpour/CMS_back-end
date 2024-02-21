@@ -8,4 +8,8 @@ export interface CreateSheetInput {
   image: string;
 }
 
-export interface UpdateSheetInput extends Omit<CreateSheetInput, 'writer'> {}
+export interface UpdateSheetInput
+  extends Partial<Omit<CreateSheetInput, 'writer'>> {
+  idUrl?: string;
+  slugUrl?: string;
+}

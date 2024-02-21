@@ -40,6 +40,9 @@ export class CreateCategoryDto {
 
   count: number;
   supplier?: string;
+
+  idUrl?: string;
+  slugUrl?: string;
 }
 
 export class CreateCategoryWithSeoDto {
