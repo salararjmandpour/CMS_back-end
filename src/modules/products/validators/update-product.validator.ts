@@ -12,8 +12,8 @@ import {
 export const updateProductValidator = Joi.object({
   title: Joi.string(),
   slug: Joi.string(),
-  description: Joi.array(),
-  shortDescription: Joi.array(),
+  description: Joi.object(),
+  shortDescription: Joi.object(),
   draft: Joi.boolean(),
   category: Joi.array()
     .items(Joi.string().pattern(objectIdPattern))

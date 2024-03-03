@@ -18,13 +18,13 @@ export class UpdateProductDto {
     type: String,
     description: 'The description for product',
   })
-  description: object[];
+  description: object;
 
   @ApiProperty({
     type: String,
     description: 'The shortDescription for product',
   })
-  shortDescription: object[];
+  shortDescription: object;
 
   @ApiProperty({
     type: Boolean,

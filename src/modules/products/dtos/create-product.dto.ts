@@ -17,18 +17,18 @@ export class CreateProductDto {
   slug: string;
 
   @ApiProperty({
-    type: String,
+    type: Object,
     description: 'The description for product',
     required: true,
   })
-  description: object[];
+  description: object;
 
   @ApiProperty({
-    type: Array<Object>,
+    type: Object,
     description: 'The shortDescription for product',
     required: true,
   })
-  shortDescription: object[];
+  shortDescription: object;
 
   @ApiProperty({
     type: Boolean,
