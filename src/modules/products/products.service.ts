@@ -104,9 +104,10 @@ export class ProductsService {
 
   async findById(id: string): Promise<ResponseFormat<any>> {
     // check exist product
-    const [_, product] = await Promise.all([
+    const [_, product, seo] = await Promise.all([
       this.productRepository.incrementViewCount(id),
       this.productRepository.findById(id),
+      this.seoRepository.findByProduct(id),
     ]);
     if (!product) {
       throw new NotFoundException(ResponseMessages.PRODUCT_NOT_FOUND);
@@ -114,9 +115,7 @@ export class ProductsService {
 
     return {
       statusCode: HttpStatus.OK,
-      data: {
-        product,
-      },
+      data: { product, seo },
     };
   }
 
