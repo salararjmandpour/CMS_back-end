@@ -3,6 +3,7 @@ import { ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 import { SMS, productSMS } from '../schema/product.schema';
+import { ISpecifications } from '../schema/specification.schema';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -142,15 +143,12 @@ export class CreateProductDto {
     required: true,
     default: [
       {
-        key: 'نوع',
-        value: 'ضد حساسیت',
+        key: { _id: '6470a3fbbb82534053e8bb86', title: 'نوع' },
+        value: { _id: '6470a3fbbb82534053e8bb86', title: 'ضد حساسیت' },
       },
     ],
   })
-  specifications: {
-    key: string;
-    value: string;
-  }[];
+  specifications: ISpecifications[];
 
   @ApiProperty({
     type: Object,

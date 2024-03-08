@@ -1,22 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export interface ISpecifications {
-  key: string;
-  value: string;
+interface ISpecificationsItem {
+  _id: string;
+  title: string;
 }
+
+export interface ISpecifications {
+  key: ISpecificationsItem;
+  value: ISpecificationsItem;
+}
+
 // Specifications Schema
 @Schema({
   versionKey: false,
 })
 class Specifications {
   @Prop({
-    type: String,
+    type: Object,
     required: true,
   })
   key: string;
 
   @Prop({
-    type: String,
+    type: Object,
     required: true,
   })
   value: string;

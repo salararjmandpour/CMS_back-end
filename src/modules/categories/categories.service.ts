@@ -277,6 +277,56 @@ export class CategoriesService {
     };
   }
 
+  async getCategoryListWithPopulate(
+    type: TypeQueryEnum,
+  ): Promise<ResponseFormat<any>> {
+    const [seos, hasWithoutCategoryProduct, hasWithoutCategoryPost] =
+      await Promise.all([
+        this.seoRepository.findWithCategory(),
+        this.categoriesRepository.findByProductWithoutCategory(),
+        this.categoriesRepository.findByPostWithoutCategory(),
+      ]);
+
+    if (!seos) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_SEO_LIST,
+      );
+    }
+    if (!hasWithoutCategoryProduct) {
+      await this.categoriesRepository.createProductWithoutCategory();
+    }
+    if (!hasWithoutCategoryPost) {
+      await this.categoriesRepository.createPostWithoutCategory();
+    }
+
+    const categories = await this.categoriesRepository.findAllWithPopulate({
+      parent: undefined,
+      type:
+        type === TypeQueryEnum.POST
+          ? TypeQueryEnum.POST
+          : TypeQueryEnum.PRODUCT,
+    });
+    if (!categories) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_CATEGORY_LIST,
+      );
+    }
+
+    const categoryList = categories.map((category: CategoryDocument) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return seo?.category?.toString() === category._id.toString();
+      });
+      return { category, seo };
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        categories: categoryList,
+      },
+    };
+  }
+
   async uploadImage(
     userId: string,
     categoryId: string,

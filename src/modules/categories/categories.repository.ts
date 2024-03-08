@@ -71,6 +71,18 @@ export class CategoriesRepository {
     ]);
   }
 
+  findAllWithPopulate(filter?: FilterQuery<CategoryDocument>) {
+    return this.categoryModel.find(filter).populate([
+      {
+        path: 'supplier',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+      {
+        path: 'subcategories',
+      },
+    ]);
+  }
+
   deleteManyByIds(Ids: string[]): Promise<any> {
     return this.categoryModel.deleteMany({ _id: { $in: Ids } });
   }

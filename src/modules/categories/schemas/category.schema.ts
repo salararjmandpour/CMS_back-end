@@ -32,7 +32,7 @@ export class Category {
   @Prop({
     type: Types.ObjectId,
     default: undefined,
-    ref: Category.name,
+    ref: 'Category',
   })
   parent: Types.ObjectId;
 
