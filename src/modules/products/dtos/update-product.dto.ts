@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsOptional, ValidateNested } from 'class-validator';
 import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
+import { ISpecifications } from '../schema/specification.schema';
 
 export class UpdateProductDto {
   @ApiProperty({
@@ -128,15 +129,12 @@ export class UpdateProductDto {
     description: 'The specifications for product. Should be array from objects',
     default: [
       {
-        key: 'نوع',
-        value: 'ضد حساسیت',
+        key: { _id: '6470a3fbbb82534053e8bb86', title: 'نوع' },
+        value: { _id: '6470a3fbbb82534053e8bb86', title: 'ضد حساسیت' },
       },
     ],
   })
-  specifications: {
-    key: string;
-    value: string;
-  }[];
+  specifications: ISpecifications[];
 
   @ApiProperty({
     type: Object,
