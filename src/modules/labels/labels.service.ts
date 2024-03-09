@@ -2,8 +2,8 @@ import {
   HttpStatus,
   Injectable,
   ConflictException,
-  InternalServerErrorException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { LabelsRepository } from './labels.repository';
 import { CreateLabelDto } from './dtos/create-label.dto';
@@ -81,6 +81,17 @@ export class LabelsService {
     return {
       statusCode: HttpStatus.OK,
       message: 'LABEL_DELETED_SUCCESS',
+    };
+  }
+
+  public async findAllLabels(): Promise<ResponseFormat<any>> {
+    const labels = await this.labelsRepository.find();
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: {
+        labels,
+      },
     };
   }
 }

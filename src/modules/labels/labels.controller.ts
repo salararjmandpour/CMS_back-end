@@ -6,6 +6,7 @@ import {
   Delete,
   UseGuards,
   Controller,
+  Get,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LabelsService } from './labels.service';
@@ -37,5 +38,10 @@ export class LabelsController {
   @Delete()
   deleteLabels(@Body() body: DeleteLabelsDto) {
     return this.labelsService.deleteLabel(body);
+  }
+
+  @Get()
+  getPropertiesList() {
+    return this.labelsService.findAllLabels();
   }
 }
