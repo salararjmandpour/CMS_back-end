@@ -21,6 +21,7 @@ import { SheetsModule } from './modules/sheets/sheets.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { DiscountCodeModule } from './modules/discount-code/discount-code.module';
 import { PropertiesModule } from './modules/properties/properties.module';
+import { LabelsModule } from './modules/labels/labels.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PropertiesModule } from './modules/properties/properties.module';
     PostsModule,
     DiscountCodeModule,
     PropertiesModule,
+    LabelsModule,
   ],
   controllers: [],
   providers: [],
