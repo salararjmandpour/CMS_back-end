@@ -1,17 +1,19 @@
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
+  Post,
   Body,
-  Controller,
   Param,
   Patch,
-  Post,
+  Delete,
   UseGuards,
+  Controller,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LabelsService } from './labels.service';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 import { CreateLabelDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
+import { DeleteLabelsDto } from './dtos/delete-label.dto';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -29,5 +31,11 @@ export class LabelsController {
   @Patch(':id')
   updateLabel(@Param('id') id: string, @Body() body: UpdateLabelDto) {
     return this.labelsService.updateLabel(id, body);
+  }
+
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  @Delete()
+  deleteLabels(@Body() body: DeleteLabelsDto) {
+    return this.labelsService.deleteLabel(body);
   }
 }

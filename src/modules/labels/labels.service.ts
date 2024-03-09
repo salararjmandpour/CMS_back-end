@@ -3,12 +3,14 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { LabelsRepository } from './labels.repository';
 import { CreateLabelDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { DeleteLabelsDto } from './dtos/delete-label.dto';
 
 @Injectable()
 export class LabelsService {
@@ -56,6 +58,29 @@ export class LabelsService {
     return {
       statusCode: HttpStatus.OK,
       message: 'LABEL_UPDATED_SUCCESS',
+    };
+  }
+
+  public async deleteLabel(
+    body: DeleteLabelsDto,
+  ): Promise<ResponseFormat<any>> {
+    const existedLabel = await this.labelsRepository.findManyByIds(
+      body.labelIds,
+    );
+    if (existedLabel.length !== body.labelIds.length) {
+      throw new NotFoundException('NOT_FOUNDS_LABELS');
+    }
+
+    const deletedResult = await this.labelsRepository.deleteManyByIds(
+      body.labelIds,
+    );
+    if (deletedResult.deletedCount !== body.labelIds.length) {
+      throw new InternalServerErrorException('FAILED_DELETE_LABELS');
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'LABEL_DELETED_SUCCESS',
     };
   }
 }
