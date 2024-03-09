@@ -58,7 +58,7 @@ export class LabelsRepository {
   createSublabel(labelId: string, data: CreateSublabelDto) {
     return this.labelModel.updateOne(
       { _id: labelId },
-      { $push: { sublabels: data } },
+      { $push: { sublabls: data } },
     );
   }
 

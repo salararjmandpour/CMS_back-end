@@ -15,6 +15,7 @@ import { CreateLabelDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
+import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -43,5 +44,14 @@ export class LabelsController {
   @Get()
   getPropertiesList() {
     return this.labelsService.findAllLabels();
+  }
+
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  @Post(':id/sublabels')
+  createCharacteristic(
+    @Param('id') id: string,
+    @Body() body: CreateSublabelDto,
+  ) {
+    return this.labelsService.createSublabels(id, body);
   }
 }

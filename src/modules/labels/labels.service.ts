@@ -9,8 +9,8 @@ import { LabelsRepository } from './labels.repository';
 import { CreateLabelDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
-import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
+import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 
 @Injectable()
 export class LabelsService {
@@ -47,7 +47,7 @@ export class LabelsService {
     });
 
     if (duplicatedSlug && duplicatedSlug._id.toString() !== _id) {
-      throw new ConflictException(ResponseMessages.PROPERTY_SLUG_ALREADY_EXIST);
+      throw new ConflictException('LABEL_SLUG_ALREADY_EXIST');
     }
 
     const updatedResult = await this.labelsRepository.updateOne({ _id }, body);
@@ -92,6 +92,37 @@ export class LabelsService {
       data: {
         labels,
       },
+    };
+  }
+
+  public async createSublabels(
+    labelId: string,
+    body: CreateSublabelDto,
+  ): Promise<ResponseFormat<any>> {
+    // prevented duplicated slug
+    const [existLabel, duplicatedSlug] = await Promise.all([
+      this.labelsRepository.findOne({ _id: labelId }),
+      this.labelsRepository.findSublabelBySlug(labelId, body.slug),
+    ]);
+    if (!existLabel) {
+      throw new NotFoundException('NOT_FOUND_LABEL');
+    }
+    if (duplicatedSlug) {
+      throw new ConflictException('SUBLABELS_SLUG_ALREADY_EXIST');
+    }
+
+    const craetedResult = await this.labelsRepository.createSublabel(
+      labelId,
+      body,
+    );
+
+    if (!craetedResult) {
+      throw new InternalServerErrorException('FAILED_CREATE_SUBLABELS');
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'SUBLABELS_CREATED_SUCCESS',
     };
   }
 }
