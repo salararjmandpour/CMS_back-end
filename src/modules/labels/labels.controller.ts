@@ -7,6 +7,7 @@ import {
   UseGuards,
   Controller,
   Get,
+  Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LabelsService } from './labels.service';
@@ -16,6 +17,7 @@ import { UpdateLabelDto } from './dtos/update-label.dto';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
+import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -53,5 +55,29 @@ export class LabelsController {
     @Body() body: CreateSublabelDto,
   ) {
     return this.labelsService.createSublabels(id, body);
+  }
+
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  @Put(':labelId/:sublabelId')
+  updateCharacteristic(
+    @Param('labelId') labelId: string,
+    @Param('sublabelId') sublabelId: string,
+    @Body() body: CreateSublabelDto,
+  ) {
+    console.log(labelId, sublabelId);
+    return this.labelsService.updateSublabels(labelId, sublabelId, body);
+  }
+
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  @Delete(':id/sublabels')
+  deleteManyCharacteristic(
+    @Param('id') propertyId: string,
+    @Body() body: DeleteSublabelsDto,
+  ) {
+    console.log({ propertyId, body });
+    return this.labelsService.deleteManyCharacteristic(
+      propertyId,
+      body.sublabelIDs,
+    );
   }
 }

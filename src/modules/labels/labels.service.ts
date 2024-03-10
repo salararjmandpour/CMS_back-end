@@ -11,6 +11,7 @@ import { UpdateLabelDto } from './dtos/update-label.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
+import { UpdateSublabelDto } from './dtos/update-sublabel.dto';
 
 @Injectable()
 export class LabelsService {
@@ -123,6 +124,62 @@ export class LabelsService {
     return {
       statusCode: HttpStatus.CREATED,
       message: 'SUBLABELS_CREATED_SUCCESS',
+    };
+  }
+
+  public async updateSublabels(
+    propertyId: string,
+    sublabelsId: string,
+    body: UpdateSublabelDto,
+  ): Promise<ResponseFormat<any>> {
+    const [existProperty, existCharacteristic, duplicatedCharacteristicSlug] =
+      await Promise.all([
+        this.labelsRepository.findOne({ _id: propertyId }),
+        this.labelsRepository.findSublabelById(sublabelsId),
+        this.labelsRepository.findSublabelBySlug(propertyId, body.slug),
+      ]);
+    if (!existProperty) {
+      throw new NotFoundException('NOT_FOUND_LABEL');
+    }
+    if (!existCharacteristic) {
+      throw new NotFoundException('NOT_FOUND_SUBLABELS');
+    }
+
+    const updatedResult = await this.labelsRepository.updateSublabel(
+      propertyId,
+      sublabelsId,
+      body,
+    );
+    if (updatedResult.modifiedCount !== 1) {
+      throw new InternalServerErrorException('FAILED_UPDATE_SUBLABELS');
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'SUBLABELS_UPDATED_SUCCESS',
+    };
+  }
+
+  public async deleteManyCharacteristic(
+    propertyId: string,
+    characteristicIds: string[],
+  ): Promise<ResponseFormat<any>> {
+    console.log(propertyId);
+    const existProperty = await this.labelsRepository.findOne({
+      _id: propertyId,
+    });
+    if (!existProperty) {
+      throw new NotFoundException('NOT_FOUND_LABELS');
+    }
+
+    const deletedResult = await this.labelsRepository.deleteSublabel(
+      propertyId,
+      characteristicIds,
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'SUBLABEL_DELETED_SUCCESS',
     };
   }
 }

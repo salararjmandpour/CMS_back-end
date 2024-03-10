@@ -65,33 +65,33 @@ export class LabelsRepository {
   findSublabelBySlug(label: string, slug: string) {
     return this.labelModel.findOne({
       _id: label,
-      'sublabels.slug': slug,
+      'sublabls.slug': slug,
     });
   }
 
   findSublabelById(_id: string) {
-    return this.labelModel.findOne({ 'sublabels._id': _id });
+    return this.labelModel.findOne({ 'sublabls._id': _id });
   }
 
   findManySublabelByIds(IDs: string[]): Promise<any> {
     return this.labelModel
       .find({
-        'sublabels._id': { $in: IDs },
+        'sublabls._id': { $in: IDs },
       })
       .select('_id sublabels');
   }
 
   updateSublabel(labelId: string, sublabelId: string, data: CreateSublabelDto) {
     return this.labelModel.updateOne(
-      { _id: labelId, 'sublabels._id': sublabelId },
-      { $set: { 'sublabels.$': data } },
+      { _id: labelId, 'sublabls._id': sublabelId },
+      { $set: { 'sublabls.$': data } },
     );
   }
 
   deleteSublabel(labelId: string, sublabelId: string[]): Promise<any> {
     return this.labelModel.updateOne(
-      { _id: labelId, 'sublabels._id': sublabelId },
-      { $pull: { sublabels: { _id: { $in: sublabelId } } } },
+      { _id: labelId, 'sublabls._id': sublabelId },
+      { $pull: { sublabls: { _id: { $in: sublabelId } } } },
     );
   }
 }
