@@ -64,7 +64,6 @@ export class LabelsController {
     @Param('sublabelId') sublabelId: string,
     @Body() body: CreateSublabelDto,
   ) {
-    console.log(labelId, sublabelId);
     return this.labelsService.updateSublabels(labelId, sublabelId, body);
   }
 

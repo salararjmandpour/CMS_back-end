@@ -12,6 +12,7 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 import { UpdateSublabelDto } from './dtos/update-sublabel.dto';
+import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
 export class LabelsService {
@@ -128,15 +129,15 @@ export class LabelsService {
   }
 
   public async updateSublabels(
-    propertyId: string,
+    lableId: string,
     sublabelsId: string,
     body: UpdateSublabelDto,
   ): Promise<ResponseFormat<any>> {
     const [existProperty, existCharacteristic, duplicatedCharacteristicSlug] =
       await Promise.all([
-        this.labelsRepository.findOne({ _id: propertyId }),
+        this.labelsRepository.findOne({ _id: lableId }),
         this.labelsRepository.findSublabelById(sublabelsId),
-        this.labelsRepository.findSublabelBySlug(propertyId, body.slug),
+        this.labelsRepository.findSublabelBySlug(lableId, body.slug),
       ]);
     if (!existProperty) {
       throw new NotFoundException('NOT_FOUND_LABEL');
@@ -145,8 +146,17 @@ export class LabelsService {
       throw new NotFoundException('NOT_FOUND_SUBLABELS');
     }
 
+    const isDuplicatedCharacteristicSlug =
+      duplicatedCharacteristicSlug?.sublabls?.some((item) => {
+        return item._id.toString() !== sublabelsId;
+      });
+
+    if (duplicatedCharacteristicSlug && isDuplicatedCharacteristicSlug) {
+      throw new ConflictException(ResponseMessages.SUBLABEL_SLUG_ALREADY_EXIST);
+    }
+
     const updatedResult = await this.labelsRepository.updateSublabel(
-      propertyId,
+      lableId,
       sublabelsId,
       body,
     );
