@@ -18,6 +18,12 @@ import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
+import { ApiCreateLable } from './docs/create-lable.doc';
+import { ApiUpdateLable } from './docs/update-lable.doc';
+import { ApiDeleteLable } from './docs/delete-lable.doc';
+import { ApiUpdateSublable } from './docs/update-sublable.doc';
+import { ApiDeleteSublable } from './docs/delete-sublable.doc';
+import { ApiCreateSublable } from './docs/create-sublable.doc';
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -25,18 +31,21 @@ import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
 export class LabelsController {
   constructor(private labelsService: LabelsService) {}
 
+  @ApiCreateLable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post()
   createLabel(@Body() body: CreateLabelDto) {
     return this.labelsService.createLabel(body);
   }
 
+  @ApiUpdateLable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Patch(':id')
   updateLabel(@Param('id') id: string, @Body() body: UpdateLabelDto) {
     return this.labelsService.updateLabel(id, body);
   }
 
+  @ApiDeleteLable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete()
   deleteLabels(@Body() body: DeleteLabelsDto) {
@@ -48,6 +57,7 @@ export class LabelsController {
     return this.labelsService.findAllLabels();
   }
 
+  @ApiCreateSublable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post(':id/sublabels')
   createCharacteristic(
@@ -57,6 +67,7 @@ export class LabelsController {
     return this.labelsService.createSublabels(id, body);
   }
 
+  @ApiUpdateSublable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Put(':labelId/:sublabelId')
   updateCharacteristic(
@@ -67,6 +78,7 @@ export class LabelsController {
     return this.labelsService.updateSublabels(labelId, sublabelId, body);
   }
 
+  @ApiDeleteSublable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete(':id/sublabels')
   deleteManyCharacteristic(
