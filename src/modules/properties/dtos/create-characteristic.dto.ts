@@ -17,6 +17,7 @@ export class CreateCharacteristicDto {
   @IsOptional()
   description: string;
 
+  // delete by lahoty
   // @ApiProperty()
   // @IsString()
   // @IsOptional()
