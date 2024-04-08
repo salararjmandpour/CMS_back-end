@@ -21,9 +21,9 @@ import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
 import { ApiCreateLable } from './docs/create-lable.doc';
 import { ApiUpdateLable } from './docs/update-lable.doc';
 import { ApiDeleteLable } from './docs/delete-lable.doc';
-import { ApiUpdateSublable } from './docs/update-sublable.doc';
-import { ApiDeleteSublable } from './docs/delete-sublable.doc';
-import { ApiCreateSublable } from './docs/create-sublable.doc';
+// import { ApiUpdateSublable } from './docs/update-sublable.doc';
+// import { ApiDeleteSublable } from './docs/delete-sublable.doc';
+// import { ApiCreateSublable } from './docs/create-sublable.doc';
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -57,38 +57,38 @@ export class LabelsController {
     return this.labelsService.findAllLabels();
   }
 
-  @ApiCreateSublable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Post(':id/sublabels')
-  createCharacteristic(
-    @Param('id') id: string,
-    @Body() body: CreateSublabelDto,
-  ) {
-    return this.labelsService.createSublabels(id, body);
-  }
+  // @ApiCreateSublable()
+  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  // @Post(':id/sublabels')
+  // createCharacteristic(
+  //   @Param('id') id: string,
+  //   @Body() body: CreateSublabelDto,
+  // ) {
+  //   return this.labelsService.createSublabels(id, body);
+  // }
 
-  @ApiUpdateSublable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Put(':labelId/:sublabelId')
-  updateCharacteristic(
-    @Param('labelId') labelId: string,
-    @Param('sublabelId') sublabelId: string,
-    @Body() body: CreateSublabelDto,
-  ) {
-    return this.labelsService.updateSublabels(labelId, sublabelId, body);
-  }
+  // @ApiUpdateSublable()
+  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  // @Put(':labelId/:sublabelId')
+  // updateCharacteristic(
+  //   @Param('labelId') labelId: string,
+  //   @Param('sublabelId') sublabelId: string,
+  //   @Body() body: CreateSublabelDto,
+  // ) {
+  //   return this.labelsService.updateSublabels(labelId, sublabelId, body);
+  // }
 
-  @ApiDeleteSublable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Delete(':id/sublabels')
-  deleteManyCharacteristic(
-    @Param('id') propertyId: string,
-    @Body() body: DeleteSublabelsDto,
-  ) {
-    console.log({ propertyId, body });
-    return this.labelsService.deleteManyCharacteristic(
-      propertyId,
-      body.sublabelIDs,
-    );
-  }
+  // @ApiDeleteSublable()
+  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  // @Delete(':id/sublabels')
+  // deleteManyCharacteristic(
+  //   @Param('id') propertyId: string,
+  //   @Body() body: DeleteSublabelsDto,
+  // ) {
+  //   console.log({ propertyId, body });
+  //   return this.labelsService.deleteManyCharacteristic(
+  //     propertyId,
+  //     body.sublabelIDs,
+  //   );
+  // }
 }

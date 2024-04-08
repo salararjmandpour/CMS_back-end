@@ -22,10 +22,10 @@ export class Characteristic {
   })
   description: string;
 
-  @Prop({
-    type: String,
-  })
-  color: string;
+  // @Prop({
+  //   type: String,
+  // })
+  // color: string;
 
   @Prop({
     type: String,

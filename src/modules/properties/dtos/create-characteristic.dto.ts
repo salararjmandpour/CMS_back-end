@@ -17,10 +17,10 @@ export class CreateCharacteristicDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  color: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // color: string;
 
   @ApiProperty()
   @IsString()

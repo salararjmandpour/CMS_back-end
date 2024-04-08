@@ -6,6 +6,8 @@ import {
   Controller,
   UploadedFiles,
   Get,
+  Delete,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
@@ -24,6 +26,9 @@ import { CreateProductDecorator } from './decorators/create-product.decorator';
 import { joiValidation } from 'src/core/utils/joi-validator.util';
 import { updateProductWithDeoValidator } from './validators/update-product.validator';
 import { SearchByTitleDoc } from './docs/search-product-by-title.doc';
+import { AuthGuard } from 'src/core/guards/auth.guard';
+import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
+import { DeleteProductDto } from './dtos/delete-product.dto';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -62,6 +67,13 @@ export class ProductsController {
     @Query('search') search?: string,
   ) {
     return this.productService.getProductList(+page, +limit, search);
+  }
+
+
+  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
+  @Delete()
+  deleteMany(@Body() body: DeleteProductDto) {
+    return this.productService.deleteMany(body.productIDs);
   }
 
   // update product by product id

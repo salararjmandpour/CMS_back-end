@@ -36,6 +36,21 @@ export class ProductsRepository {
       .exec();
   }
 
+
+  findAll(
+    filter?: FilterQuery<ProductDocument>,
+    projection?: ProjectionFields<ProductDocument>,
+    options?: QueryOptions<ProductDocument>,
+  ) {
+    return this.productModel.find(filter, projection, options).populate([
+      { path: 'categories', select: '_id title slug' },
+      {
+        path: 'writer',
+        select: '_id avatar mobile email role firstName lastName username',
+      },
+    ]);
+  }
+
   findById(id: string, projection?: ProjectionFields<ProductDocument>) {
     return this.productModel
       .findById(id, projection)
@@ -63,6 +78,10 @@ export class ProductsRepository {
         },
       ])
       .exec();
+  }
+
+  deleteManyByIds(productId: string[]): Promise<any> {
+    return this.productModel.deleteMany({ _id: { $in: productId } });
   }
 
   getProductList(

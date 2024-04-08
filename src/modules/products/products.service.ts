@@ -150,6 +150,27 @@ export class ProductsService {
     };
   }
 
+  async deleteMany(productIds: string[]): Promise<ResponseFormat<any>> {
+    // check exist posts
+    const post = await this.productRepository.findAll({ _id: productIds });
+    if (productIds.length !== post.length) {
+      throw new NotFoundException(ResponseMessages.NOT_FOUND_POSTS);
+    }
+
+    // delete posts from database
+    const manyIds = await this.productRepository.deleteManyByIds(productIds);
+    if (manyIds.deletedCount !== productIds.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_POSTS,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: ResponseMessages.POSTS_DELETED_SUCCESS,
+    };
+  }
+
   async update(
     productId: string,
     body: UpdateProductWithSeoDto,
