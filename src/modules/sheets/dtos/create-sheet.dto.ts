@@ -12,34 +12,47 @@ import { StatusEnum } from '../schema/sheet.schema';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
 export class CreateSheetDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'string',
+  })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: {
+      key: 'value',
+    },
+  })
+  @IsOptional()
   @IsObject({
     each: true,
   })
-  @IsNotEmpty()
   description: object[];
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'published',
+  })
   @IsString()
   @IsEnum({
     draft: StatusEnum.DRAFT,
     published: StatusEnum.PUBLISHED,
   })
+  @IsNotEmpty()
   status: StatusEnum;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  image: string;
-
-  @ApiProperty()
+  @ApiProperty({
+    example: 'string',
+  })
   @IsString()
   @IsOptional()
+  image: string;
+
+  @ApiProperty({
+    example:'string'
+  })
+  @IsString()
+  @IsNotEmpty()
   slug: string;
 }
 
