@@ -50,6 +50,12 @@ export const ApiCreateProduct = () => {
                   _id: '64df800ebe2064f42a82d6bf',
                 },
               ],
+              labels:[
+                {
+                  _id:'6620ae4eddae531bc4b2f3cd',
+                  value:'برچسب تستی اول'
+                }
+              ],
               _id: '64df800ebe2064f42a82d6bd',
               createdAt: '2023-08-18T14:28:30.525Z',
               updatedAt: '2023-08-18T14:28:30.525Z',

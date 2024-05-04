@@ -8,6 +8,7 @@ import {
 import { createSizeValidator } from './size.validator';
 import { SpecificationsValidator } from './specifications.validator';
 import { createSeoValidator } from 'src/modules/seo/validators/create-seo-validator';
+import { LabelsValidator } from './labels.validator';
 
 export const createProductValidator = Joi.object({
   title: Joi.string().required(),
@@ -56,6 +57,7 @@ export const createProductValidator = Joi.object({
 
   // specifications product
   specifications: Joi.array().items(SpecificationsValidator),
+  labels: Joi.array().items(LabelsValidator),
 
   //transportation
   size: createSizeValidator,
