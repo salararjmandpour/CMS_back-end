@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ISize, SizeSchema } from './size.schema';
 import { Category } from 'src/modules/categories/schemas/category.schema';
 import { ISpecifications, SpecificationsSchema } from './specification.schema';
+import { ILabels, LabelsSchema } from './labels.schema';
 
 export enum ProductUnitEnum {
   NUMBER = 'number',
@@ -234,6 +235,15 @@ export class Product {
     default: [],
   })
   specifications: ISpecifications[];
+
+
+    // *** labels product ***
+    @Prop({
+      type: [{ type: LabelsSchema }],
+      default: [],
+    })
+    labels: ILabels[];
+
 
   // *** Transportation ***
   @Prop({

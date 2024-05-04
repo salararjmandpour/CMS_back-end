@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 import { SMS, productSMS } from '../schema/product.schema';
 import { ISpecifications } from '../schema/specification.schema';
+import { ILabels } from '../schema/labels.schema';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -152,6 +153,19 @@ export class CreateProductDto {
 
   @ApiProperty({
     type: Object,
+    description: 'The labels for product. Should be ObjectId',
+    required: true,
+    default: [
+      {
+        value: { _id: '6620ae4eddae531bc4b2f3cd', title: ' برچسب تستی اول' },
+      },
+    ],
+  })
+  // @IsOptional()
+  labels: ILabels[];
+
+  @ApiProperty({
+    type: Object,
     description: 'The count for product',
     required: true,
     default: {
@@ -210,4 +224,10 @@ export class CreateProductWithCeoDto {
   @ValidateNested()
   @Type(() => CreateSeoDto)
   seo: CreateSeoDto;
+}
+function IsOptional(): (
+  target: CreateProductDto,
+  propertyKey: 'labels',
+) => void {
+  throw new Error('Function not implemented.');
 }
