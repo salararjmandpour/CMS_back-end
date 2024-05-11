@@ -151,13 +151,14 @@ export class ProductsService {
   }
 
   async deleteMany(productIds: string[]): Promise<ResponseFormat<any>> {
-    // check exist posts
-    const post = await this.productRepository.findAll({ _id: productIds });
-    if (productIds.length !== post.length) {
+    
+    // check exist product
+    const product = await this.productRepository.findManyByIds(productIds);
+    if (productIds.length !== product.length) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_POSTS);
     }
-
-    // delete posts from database
+    
+    // delete product from database
     const manyIds = await this.productRepository.deleteManyByIds(productIds);
     if (manyIds.deletedCount !== productIds.length) {
       throw new InternalServerErrorException(
