@@ -73,6 +73,7 @@ export class ProductsController {
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Delete()
   deleteMany(@Body() body: DeleteProductDto) {
+    
     return this.productService.deleteMany(body.productIDs);
   }
 

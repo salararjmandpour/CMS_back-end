@@ -36,7 +36,6 @@ export class ProductsRepository {
       .exec();
   }
 
-
   findAll(
     filter?: FilterQuery<ProductDocument>,
     projection?: ProjectionFields<ProductDocument>,
@@ -82,6 +81,10 @@ export class ProductsRepository {
 
   deleteManyByIds(productId: string[]): Promise<any> {
     return this.productModel.deleteMany({ _id: { $in: productId } });
+  }
+
+  findManyByIds(ids: string[]) {
+    return this.productModel.find({ _id: { $in: ids } });
   }
 
   getProductList(
