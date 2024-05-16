@@ -21,21 +21,21 @@ export class Label {
   slug: string;
 
   @Prop({
-    type: String,
-    default: '',
+    type: Array,
+    required: true,
   })
-  description: string;
+  description: object;
 
   @Prop({
     type: String,
   })
   image: string;
 
-  @Prop({
-    type: [{ type: SublabelSchema }],
-    default: [],
-  })
-  sublabls: SublabelDocument[];
+  // @Prop({
+  //   type: [{ type: SublabelSchema }],
+  //   default: [],
+  // })
+  // sublabls: SublabelDocument[];
 }
 
 export type LabelDocument = Label & Document;

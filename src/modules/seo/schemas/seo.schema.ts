@@ -16,10 +16,10 @@ export class SEO {
   slug: string;
 
   @Prop({
-    type: String,
-    default: '',
+    type: Object,
+    default: {},
   })
-  description: string;
+  description: Object;
 
   @Prop({
     type: Types.ObjectId,
@@ -40,6 +40,10 @@ export class SEO {
     type: Types.ObjectId,
   })
   post: string;
+  @Prop({
+    type: Types.ObjectId,
+  })
+  label: string;
 }
 
 export type SeoDocument = SEO & Document;

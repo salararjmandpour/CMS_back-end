@@ -25,7 +25,7 @@ export const ApiUpdateCategory = () => {
               _id: '650df968ec94570f8ec35d55',
               title: 'تجهیرات پزشکی',
               slug: 'medical-equipment-test',
-              description: 'متن توضیحات تست',
+              description: {"key": "value"},
               createdAt: '2023-09-22T20:30:32.689Z',
               updatedAt: '2023-09-30T09:12:41.695Z',
               parent: '650dfa8625ebf8e25d178892',
@@ -33,7 +33,7 @@ export const ApiUpdateCategory = () => {
             seo: {
               title: ['test'],
               slug: 'test-category-seo-slug',
-              description: 'متن توضیحات تست',
+              description: {"key": "value"},
               category: '650df968ec94570f8ec35d55',
               _id: '6517e689b79cdd3e9f106cda',
               createdAt: '2023-09-30T09:12:41.719Z',

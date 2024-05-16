@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 
 export class UpdateLabelDto {
   @ApiProperty()
@@ -15,10 +17,24 @@ export class UpdateLabelDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  description: string;
+  description: object;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
   image: string;
+}
+
+
+
+export class UpdateLabelWithSeoDto {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => UpdateLabelDto)
+  label: UpdateLabelDto;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => CreateSeoDto)
+  seo: CreateSeoDto;
 }

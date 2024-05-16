@@ -24,12 +24,14 @@ export class CreatePostDto {
   @IsNotEmpty()
   slug: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Object,
+  })
   @IsObject({
     each: true,
   })
   @IsNotEmpty()
-  description: object[];
+  description: object;
 
   @ApiProperty()
   @IsString()

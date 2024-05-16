@@ -20,10 +20,10 @@ export class CreateCategoryDto {
   slug: string;
 
   @ApiProperty({
-    type: String,
-    default: '',
+    type: Object,
+    default: {"key": "value"},
   })
-  description: string;
+  description: Object;
 
   @ApiProperty({
     type: String,

@@ -1,16 +1,15 @@
 import { StatusEnum } from 'src/modules/posts/schema/post.schema';
 
-export interface CraetePostInput {
+export interface CreatePostInput {
   title: string;
-  description: object[];
+  description: object;
   writer: string;
   status: StatusEnum;
   image: string;
   categories: string[];
 }
-
 export interface UpdatePostInput
-  extends Partial<Omit<CraetePostInput, 'writer'>> {
+  extends Partial<Omit<CreatePostInput, 'writer'>> {
   idUrl?: string;
   slugUrl?: string;
 }

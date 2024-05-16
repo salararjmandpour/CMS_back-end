@@ -61,6 +61,7 @@ export class Sheet {
 
   @Prop({
     type: String,
+    unique: true,
   })
   slug: string;
 }

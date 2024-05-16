@@ -25,7 +25,9 @@ export const ApiCreateCategory = () => {
             category: {
               title: 'تجهیرات پزشکی',
               slug: 'medical-equipment',
-              description: 'category',
+              description: {
+                "key": "value"
+              },
               _id: '6517df1c9f752bd69fcfe15f',
               createdAt: '2023-09-30T08:41:00.983Z',
               updatedAt: '2023-09-30T08:41:00.983Z',
@@ -33,7 +35,7 @@ export const ApiCreateCategory = () => {
             seo: {
               title: ['test'],
               slug: 'this-is-test-message',
-              description: 'this is test message for description',
+              description: { "key": "value" },
               category: '6517df1c9f752bd69fcfe15f',
               _id: '6517df1c9f752bd69fcfe161',
               createdAt: '2023-09-30T08:41:00.993Z',

@@ -6,22 +6,27 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { LabelsRepository } from './labels.repository';
-import { CreateLabelDto } from './dtos/create-label.dto';
+import { CreateLabeWithSeoDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 import { UpdateSublabelDto } from './dtos/update-sublabel.dto';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { SeoRepository } from '../seo/seo.repository';
 
 @Injectable()
 export class LabelsService {
-  constructor(private labelsRepository: LabelsRepository) {}
+  constructor(
+    private seoRepository: SeoRepository,
+    private labelsRepository: LabelsRepository,
+  ) {}
 
-  async createLabel(body: CreateLabelDto) {
+  async createLabel(body: CreateLabeWithSeoDto): Promise<ResponseFormat<any>> {
+
     // prevented duplicated slug
     const duplicatedSlug = await this.labelsRepository.findOne({
-      slug: body.slug,
+      slug: body.label.slug,
     });
 
     if (duplicatedSlug) {
@@ -32,6 +37,12 @@ export class LabelsService {
     if (!createdLabel) {
       throw new InternalServerErrorException('FAILED_CREATE_LABEL');
     }
+
+    // create seo
+    await this.seoRepository.create({
+      ...body.seo,
+      label: createdLabel._id.toString(),
+    });
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -128,47 +139,47 @@ export class LabelsService {
     };
   }
 
-  public async updateSublabels(
-    lableId: string,
-    sublabelsId: string,
-    body: UpdateSublabelDto,
-  ): Promise<ResponseFormat<any>> {
-    const [existProperty, existCharacteristic, duplicatedCharacteristicSlug] =
-      await Promise.all([
-        this.labelsRepository.findOne({ _id: lableId }),
-        this.labelsRepository.findSublabelById(sublabelsId),
-        this.labelsRepository.findSublabelBySlug(lableId, body.slug),
-      ]);
-    if (!existProperty) {
-      throw new NotFoundException('NOT_FOUND_LABEL');
-    }
-    if (!existCharacteristic) {
-      throw new NotFoundException('NOT_FOUND_SUBLABELS');
-    }
+  // public async updateSublabels(
+  //   lableId: string,
+  //   sublabelsId: string,
+  //   body: UpdateSublabelDto,
+  // ): Promise<ResponseFormat<any>> {
+  //   const [existProperty, existCharacteristic, duplicatedCharacteristicSlug] =
+  //     await Promise.all([
+  //       this.labelsRepository.findOne({ _id: lableId }),
+  //       this.labelsRepository.findSublabelById(sublabelsId),
+  //       this.labelsRepository.findSublabelBySlug(lableId, body.slug),
+  //     ]);
+  //   if (!existProperty) {
+  //     throw new NotFoundException('NOT_FOUND_LABEL');
+  //   }
+  //   if (!existCharacteristic) {
+  //     throw new NotFoundException('NOT_FOUND_SUBLABELS');
+  //   }
 
-    const isDuplicatedCharacteristicSlug =
-      duplicatedCharacteristicSlug?.sublabls?.some((item) => {
-        return item._id.toString() !== sublabelsId;
-      });
+  //   const isDuplicatedCharacteristicSlug =
+  //     duplicatedCharacteristicSlug?.sublabls?.some((item) => {
+  //       return item._id.toString() !== sublabelsId;
+  //     });
 
-    if (duplicatedCharacteristicSlug && isDuplicatedCharacteristicSlug) {
-      throw new ConflictException(ResponseMessages.SUBLABEL_SLUG_ALREADY_EXIST);
-    }
+  //   if (duplicatedCharacteristicSlug && isDuplicatedCharacteristicSlug) {
+  //     throw new ConflictException(ResponseMessages.SUBLABEL_SLUG_ALREADY_EXIST);
+  //   }
 
-    const updatedResult = await this.labelsRepository.updateSublabel(
-      lableId,
-      sublabelsId,
-      body,
-    );
-    if (updatedResult.modifiedCount !== 1) {
-      throw new InternalServerErrorException('FAILED_UPDATE_SUBLABELS');
-    }
+  //   const updatedResult = await this.labelsRepository.updateSublabel(
+  //     lableId,
+  //     sublabelsId,
+  //     body,
+  //   );
+  //   if (updatedResult.modifiedCount !== 1) {
+  //     throw new InternalServerErrorException('FAILED_UPDATE_SUBLABELS');
+  //   }
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'SUBLABELS_UPDATED_SUCCESS',
-    };
-  }
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: 'SUBLABELS_UPDATED_SUCCESS',
+  //   };
+  // }
 
   public async deleteManyCharacteristic(
     propertyId: string,

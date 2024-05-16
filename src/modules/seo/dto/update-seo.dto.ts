@@ -14,8 +14,8 @@ export class UpdateSeoDto {
   slug: string;
 
   @ApiProperty({
-    type: String,
-    default: '',
+    type: Object,
+    default: {},
   })
-  description: string;
+  description: object;
 }

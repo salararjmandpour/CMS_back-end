@@ -20,14 +20,15 @@ export class Category {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 
   @Prop({
-    type: String,
-    default: '',
+    type: Object,
+    default: {},
   })
-  description: string;
+  description: Object;
 
   @Prop({
     type: Types.ObjectId,

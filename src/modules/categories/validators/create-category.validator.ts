@@ -8,7 +8,7 @@ import { createSeoValidator } from 'src/modules/seo/validators/create-seo-valida
 
 export const categoryValidator = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string().required(),
+  description: Joi.object().required(),
   slug: Joi.string().required(),
   image: Joi.string(),
   type: Joi.string().pattern(categoryTypePattern).required(),
