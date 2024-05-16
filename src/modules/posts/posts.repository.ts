@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery, QueryOptions, ProjectionType } from 'mongoose';
 import { Post } from './schema/post.schema';
-import { CraetePostInput, UpdatePostInput } from './interfaces/post.interface';
+import { CreatePostInput, UpdatePostInput } from './interfaces/post.interface';
 
 @Injectable()
 export class PostsRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
-  create(data: CraetePostInput) {
+  create(data: CreatePostInput) {
     return this.postModel.create({ ...data, view: 0 });
   }
 

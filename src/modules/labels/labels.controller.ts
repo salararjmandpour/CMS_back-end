@@ -12,7 +12,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LabelsService } from './labels.service';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { CreateLabelDto } from './dtos/create-label.dto';
+import { CreateLabeWithSeoDto, CreateLabelDto } from './dtos/create-label.dto';
 import { UpdateLabelDto } from './dtos/update-label.dto';
 import { DeleteLabelsDto } from './dtos/delete-label.dto';
 import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
@@ -34,7 +34,7 @@ export class LabelsController {
   @ApiCreateLable()
   @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
   @Post()
-  createLabel(@Body() body: CreateLabelDto) {
+  createLabel(@Body() body: CreateLabeWithSeoDto) {
     return this.labelsService.createLabel(body);
   }
 

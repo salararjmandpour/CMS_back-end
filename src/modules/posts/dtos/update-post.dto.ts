@@ -28,7 +28,7 @@ export class UpdatePostDto {
     each: true,
   })
   @IsOptional()
-  description: object[];
+  description: object;
 
   @ApiProperty()
   @IsString()

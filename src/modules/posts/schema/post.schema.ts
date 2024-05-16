@@ -29,7 +29,7 @@ export class Post {
     type: Array,
     required: true,
   })
-  description: true;
+  description: object;
 
   @Prop({
     type: Types.ObjectId,

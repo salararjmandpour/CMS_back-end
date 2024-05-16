@@ -34,6 +34,11 @@ export class SeoRepository {
     return this.seoModel.findOne({ post: postId });
   }
 
+  findByLabel(labelId: string) {
+    return this.seoModel.findOne({ label: labelId });
+  }
+
+
   findBySlug(slug: string) {
     return this.seoModel.findOne({ slug });
   }

@@ -9,7 +9,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Label, LabelDocument } from './schema/label.schema';
-import { CreateLabelDto } from './dtos/create-label.dto';
+import { CreateLabeWithSeoDto, CreateLabelDto } from './dtos/create-label.dto';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 
 @Injectable()
@@ -25,8 +25,8 @@ export class LabelsRepository {
     return this.labelModel.findOne(filter, projection);
   }
 
-  createLabel(data: CreateLabelDto) {
-    return this.labelModel.create(data);
+  createLabel(data: CreateLabeWithSeoDto) {
+    return this.labelModel.create(data.label);
   }
 
   updateOne(
