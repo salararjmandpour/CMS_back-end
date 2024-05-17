@@ -86,7 +86,7 @@ export class LabelsRepository {
     return this.labelModel.deleteMany({ _id: { $in: ids } }, options);
   }
 
-  findAll(
+  find(
     filter?: FilterQuery<LabelDocument>,
     projection?: ProjectionType<LabelDocument>,
     options?: QueryOptions<LabelDocument>,
