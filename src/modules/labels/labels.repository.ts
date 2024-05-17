@@ -8,7 +8,7 @@ import {
 } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Label, LabelDocument } from './schema/label.schema';
+import { Label, LabelDocument, TypeEnum } from './schema/label.schema';
 import { CreateLabeWithSeoDto, CreateLabelDto } from './dtos/create-label.dto';
 import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 
@@ -24,6 +24,45 @@ export class LabelsRepository {
   ) {
     return this.labelModel.findOne(filter, projection);
   }
+
+  findByProductWithoutLabel() {
+    return this.labelModel.findOne({
+      // slug: 'without-label',
+      type: TypeEnum.PRODUCT,
+    });
+  }
+
+  findByPostWithoutLabel() {
+    return this.labelModel.findOne({
+      // slug: 'without-label',
+      type: TypeEnum.POST,
+    });
+  }
+
+  createProductWithoutLabel() {
+    return this.labelModel.create({
+      slug: 'without-category',
+      type: TypeEnum.PRODUCT,
+      name: 'بدون دسته بندی',
+    });
+  }
+
+  createPostWithoutLabel() {
+    return this.labelModel.create({
+      slug: 'without-category',
+      type: TypeEnum.POST,
+      name: 'بدون دسته بندی',
+    });
+  }
+
+  // findAll(filter?: FilterQuery<LabelDocument>) {
+  //   return this.labelModel.find(filter).populate([
+  //     {
+  //       path: 'supplier',
+  //       select: '_id avatar mobile email role firstName lastName username',
+  //     },
+  //   ]);
+  // }
 
   createLabel(data: CreateLabeWithSeoDto) {
     return this.labelModel.create(data.label);
@@ -47,7 +86,7 @@ export class LabelsRepository {
     return this.labelModel.deleteMany({ _id: { $in: ids } }, options);
   }
 
-  find(
+  findAll(
     filter?: FilterQuery<LabelDocument>,
     projection?: ProjectionType<LabelDocument>,
     options?: QueryOptions<LabelDocument>,

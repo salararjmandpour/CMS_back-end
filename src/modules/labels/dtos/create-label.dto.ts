@@ -1,7 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+
+
+export enum TypeEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+}
 
 export class CreateLabelDto {
   @ApiProperty()
@@ -23,6 +35,10 @@ export class CreateLabelDto {
 
   @ApiProperty()
   @IsString()
+  type: TypeEnum;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   image: string;
 }
@@ -37,5 +53,4 @@ export class CreateLabeWithSeoDto {
   @ValidateNested()
   @Type(() => CreateSeoDto)
   seo: CreateSeoDto;
-  slug: any;
 }

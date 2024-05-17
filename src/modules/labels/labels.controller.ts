@@ -8,6 +8,7 @@ import {
   Controller,
   Get,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LabelsService } from './labels.service';
@@ -21,9 +22,17 @@ import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
 import { ApiCreateLable } from './docs/create-lable.doc';
 import { ApiUpdateLable } from './docs/update-lable.doc';
 import { ApiDeleteLable } from './docs/delete-lable.doc';
+import { ParseLabelType } from './pipes/parse.lable-type.pipe';
+import { GetLabelListDecorator } from './decorators/create-label.decorator';
 // import { ApiUpdateSublable } from './docs/update-sublable.doc';
 // import { ApiDeleteSublable } from './docs/delete-sublable.doc';
 // import { ApiCreateSublable } from './docs/create-sublable.doc';
+
+export enum TypeQueryEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+  ALL = 'all',
+}
 
 @ApiBearerAuth()
 @ApiTags('Labels')
@@ -52,9 +61,18 @@ export class LabelsController {
     return this.labelsService.deleteLabel(body);
   }
 
-  @Get()
-  getPropertiesList() {
-    return this.labelsService.findAllLabels();
+  // @Get()
+  // getPropertiesList() {
+  //   return this.labelsService.findAllLabels();
+  // }
+
+  // get category list
+  @GetLabelListDecorator()
+  getLableList(
+    @Query('search') serach: string,
+    @Query('type', ParseLabelType) type: TypeQueryEnum,
+  ) {
+    return this.labelsService.getLabelList(type, serach);
   }
 
   // @ApiCreateSublable()

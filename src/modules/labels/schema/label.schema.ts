@@ -2,6 +2,11 @@ import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SublabelDocument, SublabelSchema } from './sublabel.schema';
 
+export enum TypeEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+}
+
 @Schema({
   timestamps: true,
   versionKey: false,
@@ -25,6 +30,13 @@ export class Label {
     required: true,
   })
   description: object;
+
+  @Prop({
+    type: String,
+    enum: [TypeEnum.PRODUCT, TypeEnum.POST],
+    required: true,
+  })
+  type: TypeEnum;
 
   @Prop({
     type: String,

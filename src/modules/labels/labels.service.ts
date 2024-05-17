@@ -14,6 +14,14 @@ import { CreateSublabelDto } from './dtos/create-sublabel.dto';
 import { UpdateSublabelDto } from './dtos/update-sublabel.dto';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { SeoRepository } from '../seo/seo.repository';
+import { SeoDocument } from '../seo/schemas/seo.schema';
+import { LabelDocument } from './schema/label.schema';
+
+export enum TypeQueryEnum {
+  PRODUCT = 'product',
+  POST = 'post',
+  ALL = 'all',
+}
 
 @Injectable()
 export class LabelsService {
@@ -23,7 +31,6 @@ export class LabelsService {
   ) {}
 
   async createLabel(body: CreateLabeWithSeoDto): Promise<ResponseFormat<any>> {
-
     // prevented duplicated slug
     const duplicatedSlug = await this.labelsRepository.findOne({
       slug: body.label.slug,
@@ -97,13 +104,63 @@ export class LabelsService {
     };
   }
 
-  public async findAllLabels(): Promise<ResponseFormat<any>> {
-    const labels = await this.labelsRepository.find();
+  // public async findAllLabels(): Promise<ResponseFormat<any>> {
+  //   const labels = await this.labelsRepository.find();
+
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     data: {
+  //       labels,
+  //     },
+  //   };
+  // }
+
+  async getLabelList(
+    type: TypeQueryEnum,
+    search: string | undefined,
+  ): Promise<ResponseFormat<any>> {
+    const [seos, hasWithoutLabelProduct, hasWithoutLabelPost] =
+      await Promise.all([
+        this.seoRepository.findWithCategory(),
+        this.labelsRepository.findByProductWithoutLabel(),
+        this.labelsRepository.findByPostWithoutLabel(),
+      ]);
+
+    if (!seos) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_SEO_LIST,
+      );
+    }
+    if (!hasWithoutLabelProduct) {
+      await this.labelsRepository.createProductWithoutLabel();
+    }
+    if (!hasWithoutLabelPost) {
+      await this.labelsRepository.createPostWithoutLabel();
+    }
+
+    let query: any = {};
+    if (type === TypeQueryEnum.POST) query.type = TypeQueryEnum.POST;
+    if (type === TypeQueryEnum.PRODUCT) query.type = TypeQueryEnum.PRODUCT;
+    if (search) query.title = { $regex: search, $options: 'i' };
+
+    const labels = await this.labelsRepository.findAll(query);
+    if (!labels) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_GET_CATEGORY_LIST,
+      );
+    }
+
+    const labelList = labels.map((label: LabelDocument) => {
+      const seo = seos.find((seo: SeoDocument) => {
+        return seo?.label?.toString() === label._id.toString();
+      });
+      return { label, seo };
+    });
 
     return {
       statusCode: HttpStatus.OK,
       data: {
-        labels,
+        labels: labelList,
       },
     };
   }
