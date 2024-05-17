@@ -61,19 +61,18 @@ export class LabelsController {
     return this.labelsService.deleteLabel(body);
   }
 
-  // @Get()
-  // getPropertiesList() {
-  //   return this.labelsService.findAllLabels();
-  // }
-
-  // get category list
-  @GetLabelListDecorator()
-  getLableList(
-    @Query('search') serach: string,
-    @Query('type', ParseLabelType) type: TypeQueryEnum,
-  ) {
-    return this.labelsService.getLabelList(type, serach);
+  @Get()
+  getPropertiesList() {
+    return this.labelsService.findAllLabels();
   }
+
+  // @GetLabelListDecorator()
+  // getLableList(
+  //   // @Query('search') serach: string,
+  //   @Query('type', ParseLabelType) type: TypeQueryEnum,
+  // ) {
+  //   return this.labelsService.getLabelList(type);
+  // }
 
   // @ApiCreateSublable()
   // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
