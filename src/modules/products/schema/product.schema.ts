@@ -78,6 +78,7 @@ export class Product {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 
@@ -273,6 +274,7 @@ export class Product {
 
   @Prop({
     type: String,
+    unique: true,
   })
   slugUrl: string;
 

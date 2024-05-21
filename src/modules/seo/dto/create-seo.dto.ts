@@ -16,13 +16,11 @@ export class CreateSeoDto {
   slug: string;
 
   @ApiProperty({
-    type: Object,
+    type: String,
     default: '',
-    example:{
-      key: 'value'
-    }
+    example:'String'
   })
-  description: Object;
+  description: String;
 
   product?: string;
   category?: string;

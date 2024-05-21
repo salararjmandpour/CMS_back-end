@@ -22,6 +22,7 @@ export class Post {
   @Prop({
     type: String,
     required: true,
+    unique: true,
   })
   slug: string;
 
@@ -66,6 +67,7 @@ export class Post {
 
   @Prop({
     type: String,
+    unique: true,
   })
   slugUrl: string;
 

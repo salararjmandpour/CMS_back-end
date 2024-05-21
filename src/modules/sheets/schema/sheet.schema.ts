@@ -51,6 +51,7 @@ export class Sheet {
 
   @Prop({
     type: String,
+    unique: true,
   })
   slugUrl: string;
 
