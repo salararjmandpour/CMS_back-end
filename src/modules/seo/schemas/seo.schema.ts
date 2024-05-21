@@ -16,8 +16,8 @@ export class SEO {
   slug: string;
 
   @Prop({
-    type: Object,
-    default: {},
+    type: String,
+    default: 'String',
   })
   description: Object;
 

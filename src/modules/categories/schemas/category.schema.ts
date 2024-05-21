@@ -69,6 +69,8 @@ export class Category {
 
   @Prop({
     type: String,
+    unique: true,
+
   })
   slugUrl: string;
 
