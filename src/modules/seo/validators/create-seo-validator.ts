@@ -4,5 +4,5 @@ import * as Joi from 'joi';
 export const createSeoValidator = Joi.object({
   title: Joi.array().items(Joi.string().empty('').optional()),
   slug: Joi.string().empty(''),
-  description: Joi.object(),
+  description: Joi.string().empty(''),
 });
