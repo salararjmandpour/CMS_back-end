@@ -1,24 +1,33 @@
 import {
   ApiOperation,
-  ApiUnauthorizedResponse,
-  ApiInternalServerErrorResponse,
-  ApiConflictResponse,
   ApiOkResponse,
   ApiNotFoundResponse,
+  ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiUpdateSublable = () => {
+export const ApiUploadImage = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'update sublable',
+      summary: 'Upload a image for label',
     }),
     ApiOkResponse({
       schema: {
         example: {
           statusCode: HttpStatus.OK,
-          message: 'SUBLABELS_UPDATED_SUCCESS',
+          message: ResponseMessages.IMAGE_UPLOADED_SUCCESS,
+        },
+      },
+    }),
+    ApiBadRequestResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ResponseMessages.FILE_IS_REQUIRED,
+          error: 'Bad Request',
         },
       },
     }),
@@ -34,18 +43,9 @@ export const ApiUpdateSublable = () => {
     ApiNotFoundResponse({
       schema: {
         example: {
-          statusCode: 404,
-          message: ['NOT_FOUND_LABEL', 'NOT_FOUND_SUBLABELS'],
+          statusCode: HttpStatus.NOT_FOUND,
+          message: ResponseMessages.CATEGORY_NOT_FOUND,
           error: 'Not Found',
-        },
-      },
-    }),
-    ApiConflictResponse({
-      schema: {
-        example: {
-          statusCode: HttpStatus.CONFLICT,
-          message: 'SUBLABEL_SLUG_ALREADY_EXIST',
-          error: 'Conflict',
         },
       },
     }),
@@ -53,7 +53,7 @@ export const ApiUpdateSublable = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'FAILED_UPDATE_SUBLABELS',
+          message: ResponseMessages.FAILED_UPLOAD_IMAGE,
           error: 'Internal Server Error',
         },
       },

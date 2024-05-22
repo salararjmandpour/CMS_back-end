@@ -3,7 +3,7 @@ import { labelTypeQueryPattern } from 'src/core/constants/pattern.constant';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
 @Injectable()
-export class ParseLabelType implements PipeTransform {
+export class ParseLabelTypePipe implements PipeTransform {
   transform(value: any) {
     if (!labelTypeQueryPattern.test(value)) {
       throw new BadRequestException(

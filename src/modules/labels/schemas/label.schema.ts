@@ -1,6 +1,5 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SublabelDocument, SublabelSchema } from './sublabel.schema';
 
 export enum TypeEnum {
   PRODUCT = 'product',
@@ -26,10 +25,16 @@ export class Label {
   slug: string;
 
   @Prop({
-    type: Array,
-    required: true,
+    type: Object,
+    default: {},
   })
-  description: object;
+  description: Object;
+
+
+  @Prop({
+    type: String,
+  })
+  image: string;
 
   @Prop({
     type: String,
@@ -38,16 +43,29 @@ export class Label {
   })
   type: TypeEnum;
 
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+  })
+  supplier?: string;
+
+  @Prop({
+    type: Boolean,
+  })
+  isWthOutLabel?: boolean;
+
+  @Prop({
+    type: String,
+    unique: true,
+
+  })
+  slugUrl: string;
+
   @Prop({
     type: String,
   })
-  image: string;
-
-  // @Prop({
-  //   type: [{ type: SublabelSchema }],
-  //   default: [],
-  // })
-  // sublabls: SublabelDocument[];
+  idUrl: string;
 }
 
 export type LabelDocument = Label & Document;
