@@ -1,55 +1,56 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
-
-
-export enum TypeEnum {
-  PRODUCT = 'product',
-  POST = 'post',
-}
+import { TypeEnum } from '../schemas/label.schema';
 
 export class CreateLabelDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: 'تجهیرات پزشکی',
+  })
   name: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: 'medical-equipment',
+  })
   slug: string;
 
-  @ApiProperty()
-  @IsObject({
-    each: true,
+  @ApiProperty({
+    type: Object,
+    default: {"key": "value"},
   })
-  @IsOptional()
-  description: object;
+  description: Object;
+
+  supplier?: string;
+
 
   @ApiProperty()
-  @IsString()
+  image: string;
+
+  @ApiProperty()
   type: TypeEnum;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  image: string;
+  idUrl?: string;
+  slugUrl?: string;
 }
 
-export class CreateLabeWithSeoDto {
-  @ApiProperty()
+export class CreateLabelWithSeoDto {
+  @ApiProperty({
+    type: CreateLabelDto,
+    default: CreateLabelDto,
+  })
   @ValidateNested()
   @Type(() => CreateLabelDto)
   label: CreateLabelDto;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: CreateSeoDto,
+    default: CreateSeoDto,
+  })
   @ValidateNested()
   @Type(() => CreateSeoDto)
   seo: CreateSeoDto;

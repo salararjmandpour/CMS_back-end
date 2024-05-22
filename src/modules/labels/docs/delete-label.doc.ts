@@ -1,23 +1,34 @@
 import {
   ApiOperation,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
-  ApiConflictResponse,
-  ApiOkResponse,
 } from '@nestjs/swagger';
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 
-export const ApiUpdateLable = () => {
+export const ApiDeleteLabel = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'update lable',
+      summary: 'delete many labels',
+      description: 'delete many labels by IDs',
     }),
     ApiOkResponse({
       schema: {
         example: {
           statusCode: HttpStatus.OK,
-          message: 'LABEL_UPDATED_SUCCESS',
+          message: ResponseMessages.LABELS_DELETED,
+        },
+      },
+    }),
+    ApiBadRequestResponse({
+      schema: {
+        example: {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ResponseMessages.BAD_REQUEST,
+          error: 'Bad Request',
         },
       },
     }),
@@ -30,12 +41,12 @@ export const ApiUpdateLable = () => {
         },
       },
     }),
-    ApiConflictResponse({
+    ApiNotFoundResponse({
       schema: {
         example: {
-          statusCode: HttpStatus.CONFLICT,
-          message: 'LABEL_SLUG_ALREADY_EXIST',
-          error: 'Conflict',
+          statusCode: HttpStatus.NOT_FOUND,
+          message: ResponseMessages.LABELS_NOT_FOUND,
+          error: 'Not Found',
         },
       },
     }),
@@ -43,7 +54,7 @@ export const ApiUpdateLable = () => {
       schema: {
         example: {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'FAILED_UPDATE_LABEL',
+          message: ResponseMessages.FAILED_DELETE_LABELS,
           error: 'Internal Server Error',
         },
       },

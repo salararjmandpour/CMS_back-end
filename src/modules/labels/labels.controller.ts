@@ -1,32 +1,31 @@
 import {
-  Post,
+  Req,
   Body,
   Param,
-  Patch,
-  Delete,
-  UseGuards,
-  Controller,
-  Get,
-  Put,
   Query,
+  Controller,
+  UploadedFile,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { LabelsService } from './labels.service';
-import { AuthGuard } from 'src/core/guards/auth.guard';
-import { CreateLabeWithSeoDto, CreateLabelDto } from './dtos/create-label.dto';
-import { UpdateLabelDto } from './dtos/update-label.dto';
-import { DeleteLabelsDto } from './dtos/delete-label.dto';
-import { RequiredPublicSettingsGuard } from 'src/core/guards/public-setting.guard';
-import { CreateSublabelDto } from './dtos/create-sublabel.dto';
-import { DeleteSublabelsDto } from './dtos/delete-labels.dto';
-import { ApiCreateLable } from './docs/create-lable.doc';
-import { ApiUpdateLable } from './docs/update-lable.doc';
-import { ApiDeleteLable } from './docs/delete-lable.doc';
-import { ParseLabelType } from './pipes/parse.lable-type.pipe';
-import { GetLabelListDecorator } from './decorators/create-label.decorator';
-// import { ApiUpdateSublable } from './docs/update-sublable.doc';
-// import { ApiDeleteSublable } from './docs/delete-sublable.doc';
-// import { ApiCreateSublable } from './docs/create-sublable.doc';
+
+import { UpdateLabelWithDto } from './dtos/update-label.dto';
+import { CreateLabelWithSeoDto } from './dtos/create-label.dto';
+
+import { UploadImageDecorator } from './decorators/upload-image.decorator';
+import { CreateLabelDecorator } from './decorators/create-label.decorator';
+import { UpdateLabelDecorator } from './decorators/update-label.decorator';
+import { DeleteLabelDecorator } from './decorators/delete-label.decorator';
+import { GetLabelListDecorator } from './decorators/get-labels-list.decorator';
+
+import { joiValidation } from 'src/core/utils/joi-validator.util';
+import { GetUser } from 'src/core/decorators/get-user-param.decorator';
+import { ParseObjectIdPipe } from 'src/core/pipes/parse-object-id.pipe';
+import { LabelDeleteManyDto } from './dtos/delete-many-label.dto';
+import { updateLabelWithSeoValidator } from './validators/update-label.validator';
+import { ParseLabelTypePipe } from './pipes/parse-label-type.pipe';
 
 export enum TypeQueryEnum {
   PRODUCT = 'product',
@@ -40,72 +39,44 @@ export enum TypeQueryEnum {
 export class LabelsController {
   constructor(private labelsService: LabelsService) {}
 
-  @ApiCreateLable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Post()
-  createLabel(@Body() body: CreateLabeWithSeoDto) {
-    return this.labelsService.createLabel(body);
+  // create label
+  @CreateLabelDecorator()
+  create(@Body() body: CreateLabelWithSeoDto, @GetUser('_id') _id: string) {
+    return this.labelsService.create(_id, body);
   }
 
-  @ApiUpdateLable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Patch(':id')
-  updateLabel(@Param('id') id: string, @Body() body: UpdateLabelDto) {
-    return this.labelsService.updateLabel(id, body);
+  @UploadImageDecorator()
+  uploadImage(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+    @Query('label', ParseObjectIdPipe) label: string,
+  ) {
+    const userId = req.user?._id;
+    return this.labelsService.uploadImage(userId, label, file);
   }
 
-  @ApiDeleteLable()
-  @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  @Delete()
-  deleteLabels(@Body() body: DeleteLabelsDto) {
-    return this.labelsService.deleteLabel(body);
+  // update label by id
+  @UpdateLabelDecorator()
+  update(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: UpdateLabelWithDto,
+  ) {
+    joiValidation(updateLabelWithSeoValidator, body);
+    return this.labelsService.update(id, body);
   }
 
-  @Get()
-  getPropertiesList() {
-    return this.labelsService.findAllLabels();
+  // delete many label by IDs
+  @DeleteLabelDecorator()
+  deleteMany(@Body() body: LabelDeleteManyDto) {
+    return this.labelsService.deleteManyByIds(body.categoriesIds);
   }
 
-  // @GetLabelListDecorator()
-  // getLableList(
-  //   // @Query('search') serach: string,
-  //   @Query('type', ParseLabelType) type: TypeQueryEnum,
-  // ) {
-  //   return this.labelsService.getLabelList(type);
-  // }
-
-  // @ApiCreateSublable()
-  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  // @Post(':id/sublabels')
-  // createCharacteristic(
-  //   @Param('id') id: string,
-  //   @Body() body: CreateSublabelDto,
-  // ) {
-  //   return this.labelsService.createSublabels(id, body);
-  // }
-
-  // @ApiUpdateSublable()
-  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  // @Put(':labelId/:sublabelId')
-  // updateCharacteristic(
-  //   @Param('labelId') labelId: string,
-  //   @Param('sublabelId') sublabelId: string,
-  //   @Body() body: CreateSublabelDto,
-  // ) {
-  //   return this.labelsService.updateSublabels(labelId, sublabelId, body);
-  // }
-
-  // @ApiDeleteSublable()
-  // @UseGuards(AuthGuard, RequiredPublicSettingsGuard)
-  // @Delete(':id/sublabels')
-  // deleteManyCharacteristic(
-  //   @Param('id') propertyId: string,
-  //   @Body() body: DeleteSublabelsDto,
-  // ) {
-  //   console.log({ propertyId, body });
-  //   return this.labelsService.deleteManyCharacteristic(
-  //     propertyId,
-  //     body.sublabelIDs,
-  //   );
-  // }
+  // get category list
+  @GetLabelListDecorator()
+  getCategoryList(
+    @Query('search') serach: string,
+    @Query('type', ParseLabelTypePipe) type: TypeQueryEnum,
+  ) {
+    return this.labelsService.getLabelList(type, serach);
+  }
 }

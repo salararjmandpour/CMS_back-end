@@ -1,40 +1,48 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
+import { UpdateSeoDto } from 'src/modules/seo/dto/update-seo.dto';
 
 export class UpdateLabelDto {
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    example: 'تجهیرات پزشکی',
+  })
   name: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    example: 'medical-equipment',
+  })
   slug: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  description: object;
+  @ApiProperty({
+    type: String,
+    default: '',
+  })
+  description: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
   image: string;
+
 }
 
-
-
-export class UpdateLabelWithSeoDto {
-  @ApiProperty()
+export class UpdateLabelWithDto {
+  @ApiProperty({
+    type: UpdateLabelDto,
+    default: UpdateLabelDto,
+  })
   @ValidateNested()
   @Type(() => UpdateLabelDto)
   label: UpdateLabelDto;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: UpdateSeoDto,
+    default: UpdateSeoDto,
+  })
   @ValidateNested()
-  @Type(() => CreateSeoDto)
-  seo: CreateSeoDto;
+  @Type(() => UpdateSeoDto)
+  seo: UpdateSeoDto;
 }

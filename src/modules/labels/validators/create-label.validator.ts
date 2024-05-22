@@ -12,6 +12,7 @@ export const labelValidator = Joi.object({
   slug: Joi.string().required(),
   image: Joi.string(),
   type: Joi.string().pattern(labelTypePattern).required(),
+
 });
 
 export const createLabelValidator = Joi.object({
