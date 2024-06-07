@@ -87,23 +87,23 @@ export class ProductsRepository {
     return this.productModel.find({ _id: { $in: ids } });
   }
 
-  getProductList(
+ async getProductList(
     page: number = 1,
     limit: number = 10,
     search?: string | undefined,
   ) {
-    return this.productModel
+    return  await this.productModel
       .find(search ? { $text: { $search: search } } : {})
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .populate([
-        { path: 'category', select: '_id title slug' },
+        // { path: 'category', select: '_id title slug' },
         {
           path: 'supplier',
           select: '_id avatar mobile email role firstName lastName username',
         },
-      ]);
+      ]).exec();
   }
 
   findByIdAndUpdate(
@@ -119,7 +119,7 @@ export class ProductsRepository {
       .find({ title: { $regex: title, $options: 'i' } })
       .limit(20)
       .populate([
-        { path: 'category', select: '_id title slug' },
+        // { path: 'category', select: '_id title slug' },
         {
           path: 'supplier',
           select: '_id avatar mobile email role firstName lastName username',

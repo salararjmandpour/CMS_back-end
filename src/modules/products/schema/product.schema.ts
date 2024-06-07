@@ -4,6 +4,7 @@ import { ISize, SizeSchema } from './size.schema';
 import { Category } from 'src/modules/categories/schemas/category.schema';
 import { ISpecifications, SpecificationsSchema } from './specification.schema';
 import { ILabels, LabelsSchema } from './labels.schema';
+import { ICategory , CategorySchema } from './category.schema';
 
 export enum ProductUnitEnum {
   NUMBER = 'number',
@@ -125,11 +126,10 @@ export class Product {
   images: [];
 
   @Prop({
-    type: Array<Types.ObjectId>,
-    required: true,
-    ref: Category.name,
+    type: [{ type: CategorySchema }],
+    default: [],
   })
-  category: string[];
+  category: ICategory[];
 
   // *** Price and Discount ***
   @Prop({

@@ -5,13 +5,14 @@ import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
 import { SMS, productSMS } from '../schema/product.schema';
 import { ISpecifications } from '../schema/specification.schema';
 import { ILabels } from '../schema/labels.schema';
+import { ICategory } from '../schema/category.schema';
 
 export class CreateProductDto {
   @ApiProperty({
     type: String,
     description: 'The title for product',
     required: true,
-    default: 'ﭼﺴﺐ ﺿﺪ ﺣﺴﺎﺳﯿﺖ ۱.۲۵ سانتی متر ﻣﺎرﺗﺎ',
+    default: 'ﭼﺴﺐ ﺿﺪ ﺣﺴﺎﺳﯿﺖ ۱.۲۵ سانتی متر ﻣﺎرﺗﺎر',
   })
   title: string;
 
@@ -40,12 +41,18 @@ export class CreateProductDto {
   draft: boolean;
 
   @ApiProperty({
-    type: Array<String>,
+    type: Object,
     description: 'The category for product. Should be ObjectId',
     required: true,
-    default: ['6470a3fbbb82534053e8bb86'],
+    default: [
+      {
+        value: { _id: '65ca02157e9a66048ac09271', title: 'بدون دسته بندی'},
+      },
+    ],
   })
-  category: string[];
+  // @IsOptional()
+  category: ICategory[];
+
 
   @ApiProperty({
     type: Number,

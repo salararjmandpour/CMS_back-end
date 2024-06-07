@@ -47,6 +47,10 @@ export class SeoRepository {
     return this.seoModel.find({ category: { $ne: null } });
   }
 
+  async findWithLabel(): Promise<SeoDocument[]> {
+    return this.seoModel.find({ label: { $ne: null } });
+  }
+
   async findAll(
     filter?: FilterQuery<SeoDocument>,
     projection?: ProjectionType<SeoDocument>,

@@ -8,6 +8,8 @@ import {
   discountDatePattern,
   productSmsStatusPattern,
 } from 'src/core/constants/pattern.constant';
+import { CategoryValidator } from './category.validator';
+import { LabelsValidator } from './labels.validator';
 
 export const updateProductValidator = Joi.object({
   title: Joi.string(),
@@ -15,10 +17,9 @@ export const updateProductValidator = Joi.object({
   description: Joi.object(),
   shortDescription: Joi.object(),
   draft: Joi.boolean(),
-  category: Joi.array()
-    .items(Joi.string().pattern(objectIdPattern))
-
-    .error(new Error('category should be array from objectId')),
+  category: Joi.array().items(CategoryValidator)
+  .required()
+  .error(new Error('category should be array from objectId')),
   image: Joi.string(),
   images: Joi.array().items(Joi.string()),
 
@@ -55,6 +56,7 @@ export const updateProductValidator = Joi.object({
 
   // specifications product
   specifications: Joi.array().items(SpecificationsValidator),
+  labels: Joi.array().items(LabelsValidator),
 
   //transportation
   size: updateSizeValidator,

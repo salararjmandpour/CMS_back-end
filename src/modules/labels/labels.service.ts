@@ -228,7 +228,7 @@ export class LabelsService {
   ): Promise<ResponseFormat<any>> {
     const [seos, hasWithoutLabelProduct, hasWithoutLabelPost] =
       await Promise.all([
-        this.seoRepository.findWithCategory(),
+        this.seoRepository.findWithLabel(),
         this.labelRepository.findByProductWithoutLabel(),
         this.labelRepository.findByPostWithoutLabel(),
       ]);
