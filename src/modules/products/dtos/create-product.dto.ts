@@ -211,7 +211,8 @@ export class CreateProductDto {
 
   @ApiProperty()
   productId: string;
-
+  
+  @ApiProperty()
   supplier: string;
 }
 
@@ -232,9 +233,4 @@ export class CreateProductWithCeoDto {
   @Type(() => CreateSeoDto)
   seo: CreateSeoDto;
 }
-function IsOptional(): (
-  target: CreateProductDto,
-  propertyKey: 'labels',
-) => void {
-  throw new Error('Function not implemented.');
-}
+

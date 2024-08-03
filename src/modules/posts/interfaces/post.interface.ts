@@ -6,7 +6,6 @@ export interface CreatePostInput {
   writer: string;
   status: StatusEnum;
   image: string;
-  categories: string[];
 }
 export interface UpdatePostInput
   extends Partial<Omit<CreatePostInput, 'writer'>> {

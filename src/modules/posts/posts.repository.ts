@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery, QueryOptions, ProjectionType } from 'mongoose';
 import { Post } from './schema/post.schema';
 import { CreatePostInput, UpdatePostInput } from './interfaces/post.interface';
+import { CreatePostWithSeoDto } from './dtos/create-post.dto';
 
 @Injectable()
 export class PostsRepository {
@@ -50,5 +51,20 @@ export class PostsRepository {
 
   deleteManyByIds(postIds: string[]): Promise<any> {
     return this.postModel.deleteMany({ _id: { $in: postIds } });
+  }
+
+
+  deleteManyByLabelId(labelId: string[]): Promise<any> {     
+    return this.postModel.updateMany(
+      { "labels.value._id": { $in: labelId } },
+      { 
+        $pull: { 
+          labels: { 
+            "value._id": { $in: labelId } 
+          }
+        }
+      }
+    ).exec();
+   
   }
 }

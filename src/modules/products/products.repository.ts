@@ -84,12 +84,18 @@ export class ProductsRepository {
   }
 
 
-  deleteManyByLabelId(labelId: string[]): Promise<any> { 
-    // return this.productModel.updateMany(
-    //   { 'labels.value._id': labelId },
-    //   { $unset: { 'labels.$.value': '' } }
-    // ).exec();
-    return this.productModel.find({ "labelId.value._id": labelId }).exec();
+  deleteManyByLabelId(labelId: string[]): Promise<any> {     
+    return this.productModel.updateMany(
+      { "labels.value._id": { $in: labelId } },
+      { 
+        $pull: { 
+          labels: { 
+            "value._id": { $in: labelId } 
+          }
+        }
+      }
+    ).exec();
+   
   }
 
   findManyByIds(ids: string[]) {

@@ -1,7 +1,8 @@
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from 'src/modules/users/schema/user.schema';
-import { Category } from 'src/modules/categories/schemas/category.schema';
+import { ILabels, LabelsSchema } from './labels.schema';
+import { CategorySchema, ICategory } from './category.schema';
 
 export enum StatusEnum {
   DRAFT = 'draft',
@@ -58,12 +59,21 @@ export class Post {
   })
   image: string;
 
+  
+  // *** category post ***
   @Prop({
-    type: [Types.ObjectId],
-    ref: Category.name,
+    type: [{ type: CategorySchema }],
     default: [],
   })
-  categories: string[];
+  category: ICategory[];
+
+  // *** labels post ***
+  @Prop({
+    type: [{ type: LabelsSchema }],
+    default: [],
+  })
+  labels: ILabels[];
+  
 
   @Prop({
     type: String,

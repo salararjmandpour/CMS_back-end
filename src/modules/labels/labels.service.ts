@@ -27,6 +27,7 @@ import { ResponseMessages } from 'src/core/constants/response-messages.constant'
 import { AddToGalleryInput } from '../gallery/interfaces/add-to-gallery.interface';
 import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
 import { UpdateLabelWithDto } from './dtos/update-label.dto';
+import { PostsRepository } from '../posts/posts.repository';
 
 export enum TypeQueryEnum {
   PRODUCT = 'product',
@@ -43,6 +44,7 @@ export class LabelsService {
     private labelRepository: LabelsRepository,
     private publicSettingsRepository: PublicSettingsRepository,
     private productRepository: ProductsRepository,
+    private postRepository: PostsRepository,
   ) {}
 
   async create(
@@ -191,7 +193,7 @@ export class LabelsService {
     if (existLabels.length !== labelIds.length) {
       throw new BadRequestException(ResponseMessages.LABELS_NOT_FOUND);
     }
-
+    
     // delete many labels by ids
     const deletedResult = await this.labelRepository.deleteManyByIds(labelIds);
     if (deletedResult.deletedCount !== labelIds.length) {
@@ -199,7 +201,7 @@ export class LabelsService {
         ResponseMessages.FAILED_DELETE_LABELS,
       );
     }
-
+    
     const deletedSeoResult = await this.seoRepository.deleteManyByLabelId(
       labelIds,
     );
@@ -208,17 +210,11 @@ export class LabelsService {
         ResponseMessages.FAILED_DELETE_LABELS,
       );
     }
+    
+    await this.productRepository.deleteManyByLabelId(labelIds);
+    
+    await this.postRepository.deleteManyByLabelId(labelIds);
 
-    const deletedProductResult =
-      await this.productRepository.deleteManyByLabelId(labelIds);
-    // if (deletedProductResult.deletedCount !== labelIds.length) {
-    //   throw new InternalServerErrorException(
-    //     ResponseMessages.FAILED_DELETE_LABELS,
-    //   );
-    // }
-
-    console.log('deletedProductResult', deletedProductResult);
-    console.log('labelIds', labelIds);
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.LABELS_DELETED,
