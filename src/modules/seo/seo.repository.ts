@@ -107,7 +107,10 @@ export class SeoRepository {
     return this.seoModel.deleteOne(filter);
   }
 
-  deleteManyByIds(IDs: any): Promise<any> {
-    return this.seoModel.deleteMany({ _id: { $in: IDs } });
+  deleteManyByIds(Ids: string[]): Promise<any> {
+    return this.seoModel.deleteMany({ _id: { $in: Ids } });
+  }
+  deleteManyByLabelId(labelId: string[]): Promise<any> {
+    return this.seoModel.deleteMany({ label: { $in: labelId } });
   }
 }

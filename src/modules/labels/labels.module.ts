@@ -7,6 +7,7 @@ import { LabelsService } from './labels.service';
 import { LabelsController } from './labels.controller';
 import { LabelsRepository } from './labels.repository';
 import { Label, LabelSchema } from './schemas/label.schema';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { Label, LabelSchema } from './schemas/label.schema';
       { name: Label.name, schema: LabelSchema },
     ]),
     SeoModule,
+    ProductsModule,
     GalleryModule,
   ],
   providers: [LabelsService, LabelsRepository],

@@ -10,6 +10,7 @@ import imageSize from 'image-size';
 
 import { FileService } from '../file/file.service';
 import { SeoRepository } from '../seo/seo.repository';
+import { ProductsRepository } from '../products/products.repository';
 import { LabelsRepository } from './labels.repository';
 import { GalleryRepository } from '../gallery/gallery.repository';
 
@@ -19,10 +20,7 @@ import { LabelDocument } from './schemas/label.schema';
 import { getTypeFile } from 'src/core/utils/gallery-type-file';
 import { CustomException } from 'src/core/utils/custom-exception.util';
 
-import {
-  CreateLabelDto,
-  CreateLabelWithSeoDto,
-} from './dtos/create-label.dto';
+import { CreateLabelDto, CreateLabelWithSeoDto } from './dtos/create-label.dto';
 
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
@@ -44,6 +42,7 @@ export class LabelsService {
     private galleryRepository: GalleryRepository,
     private labelRepository: LabelsRepository,
     private publicSettingsRepository: PublicSettingsRepository,
+    private productRepository: ProductsRepository,
   ) {}
 
   async create(
@@ -56,14 +55,11 @@ export class LabelsService {
       this.labelRepository.findBySlug(body.label.slug),
     ]);
     if (duplicateTitle) {
-      throw new ConflictException(
-        ResponseMessages.LABEL_TITLE_ALREADY_EXIST,
-      );
+      throw new ConflictException(ResponseMessages.LABEL_TITLE_ALREADY_EXIST);
     }
     if (duplicateSlug) {
       throw new ConflictException(ResponseMessages.LABEL_SLUG_ALREADY_EXIST);
     }
-  
 
     // save label in database
     const createdLabel = await this.labelRepository.create({
@@ -119,24 +115,20 @@ export class LabelsService {
     body: UpdateLabelWithDto,
   ): Promise<ResponseFormat<any>> {
     // prevent duplicate title and name
-    const [existLabel, duplicateTitle, duplicateSlug] =
-      await Promise.all([
-        this.labelRepository.findById(id),
-        this.labelRepository.findByTitle(body?.label?.name),
-        this.labelRepository.findBySlug(body?.label?.slug),
-      ]);
+    const [existLabel, duplicateTitle, duplicateSlug] = await Promise.all([
+      this.labelRepository.findById(id),
+      this.labelRepository.findByTitle(body?.label?.name),
+      this.labelRepository.findBySlug(body?.label?.slug),
+    ]);
     if (!existLabel) {
       throw new NotFoundException(ResponseMessages.LABEL_NOT_FOUND);
     }
     if (duplicateTitle && id !== duplicateTitle._id.toString()) {
-      throw new ConflictException(
-        ResponseMessages.LABEL_TITLE_ALREADY_EXIST,
-      );
+      throw new ConflictException(ResponseMessages.LABEL_TITLE_ALREADY_EXIST);
     }
     if (duplicateSlug && id !== duplicateSlug._id.toString()) {
       throw new ConflictException(ResponseMessages.LABEL_SLUG_ALREADY_EXIST);
     }
-
 
     // update label by id
     const [updatedLabel, existSeo] = await Promise.all([
@@ -194,28 +186,39 @@ export class LabelsService {
   }
 
   async deleteManyByIds(labelIds: string[]): Promise<ResponseFormat<any>> {
-    const existLabels = await this.labelRepository.findManyByIds(
-      labelIds,
-    );
+    const existLabels = await this.labelRepository.findManyByIds(labelIds);
     // check exist labels by IDs
     if (existLabels.length !== labelIds.length) {
       throw new BadRequestException(ResponseMessages.LABELS_NOT_FOUND);
     }
 
     // delete many labels by ids
-    const deletedResult = await this.labelRepository.deleteManyByIds(
-      labelIds,
-    );
+    const deletedResult = await this.labelRepository.deleteManyByIds(labelIds);
     if (deletedResult.deletedCount !== labelIds.length) {
       throw new InternalServerErrorException(
         ResponseMessages.FAILED_DELETE_LABELS,
       );
     }
 
-    const deletedSeoResult = await this.seoRepository.deleteManyByIds(
+    const deletedSeoResult = await this.seoRepository.deleteManyByLabelId(
       labelIds,
     );
+    if (deletedSeoResult.deletedCount !== labelIds.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_LABELS,
+      );
+    }
 
+    const deletedProductResult =
+      await this.productRepository.deleteManyByLabelId(labelIds);
+    // if (deletedProductResult.deletedCount !== labelIds.length) {
+    //   throw new InternalServerErrorException(
+    //     ResponseMessages.FAILED_DELETE_LABELS,
+    //   );
+    // }
+
+    console.log('deletedProductResult', deletedProductResult);
+    console.log('labelIds', labelIds);
     return {
       statusCode: HttpStatus.OK,
       message: ResponseMessages.LABELS_DELETED,

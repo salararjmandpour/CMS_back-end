@@ -83,6 +83,15 @@ export class ProductsRepository {
     return this.productModel.deleteMany({ _id: { $in: productId } });
   }
 
+
+  deleteManyByLabelId(labelId: string[]): Promise<any> { 
+    // return this.productModel.updateMany(
+    //   { 'labels.value._id': labelId },
+    //   { $unset: { 'labels.$.value': '' } }
+    // ).exec();
+    return this.productModel.find({ "labelId.value._id": labelId }).exec();
+  }
+
   findManyByIds(ids: string[]) {
     return this.productModel.find({ _id: { $in: ids } });
   }
