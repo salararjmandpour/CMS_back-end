@@ -65,6 +65,19 @@ export class PostsRepository {
         }
       }
     ).exec();
-   
   }
+
+  deleteManyByCategoryId(categoryId: string[]): Promise<any> {     
+    return this.postModel.updateMany(
+      { "category.value._id": { $in: categoryId } },
+      { 
+        $pull: { 
+          category: { 
+            "value._id": { $in: categoryId } 
+          }
+        }
+      }
+    ).exec();
+  }
+
 }

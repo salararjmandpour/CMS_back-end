@@ -98,6 +98,19 @@ export class ProductsRepository {
    
   }
 
+  deleteManyByCategoryId(categoryId: string[]): Promise<any> {     
+    return this.productModel.updateMany(
+      { "category.value._id": { $in: categoryId } },
+      { 
+        $pull: { 
+          category: { 
+            "value._id": { $in: categoryId } 
+          }
+        }
+      }
+    ).exec();
+  }
+
   findManyByIds(ids: string[]) {
     return this.productModel.find({ _id: { $in: ids } });
   }

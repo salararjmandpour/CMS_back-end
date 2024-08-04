@@ -28,6 +28,8 @@ import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
 import { AddToGalleryInput } from '../gallery/interfaces/add-to-gallery.interface';
 import { PublicSettingsRepository } from '../settings/repositories/public-settings.repository';
+import { ProductsRepository } from '../products/products.repository';
+import { PostsRepository } from '../posts/posts.repository';
 
 export enum TypeQueryEnum {
   PRODUCT = 'product',
@@ -43,6 +45,8 @@ export class CategoriesService {
     private galleryRepositoy: GalleryRepository,
     private categoriesRepository: CategoriesRepository,
     private publicSettingsRepository: PublicSettingsRepository,
+    private productRepository: ProductsRepository,
+    private postRepository: PostsRepository,
   ) {}
 
   async create(
@@ -220,6 +224,17 @@ export class CategoriesService {
     const deletedSeoResult = await this.seoRepository.deleteManyByIds(
       categoriesIds,
     );
+
+    if (deletedSeoResult.deletedCount !== categoriesIds.length) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_DELETE_CATEGORIES,
+      );
+    }
+
+    await this.productRepository.deleteManyByCategoryId(categoriesIds);
+    
+    await this.postRepository.deleteManyByCategoryId(categoriesIds);
+
 
     return {
       statusCode: HttpStatus.OK,
