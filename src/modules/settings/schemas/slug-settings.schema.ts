@@ -1,10 +1,10 @@
 import { Document as MongooseDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { LinkeStructuresEnum } from '../dtos/set-slug-config.dto';
+import { LinkStructuresEnum } from '../dtos/set-slug-config.dto';
 
 export interface ISlug {
   category: string;
-  linkeStructures: LinkeStructuresEnum;
+  linkStructures: LinkStructuresEnum;
   link: string;
 }
 
@@ -23,7 +23,7 @@ export class SlugSettings {
     type: Object,
     required: true,
   })
-  postLableSettings: ISlug;
+  postLabelSettings: ISlug;
 
   @Prop({
     type: Object,
@@ -35,7 +35,7 @@ export class SlugSettings {
     type: Object,
     required: true,
   })
-  productLableSettings: ISlug;
+  productLabelSettings: ISlug;
 }
 
 export type SlugSettingsDocument = SlugSettings & MongooseDocument;

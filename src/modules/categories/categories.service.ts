@@ -160,6 +160,11 @@ export class CategoriesService {
       );
     }
 
+    // update category to product and post by id
+    await this.productRepository.updateByCategoryId(id, body.category.title);
+
+    await this.postRepository.updateByCategoryId(id, body.category.title);
+
     // update url
     if (body.category.slug) {
       const publicSettings = await this.publicSettingsRepository.findAll();
@@ -232,9 +237,8 @@ export class CategoriesService {
     }
 
     await this.productRepository.deleteManyByCategoryId(categoriesIds);
-    
-    await this.postRepository.deleteManyByCategoryId(categoriesIds);
 
+    await this.postRepository.deleteManyByCategoryId(categoriesIds);
 
     return {
       statusCode: HttpStatus.OK,

@@ -80,4 +80,32 @@ export class PostsRepository {
     ).exec();
   }
 
+
+  async updateByLabelId(labelId: string, labelTitle: string): Promise<any> {
+    return this.postModel
+      .updateMany(
+        { 'labels.value._id': labelId },
+        {
+          $set: {
+            'labels.$.value.title': labelTitle,
+          },
+        },
+      )
+      .exec();
+  }
+
+
+  async updateByCategoryId(categoryId: string, categoryTitle: string): Promise<any> {
+    return this.postModel
+      .updateMany(
+        { 'category.value._id': categoryId },
+        {
+          $set: {
+            'category.$.value.title': categoryTitle,
+          },
+        },
+      )
+      .exec();
+  }
+
 }

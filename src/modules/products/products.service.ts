@@ -37,7 +37,7 @@ export class ProductsService {
     userId: string,
     body: CreateProductWithCeoDto,
   ): Promise<ResponseFormat<any>> {
-    // check exust product property in request body
+    // check exist product property in request body
     if (!body?.product) {
       throw new BadRequestException('product is required');
     }

@@ -145,6 +145,11 @@ export class LabelsService {
       );
     }
 
+    // update label to product and post by id
+    await this.productRepository.updateByLabelId(id, body.label.name);
+
+    await this.postRepository.updateByLabelId(id, body.label.name);
+
     // update url
     if (body.label.slug) {
       const publicSettings = await this.publicSettingsRepository.findAll();
@@ -193,7 +198,7 @@ export class LabelsService {
     if (existLabels.length !== labelIds.length) {
       throw new BadRequestException(ResponseMessages.LABELS_NOT_FOUND);
     }
-    
+
     // delete many labels by ids
     const deletedResult = await this.labelRepository.deleteManyByIds(labelIds);
     if (deletedResult.deletedCount !== labelIds.length) {
@@ -201,7 +206,7 @@ export class LabelsService {
         ResponseMessages.FAILED_DELETE_LABELS,
       );
     }
-    
+
     const deletedSeoResult = await this.seoRepository.deleteManyByLabelId(
       labelIds,
     );
@@ -210,9 +215,9 @@ export class LabelsService {
         ResponseMessages.FAILED_DELETE_LABELS,
       );
     }
-    
+
     await this.productRepository.deleteManyByLabelId(labelIds);
-    
+
     await this.postRepository.deleteManyByLabelId(labelIds);
 
     return {

@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, ValidateNested } from 'class-validator';
 import { ISlug } from '../schemas/slug-settings.schema';
 
-export enum LinkeStructuresEnum {
+export enum LinkStructuresEnum {
   SIMPLE = 'simple',
   CUSTOM = 'custom',
 }
@@ -13,10 +13,10 @@ class SlugSettingsDto {
   category: string;
 
   @ApiProperty({
-    default: LinkeStructuresEnum.SIMPLE,
+    default: LinkStructuresEnum.SIMPLE,
   })
-  @IsEnum(LinkeStructuresEnum)
-  linkeStructures: LinkeStructuresEnum;
+  @IsEnum(LinkStructuresEnum)
+  linkStructures: LinkStructuresEnum;
 
   @ApiProperty()
   link: string;
@@ -37,7 +37,7 @@ export class SetSlugCnfigDto {
     default: SlugSettingsDto,
   })
   @Type(() => SlugSettingsDto)
-  postLableSettings: ISlug;
+  postLabelSettings: ISlug;
 
   @ValidateNested()
   @ApiProperty({
@@ -53,5 +53,5 @@ export class SetSlugCnfigDto {
     default: SlugSettingsDto,
   })
   @Type(() => SlugSettingsDto)
-  productLableSettings: ISlug;
+  productLabelSettings: ISlug;
 }

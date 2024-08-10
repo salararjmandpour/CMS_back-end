@@ -83,44 +83,46 @@ export class ProductsRepository {
     return this.productModel.deleteMany({ _id: { $in: productId } });
   }
 
-
-  deleteManyByLabelId(labelId: string[]): Promise<any> {     
-    return this.productModel.updateMany(
-      { "labels.value._id": { $in: labelId } },
-      { 
-        $pull: { 
-          labels: { 
-            "value._id": { $in: labelId } 
-          }
-        }
-      }
-    ).exec();
-   
+  deleteManyByLabelId(labelId: string[]): Promise<any> {
+    return this.productModel
+      .updateMany(
+        { 'labels.value._id': { $in: labelId } },
+        {
+          $pull: {
+            labels: {
+              'value._id': { $in: labelId },
+            },
+          },
+        },
+      )
+      .exec();
   }
 
-  deleteManyByCategoryId(categoryId: string[]): Promise<any> {     
-    return this.productModel.updateMany(
-      { "category.value._id": { $in: categoryId } },
-      { 
-        $pull: { 
-          category: { 
-            "value._id": { $in: categoryId } 
-          }
-        }
-      }
-    ).exec();
+  deleteManyByCategoryId(categoryId: string[]): Promise<any> {
+    return this.productModel
+      .updateMany(
+        { 'category.value._id': { $in: categoryId } },
+        {
+          $pull: {
+            category: {
+              'value._id': { $in: categoryId },
+            },
+          },
+        },
+      )
+      .exec();
   }
 
   findManyByIds(ids: string[]) {
     return this.productModel.find({ _id: { $in: ids } });
   }
 
- async getProductList(
+  async getProductList(
     page: number = 1,
     limit: number = 10,
     search?: string | undefined,
   ) {
-    return  await this.productModel
+    return await this.productModel
       .find(search ? { $text: { $search: search } } : {})
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
@@ -131,7 +133,8 @@ export class ProductsRepository {
           path: 'supplier',
           select: '_id avatar mobile email role firstName lastName username',
         },
-      ]).exec();
+      ])
+      .exec();
   }
 
   findByIdAndUpdate(
@@ -140,6 +143,32 @@ export class ProductsRepository {
     options?: QueryOptions,
   ) {
     return this.productModel.findOneAndUpdate({ _id }, update, options);
+  }
+
+  async updateByLabelId(labelId: string, labelTitle: string): Promise<any> {
+    return this.productModel
+      .updateMany(
+        { 'labels.value._id': labelId },
+        {
+          $set: {
+            'labels.$.value.title': labelTitle,
+          },
+        },
+      )
+      .exec();
+  }
+
+  async updateByCategoryId(categoryId: string, categoryTitle: string): Promise<any> {
+    return this.productModel
+      .updateMany(
+        { 'category.value._id': categoryId },
+        {
+          $set: {
+            'category.$.value.title': categoryTitle,
+          },
+        },
+      )
+      .exec();
   }
 
   searchByTitle(title: string = '') {

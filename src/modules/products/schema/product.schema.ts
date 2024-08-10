@@ -18,7 +18,7 @@ export enum ProductUnitEnum {
 
 enum SMSStatusEnum {
   AUCTIONED_TIME = 'AUCTIONED_TIME',
-  AVAILABLE_TIEM = 'AVAILABLE_TIEM',
+  AVAIlabel_TIEM = 'AVAIlabel_TIEM',
   ENDING_TIME = 'ENDING_TIME',
 }
 
@@ -30,7 +30,7 @@ export type SMS = [
     isActive: Boolean;
   },
   {
-    status: SMSStatusEnum.AVAILABLE_TIEM;
+    status: SMSStatusEnum.AVAIlabel_TIEM;
     title: String;
     message: String;
     isActive: Boolean;
@@ -51,7 +51,7 @@ export const productSMS = [
     isActive: false,
   },
   {
-    status: SMSStatusEnum.AVAILABLE_TIEM,
+    status: SMSStatusEnum.AVAIlabel_TIEM,
     title: '',
     message: '',
     isActive: false,
@@ -167,7 +167,7 @@ export class Product {
   // *** Warehouse info ***
   @Prop({
     type: String,
-    required: true,
+    required: false,
     unique: true,
   })
   productId: string;

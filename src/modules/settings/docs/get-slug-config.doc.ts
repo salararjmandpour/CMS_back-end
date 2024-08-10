@@ -21,22 +21,22 @@ export const GetSlugConfigDoc = () => {
               _id: '65c135685184c452580591cc',
               postSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
-              postLableSettings: {
+              postLabelSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
               productSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
-              productLableSettings: {
+              productLabelSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
               createdAt: '2024-02-05T19:22:16.887Z',

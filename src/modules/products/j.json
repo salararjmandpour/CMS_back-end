@@ -1,0 +1,92 @@
+{
+    "product": {
+      "title": "ﭼﺴﺐ ﺿﺪ ﺣﺴﺎﺳﯿﺖ ۱.۲۵ سانتی متر ﻣﺎرﺗﺎر",
+      "slug": "string",
+      "description": {},
+      "shortDescription": {},
+      "draft": false,
+      "category": [
+        {
+          "value": {
+            "_id": "65ca02157e9a66048ac09271",
+            "title": "بدون دسته بندی"
+          }
+        }
+      ],
+      "regularPrice": 250000,
+      "discountedPrice": 250000,
+      "discountStartDate": "1403/03/26",
+      "discountEndDate": "1403/03/26",
+      "inStock": true,
+      "shortageInStock": 0,
+      "count": 0,
+      "warehouseName": "string",
+      "productUnit": "number",
+      "warehouseShelfId": "string",
+      "encourageMorePurchases": [
+        "6470a3fbbb82534053e8bb86"
+      ],
+      "similarProducts": [
+        "6470a3fbbb82534053e8bb86"
+      ],
+      "specifications": [
+        {
+          "key": {
+            "_id": "6470a3fbbb82534053e8bb86",
+            "title": "نوع"
+          },
+          "value": {
+            "_id": "6470a3fbbb82534053e8bb86",
+            "title": "ضد حساسیت"
+          }
+        }
+      ],
+      "labels": [
+        {
+          "value": {
+            "_id": "6620ae4eddae531bc4b2f3cd",
+            "title": " برچسب تستی اول"
+          }
+        }
+      ],
+      "size": {
+        "length": 60,
+        "height": 20,
+        "width": 40,
+        "weight": 2,
+        "weightUnit": "gram",
+        "dimensionsUnit": "centimeter"
+      },
+      "image": "string",
+      "images": [
+        "string"
+      ],
+      "sms": [
+        {
+          "status": "AUCTIONED_TIME",
+          "title": "",
+          "message": "",
+          "isActive": false
+        },
+        {
+          "status": "AVAIlabel_TIEM",
+          "title": "",
+          "message": "",
+          "isActive": false
+        },
+        {
+          "status": "ENDING_TIME",
+          "title": "",
+          "message": "",
+          "isActive": false
+        }
+      ]
+    },
+    "seo": {
+      "title": [
+        "string"
+      ],
+      "slug": "string",
+      "description": "String"
+    }
+  }

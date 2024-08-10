@@ -2,13 +2,13 @@ import * as Joi from 'joi';
 
 export const slugValidator = Joi.object({
   category: Joi.string(),
-  linkeStructures: Joi.string(),
+  linkStructures: Joi.string(),
   link: Joi.string(),
 });
 
 export const setSlugConfigValidator = Joi.object({
   postSettings: slugValidator,
-  postLableSettings: slugValidator,
+  postLabelSettings: slugValidator,
   productSettings: slugValidator,
-  productLableSettings: slugValidator,
+  productLabelSettings: slugValidator,
 });
