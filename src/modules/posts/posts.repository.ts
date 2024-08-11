@@ -15,7 +15,7 @@ export class PostsRepository {
 
   findOneById(id: string) {
     return this.postModel.findById(id).populate([
-      { path: 'categories', select: '_id title slug' },
+      { path: 'category', select: '_id title slug' },
       {
         path: 'writer',
         select: '_id avatar mobile email role firstName lastName username',
@@ -33,7 +33,7 @@ export class PostsRepository {
     options?: QueryOptions<Post>,
   ) {
     return this.postModel.find(filter, projection, options).populate([
-      { path: 'categories', select: '_id title slug' },
+      { path: 'category', select: '_id title slug' },
       {
         path: 'writer',
         select: '_id avatar mobile email role firstName lastName username',
