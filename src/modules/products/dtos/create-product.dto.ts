@@ -212,8 +212,7 @@ export class CreateProductDto {
   @ApiProperty()
   productId: string;
   
-  @ApiProperty()
-  supplier: string;b
+
 }
 
 export class CreateProductWithCeoDto {

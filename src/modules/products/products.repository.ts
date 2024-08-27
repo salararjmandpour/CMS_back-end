@@ -16,8 +16,8 @@ export class ProductsRepository {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  create(data: CreateProductDto) {
-    return this.productModel.create(data);
+  create(data: CreateProductDto,supplier: string):Promise<any> {
+    return this.productModel.create({...data,supplier});
   }
 
   findOne(
@@ -142,6 +142,8 @@ export class ProductsRepository {
     update: UpdateQuery<ProductDocument>,
     options?: QueryOptions,
   ) {
+    console.log(update);
+    
     return this.productModel.findOneAndUpdate({ _id }, update, options);
   }
 

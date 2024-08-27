@@ -67,10 +67,10 @@ export class ProductsService {
     }
 
     // save product in database
-    const createdResult = await this.productRepository.create({
-      ...body.product,
-      supplier: userId,
-    });
+    const createdResult = await this.productRepository.create(
+      body.product,
+      userId,
+    );
 
     if (!createdResult) {
       throw new InternalServerErrorException(
@@ -151,13 +151,12 @@ export class ProductsService {
   }
 
   async deleteMany(productIds: string[]): Promise<ResponseFormat<any>> {
-    
     // check exist product
     const product = await this.productRepository.findManyByIds(productIds);
     if (productIds.length !== product.length) {
       throw new NotFoundException(ResponseMessages.NOT_FOUND_POSTS);
     }
-    
+
     // delete product from database
     const manyIds = await this.productRepository.deleteManyByIds(productIds);
     if (manyIds.deletedCount !== productIds.length) {
