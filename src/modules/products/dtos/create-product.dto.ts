@@ -180,8 +180,8 @@ export class CreateProductDto {
       height: 20,
       width: 40,
       weight: 2,
-      weightUnit: 'gram' || 'kilogram',
-      dimensionsUnit: 'centimeter' || 'meter',
+      weightUnit: 'g',
+      dimensionsUnit:'cm' ,
     },
   })
   size: {
