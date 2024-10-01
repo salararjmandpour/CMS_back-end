@@ -17,6 +17,9 @@ import { SetPublicConfigDecorator } from './decorators/set-public-config.decorat
 import { GetPublicConfigDecorator } from './decorators/get-public-config.decorator';
 import { ExcludePublicSettings } from 'src/core/decorators/exclude-public-settings.decorator';
 import { GetSlugConfigDecorator } from './decorators/get-slug-config.decorator';
+import { SetReadingConfigDto } from './dtos/set-reading-setting.dto';
+import { SetReadingConfigDecorator } from './decorators/set-reading-config.decorator';
+import { GetReadingConfigDecorator } from './decorators/get-reading-config.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Settings')
@@ -71,5 +74,21 @@ export class SettingsController {
   setSlugConfig(@Body() body: SetSlugCnfigDto) {
     return this.settingsService.setSlugConfig(body);
   }
+
+
+
+  //--------------- set reading setting --------------
+
+  @SetReadingConfigDecorator()
+  setReadingConfig(@Body() body: SetReadingConfigDto) {    
+    return this.settingsService.setReadingConfig(body);
+  }
+
+  //--------------- get reading setting --------------
+  @GetReadingConfigDecorator()
+    getReadingConfig() {
+      return this.settingsService.getSlugConfig();
+    }
+
 }
 // { offset: "+03:30", label: "(GMT+03:30) Tehran", tzCode: "Asia/Tehran" },

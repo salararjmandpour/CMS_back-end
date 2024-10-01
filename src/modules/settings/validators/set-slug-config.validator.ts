@@ -8,7 +8,9 @@ export const slugValidator = Joi.object({
 
 export const setSlugConfigValidator = Joi.object({
   postSettings: slugValidator,
+  postCategorySettings: slugValidator,
   postLabelSettings: slugValidator,
   productSettings: slugValidator,
+  productCategorySettings: slugValidator,
   productLabelSettings: slugValidator,
 });

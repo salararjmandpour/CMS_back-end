@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { LinkStructuresEnum } from '../dtos/set-slug-config.dto';
 
 export interface ISlug {
-  category: string;
+  category?: string;
   linkStructures: LinkStructuresEnum;
   link: string;
 }
@@ -29,7 +29,19 @@ export class SlugSettings {
     type: Object,
     required: true,
   })
+  postCategorySettings: ISlug;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
   productSettings: ISlug;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  productCategorySettings: ISlug;
 
   @Prop({
     type: Object,

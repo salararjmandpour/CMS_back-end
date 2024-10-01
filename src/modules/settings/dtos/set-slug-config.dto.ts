@@ -9,8 +9,8 @@ export enum LinkStructuresEnum {
 }
 
 class SlugSettingsDto {
-  @ApiProperty()
-  category: string;
+  @ApiProperty({ required: false })
+  category?: string;
 
   @ApiProperty({
     default: LinkStructuresEnum.SIMPLE,
@@ -37,6 +37,14 @@ export class SetSlugCnfigDto {
     default: SlugSettingsDto,
   })
   @Type(() => SlugSettingsDto)
+  postCategorySettings: ISlug;
+
+  @ValidateNested()
+  @ApiProperty({
+    type: SlugSettingsDto,
+    default: SlugSettingsDto,
+  })
+  @Type(() => SlugSettingsDto)
   postLabelSettings: ISlug;
 
   @ValidateNested()
@@ -46,6 +54,14 @@ export class SetSlugCnfigDto {
   })
   @Type(() => SlugSettingsDto)
   productSettings: ISlug;
+
+  @ValidateNested()
+  @ApiProperty({
+    type: SlugSettingsDto,
+    default: SlugSettingsDto,
+  })
+  @Type(() => SlugSettingsDto)
+  productCategorySettings: ISlug;
 
   @ValidateNested()
   @ApiProperty({
