@@ -87,7 +87,7 @@ export class SettingsController {
   //--------------- get reading setting --------------
   @GetReadingConfigDecorator()
     getReadingConfig() {
-      return this.settingsService.getSlugConfig();
+      return this.settingsService.getReadingConfig();
     }
 
 }
