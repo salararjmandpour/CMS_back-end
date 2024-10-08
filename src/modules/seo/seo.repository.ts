@@ -47,6 +47,10 @@ export class SeoRepository {
     return this.seoModel.find({ category: { $ne: null } });
   }
 
+  async findWithLabel(): Promise<SeoDocument[]> {
+    return this.seoModel.find({ label: { $ne: null } });
+  }
+
   async findAll(
     filter?: FilterQuery<SeoDocument>,
     projection?: ProjectionType<SeoDocument>,
@@ -103,7 +107,10 @@ export class SeoRepository {
     return this.seoModel.deleteOne(filter);
   }
 
-  deleteManyByIds(IDs: any): Promise<any> {
-    return this.seoModel.deleteMany({ _id: { $in: IDs } });
+  deleteManyByIds(Ids: string[]): Promise<any> {
+    return this.seoModel.deleteMany({ category: { $in: Ids } });
+  }
+  deleteManyByLabelId(labelId: string[]): Promise<any> {
+    return this.seoModel.deleteMany({ label: { $in: labelId } });
   }
 }

@@ -68,7 +68,7 @@ export class LabelsController {
   // delete many label by IDs
   @DeleteLabelDecorator()
   deleteMany(@Body() body: LabelDeleteManyDto) {
-    return this.labelsService.deleteManyByIds(body.categoriesIds);
+    return this.labelsService.deleteManyByIds(body.labelsIds);
   }
 
   // get category list

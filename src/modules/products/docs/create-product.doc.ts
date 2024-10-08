@@ -42,7 +42,12 @@ export const ApiCreateProduct = () => {
               },
               images: [],
               inStock: true,
-              category: '6470a3fbbb82534053e8bb86',
+              category:[
+                {
+                  _id:'65ca02157e9a66048ac09271',
+                  value:'بدون دسته بندی'
+                }
+              ],
               specifications: [
                 {
                   key: 'نوع',

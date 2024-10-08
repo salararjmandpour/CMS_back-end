@@ -5,21 +5,20 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-
 import { SmsSettingsRepository } from './repositories/sms-settings.repository';
 import { SlugSettingsRepository } from './repositories/slug-settings.repository';
 import { EmailSettingsRepository } from './repositories/email-settings.repository';
 import { PublicSettingsRepository } from './repositories/public-settings.repository';
-
 import { SetSmsConfigDto } from './dtos/set-sms-config.dto';
 import { SetSlugCnfigDto } from './dtos/set-slug-config.dto';
 import { SetEmailConfigDto } from './dtos/set-email-config.dto';
 import { SetPublicConfigDto } from './dtos/set-public-config.dto';
-
 import { copyObject } from 'src/core/utils/copy-object';
 import { ResponseFormat } from 'src/core/interfaces/response.interface';
 import { getTimezone, setDefaultTimezone } from 'src/core/utils/timezone.util';
 import { ResponseMessages } from 'src/core/constants/response-messages.constant';
+import { SetReadingConfigDto } from './dtos/set-reading-setting.dto';
+import { ReadingSettingsRepository } from './repositories/reading-settings.repository';
 
 @Injectable()
 export class SettingsService {
@@ -28,6 +27,7 @@ export class SettingsService {
     private slugSettingsRepository: SlugSettingsRepository,
     private emailSettingsRepository: EmailSettingsRepository,
     private publicSettingsRepository: PublicSettingsRepository,
+    private readingSettingsRepository: ReadingSettingsRepository,
   ) {}
 
   // *** get public settings ***
@@ -321,4 +321,65 @@ export class SettingsService {
       },
     };
   }
+
+
+  //----------------- set reading setting ------------------
+  public async setReadingConfig(data: SetReadingConfigDto) {
+    const readingSettings = await this.readingSettingsRepository.findAll();
+    if (!readingSettings || readingSettings.length === 0) {
+      const createdResult = await this.readingSettingsRepository.create(data)
+      if (!createdResult) {
+        throw new InternalServerErrorException(
+          ResponseMessages. FAILED_CREATE_READING_CONFIG,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        data: {
+          slugSettings: createdResult,
+        },
+      };
+    }
+
+    const documentId = readingSettings?.[0]._id.toString();
+    const updateResult = await this.readingSettingsRepository.findAndUpdate(
+      documentId,
+      data,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(
+        ResponseMessages.FAILED_SET_CONFIG_SLUG,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        slugSettings: updateResult,
+      },
+    };
+  }
+
+  //----------------- get reading setting ------------------
+  async getReadingConfig(): Promise<ResponseFormat<any>> {
+      let readingSettings = await this.readingSettingsRepository.findAll();
+      if (!readingSettings || readingSettings.length === 0) {
+        throw new NotFoundException(
+          ResponseMessages.NOT_CONFIGURED_READING_SETTINGS,
+        );
+      }
+  
+      return {
+        statusCode: HttpStatus.OK,
+        data: {
+          readingSettings: readingSettings[0],
+        },
+      };
+    }
 }

@@ -22,6 +22,8 @@ import { SmsSettingsRepository } from './repositories/sms-settings.repository';
 import { SlugSettingsRepository } from './repositories/slug-settings.repository';
 import { EmailSettingsRepository } from './repositories/email-settings.repository';
 import { PublicSettingsRepository } from './repositories/public-settings.repository';
+import { ReadingSettingsRepository } from './repositories/reading-settings.repository';
+import { ReadingSettings, ReadingSettingsSchema } from './schemas/reading-settings.schema';
 
 @Global()
 @Module({
@@ -31,6 +33,8 @@ import { PublicSettingsRepository } from './repositories/public-settings.reposit
       { name: EmailSettings.name, schema: EmailSettingsSchema },
       { name: SmsSettings.name, schema: SmsSettingsSchema },
       { name: SlugSettings.name, schema: SlugSettingsSchema },
+      { name: ReadingSettings.name, schema: ReadingSettingsSchema },
+
     ]),
   ],
   providers: [
@@ -39,6 +43,7 @@ import { PublicSettingsRepository } from './repositories/public-settings.reposit
     EmailSettingsRepository,
     SmsSettingsRepository,
     SlugSettingsRepository,
+    ReadingSettingsRepository,
   ],
   controllers: [SettingsController],
   exports: [
@@ -46,6 +51,7 @@ import { PublicSettingsRepository } from './repositories/public-settings.reposit
     PublicSettingsRepository,
     EmailSettingsRepository,
     SmsSettingsRepository,
+    ReadingSettingsRepository,
   ],
 })
 export class SettingsModule {}

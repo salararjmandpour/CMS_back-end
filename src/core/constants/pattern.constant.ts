@@ -17,5 +17,5 @@ export const categoryTypePattern =  /(product|post)/i;
 export const categoryTypeQueryPattern =  /(product|post|all)/i;
 export const labelTypePattern =  /(product|post)/i;
 export const labelTypeQueryPattern =  /(product|post|all)/i;
-export const productSmsStatusPattern = /(AUCTIONED_TIME|AVAILABLE_TIEM|ENDING_TIME)/i;
+export const productSmsStatusPattern = /(AUCTIONED_TIME|AVAIlabel_TIEM|ENDING_TIME)/i;
 // export const datePattern = /^(13\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;

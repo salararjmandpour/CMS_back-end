@@ -12,6 +12,8 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusEnum } from '../schema/post.schema';
 import { CreateSeoDto } from 'src/modules/seo/dto/create-seo.dto';
+import { ICategory } from '../schema/category.schema';
+import { ILabels } from '../schema/labels.schema';
 
 export class CreatePostDto {
   @ApiProperty()
@@ -23,6 +25,9 @@ export class CreatePostDto {
   @IsString()
   @IsNotEmpty()
   slug: string;
+
+  @ApiProperty()
+  writer: string;
 
   @ApiProperty({
     type: Object,
@@ -46,11 +51,31 @@ export class CreatePostDto {
   @IsOptional()
   image: string;
 
-  @ApiProperty()
-  @IsArray()
-  @IsMongoId({ each: true })
-  @IsOptional()
-  categories: string[];
+  @ApiProperty({
+    type: Object,
+    description: 'The category for product. Should be ObjectId',
+    required: true,
+    default: [
+      {
+        value: { _id: '65ca02157e9a66048ac09271', title: 'بدون دسته بندی'},
+      },
+    ],
+  })
+  // @IsOptional()
+  category: ICategory[];
+
+  @ApiProperty({
+    type: Object,
+    description: 'The labels for product. Should be ObjectId',
+    required: true,
+    default: [
+      {
+        value: { _id: '6620ae4eddae531bc4b2f3cd', title: ' برچسب تستی اول' },
+      },
+    ],
+  })
+  // @IsOptional()
+  labels: ILabels[];
 }
 
 export class CreatePostWithSeoDto {

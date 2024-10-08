@@ -20,22 +20,22 @@ export const SetSlugConfigDoc = () => {
             slugSettings: {
               postSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
-              postLableSettings: {
+              postLabelSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
               productSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
-              productLableSettings: {
+              productLabelSettings: {
                 category: 'string',
-                linkeStructures: 'simple',
+                linkStructures: 'simple',
                 link: 'string',
               },
               _id: '65c135685184c452580591cc',

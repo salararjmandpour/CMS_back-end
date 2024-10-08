@@ -58,12 +58,12 @@ export class UpdateProductDto {
 
   discount: number;
 
-  @ApiProperty({
-    type: String,
-    description: 'The discountDate for product',
-    default: '1403/03/26',
-  })
-  discountDate: string;
+  // @ApiProperty({
+  //   type: String,
+  //   description: 'The discountDate for product',
+  //   default: '1403/03/26',
+  // })
+  // discountDate: string;
 
   @ApiProperty({
     type: Boolean,
@@ -105,6 +105,11 @@ export class UpdateProductDto {
     required: true,
   })
   warehouseShelfId: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  productId: string;
 
   @ApiProperty({
     type: Array<String>,

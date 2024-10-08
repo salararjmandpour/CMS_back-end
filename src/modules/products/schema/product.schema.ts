@@ -4,6 +4,7 @@ import { ISize, SizeSchema } from './size.schema';
 import { Category } from 'src/modules/categories/schemas/category.schema';
 import { ISpecifications, SpecificationsSchema } from './specification.schema';
 import { ILabels, LabelsSchema } from './labels.schema';
+import { ICategory , CategorySchema } from './category.schema';
 
 export enum ProductUnitEnum {
   NUMBER = 'number',
@@ -17,7 +18,7 @@ export enum ProductUnitEnum {
 
 enum SMSStatusEnum {
   AUCTIONED_TIME = 'AUCTIONED_TIME',
-  AVAILABLE_TIEM = 'AVAILABLE_TIEM',
+  AVAIlabel_TIEM = 'AVAIlabel_TIEM',
   ENDING_TIME = 'ENDING_TIME',
 }
 
@@ -29,7 +30,7 @@ export type SMS = [
     isActive: Boolean;
   },
   {
-    status: SMSStatusEnum.AVAILABLE_TIEM;
+    status: SMSStatusEnum.AVAIlabel_TIEM;
     title: String;
     message: String;
     isActive: Boolean;
@@ -50,7 +51,7 @@ export const productSMS = [
     isActive: false,
   },
   {
-    status: SMSStatusEnum.AVAILABLE_TIEM,
+    status: SMSStatusEnum.AVAIlabel_TIEM,
     title: '',
     message: '',
     isActive: false,
@@ -125,11 +126,10 @@ export class Product {
   images: [];
 
   @Prop({
-    type: Array<Types.ObjectId>,
-    required: true,
-    ref: Category.name,
+    type: [{ type: CategorySchema }],
+    default: [],
   })
-  category: string[];
+  category: ICategory[];
 
   // *** Price and Discount ***
   @Prop({
@@ -167,7 +167,7 @@ export class Product {
   // *** Warehouse info ***
   @Prop({
     type: String,
-    required: true,
+    required: false,
     unique: true,
   })
   productId: string;

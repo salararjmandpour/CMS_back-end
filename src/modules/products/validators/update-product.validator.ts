@@ -8,16 +8,19 @@ import {
   discountDatePattern,
   productSmsStatusPattern,
 } from 'src/core/constants/pattern.constant';
+import { CategoryValidator } from './category.validator';
+import { LabelsValidator } from './labels.validator';
 
 export const updateProductValidator = Joi.object({
   title: Joi.string(),
   slug: Joi.string(),
+  productId: Joi.string(),
   description: Joi.object(),
   shortDescription: Joi.object(),
   draft: Joi.boolean(),
   category: Joi.array()
-    .items(Joi.string().pattern(objectIdPattern))
-
+    .items(CategoryValidator)
+    .required()
     .error(new Error('category should be array from objectId')),
   image: Joi.string(),
   images: Joi.array().items(Joi.string()),
@@ -25,12 +28,12 @@ export const updateProductValidator = Joi.object({
   // price and discount
   regularPrice: Joi.number(),
   discountedPrice: Joi.number(),
-  discountStartDate: Joi.string()
-    .pattern(discountDatePattern)
-    .error(new Error('Invalid discountStartDate')),
-  discountEndDate: Joi.string()
-    .pattern(discountDatePattern)
-    .error(new Error('Invalid discountEndDate')),
+  discountStartDate: Joi.string(),
+  //   .pattern(discountDatePattern)
+  //   .error(new Error('Invalid discountStartDate')),
+  // discountEndDate: Joi.string()
+  //   .pattern(discountDatePattern)
+  //   .error(new Error('Invalid discountEndDate')),
 
   // warehouse info
   inStock: Joi.boolean(),
@@ -55,6 +58,7 @@ export const updateProductValidator = Joi.object({
 
   // specifications product
   specifications: Joi.array().items(SpecificationsValidator),
+  labels: Joi.array().items(LabelsValidator),
 
   //transportation
   size: updateSizeValidator,
